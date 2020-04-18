@@ -490,7 +490,7 @@ namespace SzachyMulti
         {
             client.Connect();
             isOdbierz = true;
-            lines = GetContent("ActiveSessions", Convert.ToString(ID));
+            lines = GetContent(currentfolder, Convert.ToString(ID));
             if (lastCount < lines.Count() || isApppending == false)
             {
                 wasContentReceived = true;
@@ -500,10 +500,11 @@ namespace SzachyMulti
                     if (lines[i].Contains("CLOSING"))
                     {
                         AppendText("OK", "StartingSessions", ID);
+                        currentfolder = "ActiveSessions";
                     }
                     if (lines[i].Contains("OK"))
                     {
-
+                        client.MoveFile($"/SzachySerwer/StartingSessions/{ID}.txt",$"/SzachySerwer/ActiveSessions/{ID}.txt");
                     }
                     if (lines[i].Contains("JOIN"))
                     {
@@ -663,12 +664,11 @@ namespace SzachyMulti
                     BasicIO = true;
                 }
             }
-            InitKlient();
         menuglowne:
             Console.WriteLine($"Obecny czas: {DateTime.Now}/{(Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds}");
             Console.WriteLine("Polaczyc sie z serwerem? Tak/Nie");
-            string czy_polaczyc = Console.ReadLine();
-            if (czy_polaczyc == "Tak" || czy_polaczyc == "tak")
+            string czy_polaczyc = Console.ReadLine().ToLower();
+            if (czy_polaczyc.Contains("tak"))
             {
                 Console.WriteLine("Podaj swoj nick:");
                 Nick = Console.ReadLine();
@@ -697,7 +697,7 @@ namespace SzachyMulti
                     }
                 }
             }
-            if (czy_polaczyc == "Nie" || czy_polaczyc == "nie")
+            if (czy_polaczyc.Contains("nie"))
             {
                 Console.WriteLine("Cofanie do menu glownego");
                 goto menuglowne;
@@ -705,11 +705,11 @@ namespace SzachyMulti
         lobby:
             try
             {
+                bool donotincrement = false;
                 if (client.GetWorkingDirectory() != "/SzachySerwer/StartingSessions/")
                 {
                     client.SetWorkingDirectory(@"/SzachySerwer/StartingSessions/");
                 }
-                Console.WriteLine("Jest gituwa dostalem sie do folderu lobby");
                 wykonajconnect = false;
                 odswiezlobby = false;
                 Console.WriteLine("---Lobby------------------------------------------------------------------------");
@@ -717,6 +717,7 @@ namespace SzachyMulti
                 int i = 1;
                 foreach (var item in client.GetListing(client.GetWorkingDirectory(), FtpListOption.Recursive))
                 {
+                    donotincrement = false;
                     var isFile = client.FileExists(item.FullName);
                     if (isFile == true)
                     {
@@ -725,6 +726,7 @@ namespace SzachyMulti
                         tmp.Read(buffer, 0, (Int32)tmp.Length);
                         string str = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
                         List<string> lines = str.Split('\n').ToList();
+                        tmp.Close();
                         if (lines[0] == "public")
                         {
                             if (lines[1].Length > 25)
@@ -733,20 +735,29 @@ namespace SzachyMulti
                             }
                             Console.WriteLine($"{i}.  \"{lines[1]}\"" + new String(' ', 25 - lines[1].Length) + $"- {item.Name.TrimEnd('t', 'x', '.')}");
                         }
-                        if (lines[0] == "private")
+                        else
                         {
-                            i--;
+                            donotincrement = true;
                         }
-                        tmp.Close();
                     }
-                    i++;
+                    if(donotincrement == false)
+                    {
+                        i++;
+                    }
                 }
                 client.SetWorkingDirectory(@"/SzachySerwer/");
                 client.Disconnect();
             }
-            catch
+            catch(Exception e)
             {
-
+                client.Disconnect();
+                Console.WriteLine(e);
+                Console.WriteLine("Blad odbierania lobby. Sprobowac ponownie? y/n");
+                string tryagainlobby = Console.ReadLine();
+                if(tryagainlobby.ToLower().Contains("y"))
+                {
+                    goto lobby;
+                }
             }
             odswiezlobby = false;
             wykonajconnect = false;
@@ -756,7 +767,7 @@ namespace SzachyMulti
             if (connect_to_id.ToLower().Contains("create"))
             {
                 bool isPublic;
-                Console.WriteLine("\nPodaj nazwe sesji, ktora chcesz stworzyc lub napisz \"cancel\" aby wrocic do lobby");
+                Console.Write("\nPodaj nazwe sesji, ktora chcesz stworzyc lub napisz \"cancel\" aby wrocic do lobby");
                 nazwasesji = Console.ReadLine();
                 if (nazwasesji.ToLower() == "cancel")
                 {
@@ -789,10 +800,10 @@ namespace SzachyMulti
                         client.Connect();
                         CreateSessionFile(ID, isPublic, nazwasesji, Nick);
                         client.Disconnect();
+                        Console.WriteLine("Czekanie na drugiego gracza...");
                         InitKlient();
                         Rozgrywka();
                         //(Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds
-
                     }
                     else if (napewno.ToLower().Contains("nie"))
                     {
