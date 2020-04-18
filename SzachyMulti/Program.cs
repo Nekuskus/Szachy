@@ -823,30 +823,27 @@ namespace SzachyMulti
                 Console.WriteLine("Niepoprawna odpowiedz:" + connect_to_id);
                 Console.WriteLine("Cofanie do lobby...\n");
                 wykonajconnect = false;
-                odswiezlobby = true;
+                goto lobby;
             }
-            finally
+            if (wykonajconnect == true)
             {
-                if (wykonajconnect == true)
+                foreach (var item in client.GetNameListing())
                 {
-                    foreach (var item in client.GetNameListing())
+                    //connect, setdirectory
+                    var isFile = client.FileExists(item);
+                    if (isFile == true)
                     {
-                        //connect, setdirectory
-                        var isFile = client.FileExists(item);
-                        if (isFile == true)
+                        if (item.GetFtpFileName().TrimEnd('.', 't', 'x') == connect_to_id)
                         {
-                            if (item.GetFtpFileName().TrimEnd('.', 't', 'x') == connect_to_id)
-                            {
-                                Console.Clear();
-                                Console.SetWindowSize(80, 50);
-                                ID = connect_to_id;
-                                AppendText($"JOIN: {Nick}", currentfolder, connect_to_id);
-                                InitKlient();
-                                nazwasesji = lines[0];
-                                enemyNick = lines[2];
-                                enemyTeam = Convert.ToChar(lines[3]);
-                                Rozgrywka();
-                            }
+                            Console.Clear();
+                            Console.SetWindowSize(80, 50);
+                            ID = connect_to_id;
+                            AppendText($"JOIN: {Nick}", currentfolder, connect_to_id);
+                            InitKlient();
+                            nazwasesji = lines[0];
+                            enemyNick = lines[2];
+                            enemyTeam = Convert.ToChar(lines[3]);
+                            Rozgrywka();
                         }
                     }
                 }
