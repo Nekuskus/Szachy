@@ -559,8 +559,8 @@ namespace SzachyMulti
                 CreateNoWindow = false,
                 UseShellExecute = true,
                 FileName = $@"{Directory.GetCurrentDirectory()}\Chat\SzachyChat.exe",
-                WindowStyle = ProcessWindowStyle.Normal
-
+                WindowStyle = ProcessWindowStyle.Normal,
+                Arguments = $"{ID}"
             };
             chat.StartInfo = psi;
             chat.Start();
@@ -573,7 +573,6 @@ namespace SzachyMulti
             chatLog = null;
             chatLog.AddRange(chatReader.ReadToEnd().Split('\n'));
             int countNow = chatLog.Count();
-
             if (countNow > lastCountChat)
             {
                 isSending = true;

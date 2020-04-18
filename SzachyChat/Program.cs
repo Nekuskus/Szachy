@@ -5,12 +5,14 @@ namespace SzachyChat
 {
     public class Program
     {
-        public static bool wasMessageSent = false;
-        public static bool wasMessageInput = false;
+        public static bool wasMessageInput;
+        public static int lastcount;
         public static string Message;
         static void Main(string[] args)
         {
 
+            Thread Odbierz = new Thread(new ParameterizedThreadStart(OdbierzCzat(args[0])));
+            Odbierz.Start();
             Console.Title = "Czat sesji";
             Console.SetWindowSize(40, 50);
             Console.SetBufferSize(40, 750);
@@ -21,14 +23,14 @@ namespace SzachyChat
                 wasMessageInput = true;
             }
         }
-        static void InitKlient()
+        static void OdbierzCzat(string ID)
         {
-            Thread Odbierz = new Thread(new ThreadStart(OdbierzWiad));
-            Odbierz.Start();
+            PrzeczytajCzat(ID);
+            Thread.Sleep(4000);
         }
-        static void OdbierzWiad()
+        static void PrzeczytajCzat(string ID)
         {
-
+            StreamReader sr = new StreamReader($@".\Logs\Log{ID}.txt");
         }
     }
 }
