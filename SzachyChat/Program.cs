@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 namespace SzachyChat
 {
     public class Program
@@ -11,6 +10,22 @@ namespace SzachyChat
         public static int lastcount = 0;
         public static string Message;
         public static bool isReady = true;
+        static void ConsoleReader()
+        {
+            while (true)
+            {
+                if (isReady)
+                {
+                    ConsoleRead();
+                }
+            }
+        }
+        static void ConsoleRead()
+        {
+            isReady = false;
+            Message = Console.ReadLine();
+            wasMessageInput = true;
+        }
         static void Main(string[] args)
         {
             Thread Odbierz = new Thread(new ParameterizedThreadStart(OdbierzCzat));
@@ -18,12 +33,8 @@ namespace SzachyChat
             Console.Title = "Czat sesji";
             Console.SetWindowSize(40, 50);
             Console.SetBufferSize(40, 750);
-            while(!isReady)
-            {
-                isReady = false;
-                Message = Console.ReadLine();
-                wasMessageInput = true;
-            }
+            Thread Czytaj = new Thread(new ThreadStart(ConsoleReader));
+            Czytaj.Start();
         }
         static void OdbierzCzat(object IDarg)
         {
@@ -35,10 +46,10 @@ namespace SzachyChat
         {
             StreamReader sr = new StreamReader($@".\Logs\Log{ID}.txt");
             string[] messages = sr.ReadToEnd().Split('\n');
-            if(messages.Length > lastcount)
+            if (messages.Length > lastcount)
             {
                 int i = lastcount;
-                while(i >= messages.Length)
+                while (i >= messages.Length)
                 {
                     Console.WriteLine(messages[i]);
                     i++;
@@ -51,13 +62,14 @@ namespace SzachyChat
                 {
                     StreamWriter sw = new StreamWriter($@".\Logs\Log{ID}.txt");
                     sw.WriteLine(Message);
+                    isReady = true;
                 }
                 catch
                 {
-                   Thread.Sleep(150);
-                   goto trywrite;
+                    Thread.Sleep(150);
+                    goto trywrite;
                 }
-            }          
+            }
         }
     }
 }

@@ -615,39 +615,43 @@ namespace SzachyMulti
 
         public static void KlientOdbierajacy()
         {
-            int repeati = 0;
-            while (czy_odbierac == true)
+
+            while (true)
             {
-                try
+                int repeati = 0;
+                while (czy_odbierac == true)
                 {
-                    Odbierz();
-                    repeati = 0;
-                    Thread.Sleep(700);
-                }
-                catch
-                {
-                    if (repeati >= 4)
+                    try
                     {
-                        Console.WriteLine("Nie udalo sie polaczyc z serwerem, sprobowac ponownie?\n//Mozliwe odpowiedzi: Tak, Nie\n(Odpowiedz \"Nie\" przerywa sesje, nie jest to wskazane.");
-                    connrepeatgoto:
-                        string connrepeat = Console.ReadLine();
-                        if (connrepeat.ToLower().Contains("tak"))
-                        {
-                            repeati++;
-                        }
-                        else if (connrepeat.ToLower().Contains("nie"))
-                        {
-                            Console.WriteLine("Konczenie sesji... cofanie do menu glownego");
-                            czy_odbierac = false;
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Niepoprawna odpowiedz: {connrepeat}");
-                            goto connrepeatgoto;
-                        }
+                        Odbierz();
+                        repeati = 0;
+                        Thread.Sleep(700);
                     }
-                    repeati++;
-                }
+                    catch
+                    {
+                        if (repeati >= 4)
+                        {
+                            Console.WriteLine("Nie udalo sie polaczyc z serwerem, sprobowac ponownie?\n//Mozliwe odpowiedzi: Tak, Nie\n(Odpowiedz \"Nie\" przerywa sesje, nie jest to wskazane.");
+                        connrepeatgoto:
+                            string connrepeat = Console.ReadLine();
+                            if (connrepeat.ToLower().Contains("tak"))
+                            {
+                                repeati++;
+                            }
+                            else if (connrepeat.ToLower().Contains("nie"))
+                            {
+                                Console.WriteLine("Konczenie sesji... cofanie do menu glownego");
+                                czy_odbierac = false;
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Niepoprawna odpowiedz: {connrepeat}");
+                                goto connrepeatgoto;
+                            }
+                        }
+                        repeati++;
+                    }
+                } 
             }
         }
         static void Main(string[] args)
@@ -857,8 +861,11 @@ namespace SzachyMulti
         }
         static void SizeCheck()
         {
-            SizeCheckThread();
-            Thread.Sleep(3000);
+            while (true)
+            {
+                SizeCheckThread();
+                Thread.Sleep(3000);
+            }
         }
 
         static void InitKlient()
@@ -876,8 +883,11 @@ namespace SzachyMulti
         }
         static void ChatThread()
         {
-            Chat();
-            Thread.Sleep(500);
+            while (true)
+            {
+                Chat();
+                Thread.Sleep(500);
+            }
         }
         static public string Przekazywacz(string przekażCzat)
         {
