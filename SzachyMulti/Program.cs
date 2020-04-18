@@ -394,6 +394,7 @@ namespace SzachyMulti
     }
     public class Program
     {
+        public static bool hasOtherPlayerJoined = false;
         public static bool isApppending = false;
         public static bool wasContentReceived = false;
         public static bool isContentBeingReceived = false;
@@ -509,6 +510,7 @@ namespace SzachyMulti
                     if (lines[i].Contains("JOIN"))
                     {
                         enemyNick = lines[i].Remove(0, 5).Trim();
+                        hasOtherPlayerJoined = true;
                     }
                     if (lines[i].Contains(">>"))
                     {
@@ -685,21 +687,26 @@ namespace SzachyMulti
                 catch
                 {
                     Console.WriteLine("Nie udalo sie polaczyc z serwerem, sprobowac ponownie?\n//Mozliwe odpowiedzi: Tak, Nie");
-                    string connrepeat = Console.ReadLine();
-                    if (connrepeat == "Tak" || connrepeat == "tak")
+                    string connrepeat = Console.ReadLine().ToLower();
+                    if (connrepeat.Contains("tak"))
                     {
                         goto polacz;
                     }
-                    else if (connrepeat == "Nie" || connrepeat == "nie")
+                    else if (connrepeat.Contains("nie"))
                     {
                         Console.WriteLine("Cofanie do menu glownego");
                         goto menuglowne;
                     }
                 }
             }
-            if (czy_polaczyc.Contains("nie"))
+            else if (czy_polaczyc.Contains("nie"))
             {
                 Console.WriteLine("Cofanie do menu glownego");
+                goto menuglowne;
+            }
+            else
+            {
+                Console.WriteLine($"Niepoprawna odpowiedz {czy_polaczyc}");
                 goto menuglowne;
             }
         lobby:
