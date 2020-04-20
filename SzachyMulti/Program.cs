@@ -685,7 +685,7 @@ namespace SzachyMulti
                 Console.WriteLine("Podaj swoj nick:");
                 Nick = Console.ReadLine();
                 string jsontxt;
-                using (StreamReader r = new StreamReader("credentials.json"))
+                using (StreamReader r = new StreamReader(@".\resources\credentials.json"))
                 {
                     jsontxt = r.ReadToEnd();
                 }
