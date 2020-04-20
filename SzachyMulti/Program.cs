@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 
@@ -978,15 +977,15 @@ namespace SzachyMulti
             }
             for (int tura = 1; !koniecrozgrywki; tura++)
             {
-                if (tura < 10)
+                if (tura.ToString().Length == 1)
                 {
                     Console.WriteLine(new String('-', 36) + $" Tura {tura} " + new String('-', 36));
                 }
-                else if (tura < 100)
+                else if (tura.ToString().Length == 2)
                 {
                     Console.WriteLine(new String('-', 35) + $" Tura {tura} " + new String('-', 36));
                 }
-                else if (tura < 1000)
+                else if (tura.ToString().Length == 3)
                 {
                     Console.WriteLine(new String('-', 35) + $" Tura {tura} " + new String('-', 35));
                 }
