@@ -1,5 +1,4 @@
 ﻿using FluentFTP;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 
@@ -164,7 +164,6 @@ namespace SzachyMulti
                     Console.Write("\n");
                 }
                 //Console.WriteLine("|       |       |       |       |       |       |       |       |");
-                //if()
             }
             else
             {
@@ -235,7 +234,6 @@ namespace SzachyMulti
                     }
                     x = 0;
                     Console.Write("\n");
-                    //TODO: dodać rysowanie w drugą stronę i numerowanie pól!
                 }
             }
             Console.WriteLine("\t-----------------------------------------------------------------");
@@ -392,6 +390,7 @@ namespace SzachyMulti
                 Program.client.Connect();
             }
             Program.AppendText($"{Program.Nick}: {wiadomosc}", currentfolder, Convert.ToString(ID));
+            Program.isSending = false;
         }
     }
     public class Program
@@ -515,8 +514,19 @@ namespace SzachyMulti
                     while (i <= lines.Count)
                     {
                         lines[i] = lines[i].Substring(enemyNick.Length + 2);
-                        if (lines[i].Contains(">>"))
+                        if (lines[i].StartsWith("CZAT"))
                         {
+                            lines[i] = lines[i].Substring(enemyNick.Length + 2);
+                            odebranoWiad = true;
+                            //"CZAT {wiad}"
+                            lines[i] = lines[i].Remove(0, 5);
+                            lines[i] = lines[i].Trim();
+                            lines[i] = lines[i].Insert(0, $"{enemyNick}: ");
+                            receivedMessages.Add(lines[i]);
+                        }
+                        else if (lines[i].Contains(">>"))
+                        {
+                            lines[i] = lines[i].Substring(enemyNick.Length + 2);
                             //"A1 >> A2"
                             string[] moveArgs = new string[2];
                             moveArgs[0] = lines[i].Substring(0, 2);
@@ -528,32 +538,30 @@ namespace SzachyMulti
                             Pozycja2.Pos1 = SkonwertujLitere(moveArgs[1].First());
                             Pozycja2.Pos2 = moveArgs[1].Last();
                         }
-                        else if (lines[i].Contains("CZAT"))
+                        else if (lines[i].StartsWith("CLOSING"))
                         {
-                            odebranoWiad = true;
-                            //"CZAT {wiad}"
-                            lines[i] = lines[i].Remove(0, 5);
-                            lines[i] = lines[i].Trim();
-                            lines[i] = lines[i].Insert(0, $"{enemyNick}: ");
-                            receivedMessages.Add(lines[i]);
-                        }
-                        else if (lines[i].Contains("CLOSING"))
-                        {
+                            lines[i] = lines[i].Substring(enemyNick.Length + 2);
                             AppendText("OK", "StartingSessions", ID);
                             currentfolder = "ActiveSessions";
                         }
-                        else if (lines[i].Contains("OK"))
+                        else if (lines[i].StartsWith("OK"))
                         {
+                            lines[i] = lines[i].Substring(enemyNick.Length + 2);
                             //"OK"
                             client.MoveFile($"/SzachySerwer/StartingSessions/{ID}.txt", $"/SzachySerwer/ActiveSessions/{ID}.txt");
                         }
-                        else if (lines[i].Contains("JOIN"))
+                        else if (lines[i].StartsWith("JOIN"))
                         {
+                            lines[i] = lines[i].Substring(enemyNick.Length + 2);
                             enemyNick = lines[i].Remove(0, 5).Trim();
                             hasOtherPlayerJoined = true;
                         }
+                        else if (lines[i].StartsWith("EVENT"))
+                        {
+                            receivedMessages.Add(lines[i].Substring(0,6));
+                        }
                         i++;
-                    } 
+                    }
                 }
                 lastCount = lines.Count;
             }
@@ -593,7 +601,10 @@ namespace SzachyMulti
                 List<string> sentMessages = new List<string>();
                 for (int i = lastCountChat + 1; i <= countNow; i++)
                 {
-                    sentMessages.Add($"{Nick}: {chatLog[i]}");
+                    if (!chatLog[i].StartsWith(Nick))
+                    {
+                        sentMessages.Add($"{Nick}: {chatLog[i]}");
+                    }
                 }
                 if (client.IsConnected == false)
                 {
@@ -691,7 +702,6 @@ namespace SzachyMulti
                 }
                 JObject jsonObject = JObject.Parse(jsontxt);
                 client = new FtpClient();
-                Console.WriteLine(jsonObject);
                 client.Host = (string)jsonObject["host"];
                 client.Port = (int)jsonObject["port"];
                 client.Credentials = new NetworkCredential((string)jsonObject["login"], (string)jsonObject["password"]);
@@ -772,10 +782,9 @@ namespace SzachyMulti
                 client.SetWorkingDirectory(@"/SzachySerwer/");
                 client.Disconnect();
             }
-            catch (Exception e)
+            catch
             {
                 client.Disconnect();
-                Console.WriteLine(e);
                 Console.WriteLine("Blad odbierania lobby. Sprobowac ponownie? y/n");
                 string tryagainlobby = Console.ReadLine();
                 if (tryagainlobby.ToLower().Contains("y"))
@@ -889,7 +898,7 @@ namespace SzachyMulti
                             nazwasesji = lines[0];
                             enemyNick = lines[2];
                             enemyTeam = Convert.ToChar(lines[3]);
-                            switch(enemyTeam)
+                            switch (enemyTeam)
                             {
                                 case 'B':
                                     playerTeam = 'C';
@@ -949,16 +958,39 @@ namespace SzachyMulti
         }
         static void Rozgrywka()
         {
-            switch(playerTeam)
+            Szachy.PostawPionki();
+            bool koniecrozgrywki = false;
+            switch (playerTeam)
             {
                 case 'B':
                     //napisz w czacie $"Gracz {Nick} gra białymi"
-                    AppendText($"Gracz {Nick} gra białymi",currentfolder,ID);
+                    AppendText($"EVENT Gracz {Nick} gra białymi", currentfolder, ID);
                     receivedMessages.Add($"Gracz {Nick} gra białymi");
                     odebranoWiad = true;
                     break;
                 case 'C':
                     break;
+            }
+            while (!koniecrozgrywki)
+            {
+                switch (playerTeam)
+                {
+                    case 'B':
+                        //wykonaj swoją turę
+                        //while(!hasEnemyMoved)
+                        //{
+                        //    
+                        //}
+                        break;
+                    case 'C':
+                        while (!hasEnemyMoved)
+                        {
+                            Thread.Sleep(1000);
+                        }
+                        //wykonaj swoją turę
+                        //przeciwnik wykonuje ture
+                        break;
+                }
             }
         }
     }
