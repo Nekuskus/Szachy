@@ -394,6 +394,7 @@ namespace SzachyMulti
     }
     public class Program
     {
+        public static Random rand = new Random();
         public static bool hasOtherPlayerJoined = false;
         public static bool isApppending = false;
         public static bool wasContentReceived = false;
@@ -431,10 +432,22 @@ namespace SzachyMulti
         {
             isApppending = true;
             txt = txt + "\n";
-            var tmp = client.OpenAppend($"/SzachySerwer/{Folder}/{ID}.txt");
-            var bytes = Encoding.UTF8.GetBytes(txt);
-            tmp.Write(bytes, 0, bytes.Count());
-            client.Disconnect();
+            writetofile:
+            try
+            {
+                
+                var tmp = client.OpenAppend($"/SzachySerwer/{Folder}/{ID}.txt");
+                var bytes = Encoding.UTF8.GetBytes(txt);
+                tmp.Write(bytes, 0, bytes.Count());
+                client.Disconnect();
+                isApppending = false;
+            }
+            catch
+            {
+                client.Disconnect();
+                Thread.Sleep(rand.Next(140, 201));
+                goto writetofile;
+            }
             isApppending = false;
         }
         public static void CreateSessionFile(string ID, bool IsPublic, string name, string nick)
@@ -445,7 +458,6 @@ namespace SzachyMulti
             if (!IsPublic) txt += "private\n";
             txt += $"{name}\n";
             txt += $"{nick}\n";
-            Random rand = new Random();
             int playerTeamInt = rand.Next(1, 3);
             if (playerTeamInt == 2)
             {
@@ -774,11 +786,17 @@ namespace SzachyMulti
             if (connect_to_id.ToLower().Contains("create"))
             {
                 bool isPublic;
+                podajnazwesesji:
                 Console.Write("\nPodaj nazwe sesji, ktora chcesz stworzyc lub napisz \"cancel\" aby wrocic do lobby");
                 nazwasesji = Console.ReadLine();
                 if (nazwasesji.ToLower() == "cancel")
                 {
                     goto lobby;
+                }
+                if(nazwasesji.Length > 25)
+                {
+                    Console.WriteLine("Nazwa sesji jest zbyt dluga. Wpisz krotsza nazwe (max 25 znakow)");
+                    goto podajnazwesesji;
                 }
             ispublicgoto:
                 if (isCancel == false)
@@ -807,7 +825,19 @@ namespace SzachyMulti
                         client.Connect();
                         CreateSessionFile(ID, isPublic, nazwasesji, Nick);
                         client.Disconnect();
+                        if(rand.Next(1,3) == 1)
+                        {
+                            playerTeam = 'B';
+                        }
+                        else
+                        {
+                            playerTeam = 'C';
+                        }
                         Console.WriteLine("Czekanie na drugiego gracza...");
+                        while(!hasOtherPlayerJoined)
+                        {
+                            Thread.Sleep(TimeSpan.FromSeconds(5));
+                        }
                         InitKlient();
                         Rozgrywka();
                         //(Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds
@@ -913,6 +943,7 @@ namespace SzachyMulti
         static void Rozgrywka()
         {
             //po turze czekaj aż przekazywacz != null
+            
         }
     }
 }
