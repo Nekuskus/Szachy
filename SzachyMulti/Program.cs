@@ -833,12 +833,13 @@ namespace SzachyMulti
                         {
                             playerTeam = 'C';
                         }
+                        InitKlient();
                         Console.WriteLine("Czekanie na drugiego gracza...");
                         while(!hasOtherPlayerJoined)
                         {
                             Thread.Sleep(TimeSpan.FromSeconds(5));
                         }
-                        InitKlient();
+                        
                         Rozgrywka();
                         //(Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds
                     }
