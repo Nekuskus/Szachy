@@ -395,6 +395,8 @@ namespace SzachyMulti
     }
     public class Program
     {
+        public static Pozycja PozycjaFrom;
+        public static Pozycja PozycjaTo;
         public static Random rand = new Random();
         public static bool hasOtherPlayerJoined = false;
         public static bool isApppending = false;
@@ -420,6 +422,7 @@ namespace SzachyMulti
         public static bool odswiezlobby;
         public static bool wykonajconnect = true;
         public static string nazwasesji;
+        public static bool hasEnemyMoved;
         public static List<string> GetContent(string folder, string id)
         {
             var tmp = client.OpenRead($"/SzachySerwer/{folder}/{id}.txt");
@@ -537,6 +540,7 @@ namespace SzachyMulti
                             Pozycja1.Pos2 = moveArgs[0].Last();
                             Pozycja2.Pos1 = SkonwertujLitere(moveArgs[1].First());
                             Pozycja2.Pos2 = moveArgs[1].Last();
+                            Przekazywacz(Pozycja1, Pozycja2);
                         }
                         else if (lines[i].StartsWith("CLOSING"))
                         {
@@ -925,7 +929,7 @@ namespace SzachyMulti
             while (true)
             {
                 SizeCheckThread();
-                Thread.Sleep(3000);
+                Thread.Sleep(1500);
             }
         }
 
@@ -950,11 +954,12 @@ namespace SzachyMulti
                 Thread.Sleep(500);
             }
         }
-        static public string Przekazywacz(string przekażCzat)
+        static public void Przekazywacz(Pozycja Pozycja1, Pozycja Pozycja2)
         {
-
-            //if ruch przekaż do rozgrywka
-            return "abc";
+            hasEnemyMoved = true;
+            PozycjaFrom = Pozycja1;
+            PozycjaTo = Pozycja2;
+            return;
         }
         static void Rozgrywka()
         {
@@ -971,16 +976,29 @@ namespace SzachyMulti
                 case 'C':
                     break;
             }
-            while (!koniecrozgrywki)
+            for (int tura = 1; !koniecrozgrywki; tura++)
             {
+                if (tura < 10)
+                {
+                    Console.WriteLine(new String('-', 36) + $" Tura {tura} " + new String('-', 36));
+                }
+                else if (tura < 100)
+                {
+                    Console.WriteLine(new String('-', 35) + $" Tura {tura} " + new String('-', 36));
+                }
+                else if (tura < 1000)
+                {
+                    Console.WriteLine(new String('-', 35) + $" Tura {tura} " + new String('-', 35));
+                }
+                else
+                {
+                    //może jakiś algorytm na to here
+                    //if costam % 2 == 0 musi być, kiedyś to napiszę
+                }
                 switch (playerTeam)
                 {
                     case 'B':
-                        //wykonaj swoją turę
-                        //while(!hasEnemyMoved)
-                        //{
-                        //    
-                        //}
+                        Szachy.NarysujPlansze();
                         break;
                     case 'C':
                         while (!hasEnemyMoved)
@@ -990,6 +1008,7 @@ namespace SzachyMulti
                         //wykonaj swoją turę
                         //przeciwnik wykonuje ture
                         break;
+                        
                 }
             }
         }
