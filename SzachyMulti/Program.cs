@@ -437,7 +437,6 @@ namespace SzachyMulti
         writetofile:
             try
             {
-
                 var tmp = client.OpenAppend($"/SzachySerwer/{Folder}/{ID}.txt");
                 var bytes = Encoding.UTF8.GetBytes(txt);
                 tmp.Write(bytes, 0, bytes.Count());
@@ -463,7 +462,7 @@ namespace SzachyMulti
             int playerTeamInt = rand.Next(1, 3);
             if (playerTeamInt == 2)
             {
-                playerTeam = 'C';
+                playerTeam = 'B';
             }
             else
             {
@@ -508,56 +507,53 @@ namespace SzachyMulti
             lines = GetContent(currentfolder, Convert.ToString(ID));
             if (lastCount < lines.Count() || isApppending == false)
             {
+                //"Nick: [wydarzenie]"
                 wasContentReceived = true;
                 int i = lastCount + 1;
-                while (i <= lines.Count)
+                if (!lines[i].StartsWith(Nick))
                 {
-                    if (lines[i].Contains("CLOSING"))
+                    while (i <= lines.Count)
                     {
-                        AppendText("OK", "StartingSessions", ID);
-                        currentfolder = "ActiveSessions";
-                    }
-                    if (lines[i].Contains("OK"))
-                    {
-                        client.MoveFile($"/SzachySerwer/StartingSessions/{ID}.txt", $"/SzachySerwer/ActiveSessions/{ID}.txt");
-                    }
-                    if (lines[i].Contains("JOIN"))
-                    {
-                        enemyNick = lines[i].Remove(0, 5).Trim();
-                        hasOtherPlayerJoined = true;
-                    }
-                    if (lines[i].Contains(">>"))
-                    {
-                        string[] moveArgs = new string[2];
-                        //"A1 >> A2"
-                        moveArgs[0] = lines[i].Substring(0, 2);
-                        moveArgs[1] = lines[i].Substring(6, 2);
-                        Pozycja Pozycja1 = new Pozycja();
-                        Pozycja Pozycja2 = new Pozycja();
-                        Pozycja1.Pos1 = SkonwertujLitere(moveArgs[0].First());
-                        Pozycja1.Pos2 = moveArgs[0].Last();
-                        Pozycja2.Pos1 = SkonwertujLitere(moveArgs[1].First());
-                        Pozycja2.Pos2 = moveArgs[1].Last();
-                    }
-                    if (lines[i].Contains("CZAT"))
-                    {
-                        odebranoWiad = true;
-                        //CZAT: {nick}: {wiad}
-                        List<string> substrings = new List<string>();
-                        lines[i].Remove(0, 5);
-                        lines[i].Trim();
-                        substrings.AddRange(lines[i].Split(':'));
-                        foreach (var item in substrings)
+                        lines[i] = lines[i].Substring(enemyNick.Length + 2);
+                        if (lines[i].Contains(">>"))
                         {
-                            item.Trim();
+                            //"A1 >> A2"
+                            string[] moveArgs = new string[2];
+                            moveArgs[0] = lines[i].Substring(0, 2);
+                            moveArgs[1] = lines[i].Substring(6, 2);
+                            Pozycja Pozycja1 = new Pozycja();
+                            Pozycja Pozycja2 = new Pozycja();
+                            Pozycja1.Pos1 = SkonwertujLitere(moveArgs[0].First());
+                            Pozycja1.Pos2 = moveArgs[0].Last();
+                            Pozycja2.Pos1 = SkonwertujLitere(moveArgs[1].First());
+                            Pozycja2.Pos2 = moveArgs[1].Last();
                         }
-                        if (!(substrings[0] == Nick))
+                        else if (lines[i].Contains("CZAT"))
                         {
+                            odebranoWiad = true;
+                            //"CZAT {wiad}"
+                            lines[i] = lines[i].Remove(0, 5);
+                            lines[i] = lines[i].Trim();
+                            lines[i] = lines[i].Insert(0, $"{enemyNick}: ");
                             receivedMessages.Add(lines[i]);
                         }
-                        substrings = null;
-                    }
-                    i++;
+                        else if (lines[i].Contains("CLOSING"))
+                        {
+                            AppendText("OK", "StartingSessions", ID);
+                            currentfolder = "ActiveSessions";
+                        }
+                        else if (lines[i].Contains("OK"))
+                        {
+                            //"OK"
+                            client.MoveFile($"/SzachySerwer/StartingSessions/{ID}.txt", $"/SzachySerwer/ActiveSessions/{ID}.txt");
+                        }
+                        else if (lines[i].Contains("JOIN"))
+                        {
+                            enemyNick = lines[i].Remove(0, 5).Trim();
+                            hasOtherPlayerJoined = true;
+                        }
+                        i++;
+                    } 
                 }
                 lastCount = lines.Count;
             }
@@ -834,14 +830,6 @@ namespace SzachyMulti
                         client.Connect();
                         CreateSessionFile(ID, isPublic, nazwasesji, Nick);
                         client.Disconnect();
-                        if (rand.Next(1, 3) == 1)
-                        {
-                            playerTeam = 'B';
-                        }
-                        else
-                        {
-                            playerTeam = 'C';
-                        }
                         InitKlient();
                         Console.WriteLine("Czekanie na drugiego gracza...");
                         while (!hasOtherPlayerJoined)
@@ -901,6 +889,15 @@ namespace SzachyMulti
                             nazwasesji = lines[0];
                             enemyNick = lines[2];
                             enemyTeam = Convert.ToChar(lines[3]);
+                            switch(enemyTeam)
+                            {
+                                case 'B':
+                                    playerTeam = 'C';
+                                    break;
+                                case 'C':
+                                    playerTeam = 'B';
+                                    break;
+                            }
                             Rozgrywka();
                         }
                     }
@@ -952,8 +949,17 @@ namespace SzachyMulti
         }
         static void Rozgrywka()
         {
-            //po turze czekaj aż przekazywacz != null
-
+            switch(playerTeam)
+            {
+                case 'B':
+                    //napisz w czacie $"Gracz {Nick} gra białymi"
+                    AppendText($"Gracz {Nick} gra białymi",currentfolder,ID);
+                    receivedMessages.Add($"Gracz {Nick} gra białymi");
+                    odebranoWiad = true;
+                    break;
+                case 'C':
+                    break;
+            }
         }
     }
 }
