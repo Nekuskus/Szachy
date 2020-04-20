@@ -1,4 +1,6 @@
 ﻿using FluentFTP;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -432,10 +434,10 @@ namespace SzachyMulti
         {
             isApppending = true;
             txt = txt + "\n";
-            writetofile:
+        writetofile:
             try
             {
-                
+
                 var tmp = client.OpenAppend($"/SzachySerwer/{Folder}/{ID}.txt");
                 var bytes = Encoding.UTF8.GetBytes(txt);
                 tmp.Write(bytes, 0, bytes.Count());
@@ -517,7 +519,7 @@ namespace SzachyMulti
                     }
                     if (lines[i].Contains("OK"))
                     {
-                        client.MoveFile($"/SzachySerwer/StartingSessions/{ID}.txt",$"/SzachySerwer/ActiveSessions/{ID}.txt");
+                        client.MoveFile($"/SzachySerwer/StartingSessions/{ID}.txt", $"/SzachySerwer/ActiveSessions/{ID}.txt");
                     }
                     if (lines[i].Contains("JOIN"))
                     {
@@ -666,7 +668,7 @@ namespace SzachyMulti
                         }
                         repeati++;
                     }
-                } 
+                }
             }
         }
         static void Main(string[] args)
@@ -686,10 +688,17 @@ namespace SzachyMulti
             {
                 Console.WriteLine("Podaj swoj nick:");
                 Nick = Console.ReadLine();
+                string jsontxt;
+                using (StreamReader r = new StreamReader("credentials.json"))
+                {
+                    jsontxt = r.ReadToEnd();
+                }
+                JObject jsonObject = JObject.Parse(jsontxt);
                 client = new FtpClient();
-                client.Host = "www.mkwk019.cba.pl";
-                client.Port = 210;
-                client.Credentials = new NetworkCredential("nekuz@yukkitesting.cba.pl", "Abcabc123");
+                Console.WriteLine(jsonObject);
+                client.Host = (string)jsonObject["host"];
+                client.Port = (int)jsonObject["port"];
+                client.Credentials = new NetworkCredential((string)jsonObject["login"], (string)jsonObject["password"]);
             polacz:
                 try
                 {
@@ -759,7 +768,7 @@ namespace SzachyMulti
                             donotincrement = true;
                         }
                     }
-                    if(donotincrement == false)
+                    if (donotincrement == false)
                     {
                         i++;
                     }
@@ -767,13 +776,13 @@ namespace SzachyMulti
                 client.SetWorkingDirectory(@"/SzachySerwer/");
                 client.Disconnect();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 client.Disconnect();
                 Console.WriteLine(e);
                 Console.WriteLine("Blad odbierania lobby. Sprobowac ponownie? y/n");
                 string tryagainlobby = Console.ReadLine();
-                if(tryagainlobby.ToLower().Contains("y"))
+                if (tryagainlobby.ToLower().Contains("y"))
                 {
                     goto lobby;
                 }
@@ -786,14 +795,14 @@ namespace SzachyMulti
             if (connect_to_id.ToLower().Contains("create"))
             {
                 bool isPublic;
-                podajnazwesesji:
+            podajnazwesesji:
                 Console.Write("\nPodaj nazwe sesji, ktora chcesz stworzyc lub napisz \"cancel\" aby wrocic do lobby");
                 nazwasesji = Console.ReadLine();
                 if (nazwasesji.ToLower() == "cancel")
                 {
                     goto lobby;
                 }
-                if(nazwasesji.Length > 25)
+                if (nazwasesji.Length > 25)
                 {
                     Console.WriteLine("Nazwa sesji jest zbyt dluga. Wpisz krotsza nazwe (max 25 znakow)");
                     goto podajnazwesesji;
@@ -825,7 +834,7 @@ namespace SzachyMulti
                         client.Connect();
                         CreateSessionFile(ID, isPublic, nazwasesji, Nick);
                         client.Disconnect();
-                        if(rand.Next(1,3) == 1)
+                        if (rand.Next(1, 3) == 1)
                         {
                             playerTeam = 'B';
                         }
@@ -835,11 +844,11 @@ namespace SzachyMulti
                         }
                         InitKlient();
                         Console.WriteLine("Czekanie na drugiego gracza...");
-                        while(!hasOtherPlayerJoined)
+                        while (!hasOtherPlayerJoined)
                         {
                             Thread.Sleep(TimeSpan.FromSeconds(5));
                         }
-                        
+
                         Rozgrywka();
                         //(Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds
                     }
@@ -944,7 +953,7 @@ namespace SzachyMulti
         static void Rozgrywka()
         {
             //po turze czekaj aż przekazywacz != null
-            
+
         }
     }
 }
