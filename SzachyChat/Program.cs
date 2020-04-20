@@ -6,6 +6,7 @@ namespace SzachyChat
     public class Program
     {
         public static string ID;
+        public static string Nick;
         public static bool wasMessageInput;
         public static int lastcount = 0;
         public static string Message;
@@ -28,21 +29,22 @@ namespace SzachyChat
         }
         static void Main(string[] args)
         {
-            Thread Odbierz = new Thread(new ParameterizedThreadStart(OdbierzCzat));
-            Odbierz.Start(args[0]);
+            ID = args[0];
+            Nick = args[1];
+            Thread Odbierz = new Thread(new ThreadStart(OdbierzCzat));
+            Odbierz.Start();
             Console.Title = "Czat sesji";
             Console.SetWindowSize(40, 50);
             Console.SetBufferSize(40, 750);
             Thread Czytaj = new Thread(new ThreadStart(ConsoleReader));
             Czytaj.Start();
         }
-        static void OdbierzCzat(object IDarg)
+        static void OdbierzCzat()
         {
-            ID = (string)IDarg;
-            PrzeczytajCzat(ID);
+            PrzeczytajCzat();
             Thread.Sleep(4000);
         }
-        static void PrzeczytajCzat(string ID)
+        static void PrzeczytajCzat()
         {
             StreamReader sr = new StreamReader($@".\Logs\Log{ID}.txt");
             string[] messages = sr.ReadToEnd().Split('\n');
@@ -61,7 +63,7 @@ namespace SzachyChat
                 try
                 {
                     StreamWriter sw = new StreamWriter($@".\Logs\Log{ID}.txt");
-                    sw.WriteLine(Message);
+                    sw.WriteLine($"{Nick}: {Message}");
                     isReady = true;
                 }
                 catch
