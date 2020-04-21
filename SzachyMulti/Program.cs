@@ -1,5 +1,5 @@
 ﻿using FluentFTP;
-using Newtonsoft.Json.Linq;
+using creds = Credentials.credentials;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Web.UI.WebControls;
 
 namespace SzachyMulti
 {
@@ -698,16 +699,10 @@ namespace SzachyMulti
             {
                 Console.WriteLine("Podaj swoj nick:");
                 Nick = Console.ReadLine();
-                string jsontxt;
-                using (StreamReader r = new StreamReader(@".\resources\credentials.json"))
-                {
-                    jsontxt = r.ReadToEnd();
-                }
-                JObject jsonObject = JObject.Parse(jsontxt);
                 client = new FtpClient();
-                client.Host = (string)jsonObject["host"];
-                client.Port = (int)jsonObject["port"];
-                client.Credentials = new NetworkCredential((string)jsonObject["login"], (string)jsonObject["password"]);
+                client.Host = creds.host;
+                client.Port = creds.port;
+                client.Credentials = new NetworkCredential(creds.username, creds.password);
             polacz:
                 try
                 {
@@ -1000,6 +995,7 @@ namespace SzachyMulti
                         Szachy.NarysujPlansze();
                         break;
                     case 'C':
+                        Szachy.NarysujPlansze();
                         while (!hasEnemyMoved)
                         {
                             Thread.Sleep(1000);
@@ -1007,7 +1003,7 @@ namespace SzachyMulti
                         //wykonaj swoją turę
                         //przeciwnik wykonuje ture
                         break;
-                        
+                        //ZANIM NAPISZESZ RESZTĘ DOKOŃCZ OZNACZSZACHY()
                 }
             }
         }
