@@ -67,6 +67,12 @@ namespace SzachyMulti
             Plansza[1, 5] = "pionek6B";
             Plansza[1, 6] = "pionek7B";
             Plansza[1, 7] = "pionek8B";
+            //DEBUG
+            Plansza[4, 2] = "pionek1C";
+            Plansza[3, 3] = "krolB";
+            Plansza[2, 0] = "krolC";
+            Plansza[2, 2] = "krolC";
+            //DEBUG
             Plansza[7, 0] = "wieza1C";
             Plansza[7, 1] = "kon1C";
             Plansza[7, 2] = "goniec1C";
@@ -86,65 +92,112 @@ namespace SzachyMulti
         }
         public static void OznaczSzachy()
         {
-            for(int i = 0, i2 = 0; i != 8; i2++)
+            SzachyB = new bool[8, 8];
+            SzachyC = new bool[8, 8];
+            for(int i = 0, i2 = 0; i < 8; i2++)
             {
-                switch(Plansza[i,i2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C'))
+                if(i2 == 8)
                 {
-                    case "pionek":
-                        switch(Plansza[i,i2].Last())
-                        {
-                            case 'B':
-                                
-                                break;
-                            case 'C':
-                                break;
-                        }
-                        break;
-                    case "kon":
-                        switch(Plansza[i,i2].Last())
-                        {
-                            case 'B':
-                                break;
-                            case 'C':
-                                break;
-                        }
-                        break;
-                    case "goniec":
-                        switch (Plansza[i,i2].Last())
-                        {
-                            case 'B':
-                                break;
-                            case 'C':
-                                break;
-                        }
-                        break;
-                    case "wieza":
-                        switch (Plansza[i,i2].Last())
-                        {
-                            case 'B':
-                                break;
-                            case 'C':
-                                break;
-                        }
-                        break;
-                    case "krol":
-                        switch (Plansza[i,i2].Last())
-                        {
-                            case 'B':
-                                break;
-                            case 'C':
-                                break;
-                        }
-                        break;
-                    case "krolowa":
-                        switch (Plansza[i,i2].Last())
-                        {
-                            case 'B':
-                                break;
-                            case 'C':
-                                break;
-                        }
-                        break;
+                    i2 = 0;
+                    i++;
+                    if(i >= 8)
+                    {
+                        continue;
+                    }
+                }
+                if (!(Plansza[i,i2] == null))
+                {
+                    switch (Plansza[i, i2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C'))
+                    {
+                        case "pionek":
+                            switch (Plansza[i, i2].Last())
+                            {
+                                case 'B':
+                                    if (!(i + 1 == 8))
+                                    {
+                                        if (!(i2 - 1 == -1))
+                                        {
+                                            if (Plansza[i + 1, i2 - 1] == "krolC")
+                                            {
+                                                SzachyB[i + 1, i2 - 1] = true;
+                                            }
+                                        }
+                                        if (!(i2 + 1 == 8))
+                                        {
+                                            if (Plansza[i + 1, i2 + 1] == "krolC")
+                                            {
+                                                SzachyB[i + 1, i2 + 1] = true;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case 'C':
+                                    if (!(i - 1 == -1))
+                                    {
+                                        if (!(i2 + 1 == 8))
+                                        {
+                                            if (Plansza[i - 1, i2 + 1] == "krolB")
+                                            {
+                                                SzachyC[i - 1, i2 + 1] = true;
+                                            }
+                                        }
+                                        if (!(i2 - 1 == -1))
+                                        {
+                                            if (Plansza[i - 1, i2 - 1] == "krolB")
+                                            {
+                                                SzachyC[i - 1, i2 - 1] = true;
+                                            }
+                                        }
+                                    }
+                                    break;
+                            }
+                            break;
+                        case "kon":
+                            switch (Plansza[i, i2].Last())
+                            {
+                                case 'B':
+                                    break;
+                                case 'C':
+                                    break;
+                            }
+                            break;
+                        case "goniec":
+                            switch (Plansza[i, i2].Last())
+                            {
+                                case 'B':
+                                    break;
+                                case 'C':
+                                    break;
+                            }
+                            break;
+                        case "wieza":
+                            switch (Plansza[i, i2].Last())
+                            {
+                                case 'B':
+                                    break;
+                                case 'C':
+                                    break;
+                            }
+                            break;
+                        case "krol":
+                            switch (Plansza[i, i2].Last())
+                            {
+                                case 'B':
+                                    break;
+                                case 'C':
+                                    break;
+                            }
+                            break;
+                        case "krolowa":
+                            switch (Plansza[i, i2].Last())
+                            {
+                                case 'B':
+                                    break;
+                                case 'C':
+                                    break;
+                            }
+                            break;
+                    } 
                 }
                 //PAMIĘTAJ O SPRAWDZANIU CZY KRÓL MA SZACHA U OBU DRUŻYN
             }
@@ -163,13 +216,14 @@ namespace SzachyMulti
                     Console.Write("\t|");
                     while (x < 8)
                     {
-                        if (Plansza[linia, x] == "KrolB")
+                        if (Plansza[linia, x] == "krolB")
                         {
                             if (SzachyC[linia, x] == true)
                             {
                                 Console.ForegroundColor = ConsoleColor.DarkRed;
-                                Console.Write(" szach! |");
+                                Console.Write(" szach!");
                                 Console.ForegroundColor = ConsoleColor.White;
+                                Console.Write("|");
                             }
                             else
                             {
@@ -203,17 +257,18 @@ namespace SzachyMulti
                     Console.Write("\t|");
                     while (x < 8)
                     {
-                        if (Plansza[linia, x] == "KrolC")
+                        if (Plansza[linia, x] == "krolC")
                         {
-                            if (SzachyC[linia, x] == true)
+                            if (SzachyB[linia, x] == true)
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
-                                Console.Write(" szach! |");
+                                Console.Write(" szach!");
                                 Console.ForegroundColor = ConsoleColor.White;
+                                Console.Write("|");
                             }
                             else
                             {
-                                Console.Write(" szach! |");
+                                Console.Write("       |");
                             }
                         }
                         else
@@ -235,13 +290,14 @@ namespace SzachyMulti
                     Console.Write("\t|");
                     while (x < 8)
                     {
-                        if (Plansza[linia, x] == "KrolB")
+                        if (Plansza[linia, x] == "krolB")
                         {
                             if (SzachyC[linia, x] == true)
                             {
-                                Console.ForegroundColor = ConsoleColor.DarkRed;
-                                Console.Write(" szach! |");
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.Write(" szach!");
                                 Console.ForegroundColor = ConsoleColor.White;
+                                Console.Write("|");
                             }
                             else
                             {
@@ -275,17 +331,18 @@ namespace SzachyMulti
                     Console.Write("\t|");
                     while (x < 8)
                     {
-                        if (Plansza[linia, x] == "KrolC")
+                        if (Plansza[linia, x] == "krolC")
                         {
-                            if (SzachyC[linia, x] == true)
+                            if (SzachyB[linia, x] == true)
                             {
-                                Console.ForegroundColor = ConsoleColor.Red;
-                                Console.Write(" szach! |");
+                                Console.ForegroundColor = ConsoleColor.DarkRed;
+                                Console.Write(" szach!");
                                 Console.ForegroundColor = ConsoleColor.White;
+                                Console.Write("|");
                             }
                             else
                             {
-                                Console.Write(" szach! |");
+                                Console.Write("       |");
                             }
                         }
                         else
@@ -759,7 +816,6 @@ namespace SzachyMulti
 
         public static void KlientOdbierajacy()
         {
-
             while (true)
             {
                 int repeati = 0;
@@ -800,6 +856,12 @@ namespace SzachyMulti
         }
         static void Main(string[] args)
         {
+            Szachy.PostawPionki();
+            Console.WriteLine(Szachy.Plansza.GetLength(1));
+            Szachy.OznaczSzachy();
+            Szachy.NarysujPlansze();
+            playerTeam = 'C';
+            Szachy.NarysujPlansze();
             if (args.Length > 0)
             {
                 if (args[0] == "true")
