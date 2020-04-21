@@ -86,21 +86,22 @@ namespace SzachyMulti
         }
         public static void OznaczSzachy()
         {
-            foreach(var item in Plansza)
+            for(int i = 0, i2 = 0; i != 8; i2++)
             {
-                switch(item.TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C'))
+                switch(Plansza[i,i2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C'))
                 {
                     case "pionek":
-                        switch(item.Last())
+                        switch(Plansza[i,i2].Last())
                         {
                             case 'B':
+                                
                                 break;
                             case 'C':
                                 break;
                         }
                         break;
                     case "kon":
-                        switch(item.Last())
+                        switch(Plansza[i,i2].Last())
                         {
                             case 'B':
                                 break;
@@ -109,7 +110,7 @@ namespace SzachyMulti
                         }
                         break;
                     case "goniec":
-                        switch (item.Last())
+                        switch (Plansza[i,i2].Last())
                         {
                             case 'B':
                                 break;
@@ -118,7 +119,7 @@ namespace SzachyMulti
                         }
                         break;
                     case "wieza":
-                        switch (item.Last())
+                        switch (Plansza[i,i2].Last())
                         {
                             case 'B':
                                 break;
@@ -127,7 +128,7 @@ namespace SzachyMulti
                         }
                         break;
                     case "krol":
-                        switch (item.Last())
+                        switch (Plansza[i,i2].Last())
                         {
                             case 'B':
                                 break;
@@ -136,7 +137,7 @@ namespace SzachyMulti
                         }
                         break;
                     case "krolowa":
-                        switch (item.Last())
+                        switch (Plansza[i,i2].Last())
                         {
                             case 'B':
                                 break;
