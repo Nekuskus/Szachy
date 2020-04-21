@@ -1000,6 +1000,10 @@ namespace SzachyMulti
                         {
                             Thread.Sleep(1000);
                         }
+                        Szachy.WykonajRuch(PozycjaFrom, PozycjaTo);
+                        //
+                        //DODAJ POZYCJAFROM = NULL i POZYCJATO = NULL NA KOŃCU WYKONAJRUCH()
+                        //
                         //wykonaj swoją turę
                         //przeciwnik wykonuje ture
                         break;
