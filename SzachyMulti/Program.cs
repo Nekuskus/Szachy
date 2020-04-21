@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Web.UI.WebControls;
+using System.Reflection;
 
 namespace SzachyMulti
 {
@@ -42,7 +43,7 @@ namespace SzachyMulti
             set => _pos2 = value;
         }
     };
-    class Szachy
+    public static class Szachy
     {
         public static string[,] Plansza = new string[8, 8];
         public static bool[,] SzachyB = new bool[8, 8];
@@ -85,7 +86,67 @@ namespace SzachyMulti
         }
         public static void OznaczSzachy()
         {
-
+            foreach(var item in Plansza)
+            {
+                switch(item.TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C'))
+                {
+                    case "pionek":
+                        switch(item.Last())
+                        {
+                            case 'B':
+                                break;
+                            case 'C':
+                                break;
+                        }
+                        break;
+                    case "kon":
+                        switch(item.Last())
+                        {
+                            case 'B':
+                                break;
+                            case 'C':
+                                break;
+                        }
+                        break;
+                    case "goniec":
+                        switch (item.Last())
+                        {
+                            case 'B':
+                                break;
+                            case 'C':
+                                break;
+                        }
+                        break;
+                    case "wieza":
+                        switch (item.Last())
+                        {
+                            case 'B':
+                                break;
+                            case 'C':
+                                break;
+                        }
+                        break;
+                    case "krol":
+                        switch (item.Last())
+                        {
+                            case 'B':
+                                break;
+                            case 'C':
+                                break;
+                        }
+                        break;
+                    case "krolowa":
+                        switch (item.Last())
+                        {
+                            case 'B':
+                                break;
+                            case 'C':
+                                break;
+                        }
+                        break;
+                }
+                //PAMIĘTAJ O SPRAWDZANIU CZY KRÓL MA SZACHA U OBU DRUŻYN
+            }
         }
         public static void NarysujPlansze()
         {
@@ -322,25 +383,26 @@ namespace SzachyMulti
             string figureType = Plansza[Pozycja1.Pos1, Pozycja1.Pos2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C');
             switch (figureType)
             {
-                case "Pionek":
+                case "pionek":
                     RuchPionem(Pozycja1, Pozycja2);
                     break;
-                case "Kon":
+                case "kon":
                     RuchKoniem(Pozycja1, Pozycja2);
                     break;
-                case "Goniec":
+                case "goniec":
                     RuchGońcem(Pozycja1, Pozycja2);
                     break;
-                case "Wieza":
+                case "wieza":
                     RuchWieżą(Pozycja1, Pozycja2);
                     break;
-                case "Krol":
+                case "krol":
                     RuchKrólem(Pozycja1, Pozycja2);
                     break;
-                case "Krolowa":
+                case "krolowa":
                     RuchKrólową(Pozycja1, Pozycja2);
                     break;
             }
+            Program.hasEnemyMoved = true;
         }
         public static void RuchPionem(Pozycja Pozycja1, Pozycja Pozycja2)
         {
@@ -392,11 +454,64 @@ namespace SzachyMulti
             Program.AppendText($"{Program.Nick}: {wiadomosc}", currentfolder, Convert.ToString(ID));
             Program.isSending = false;
         }
+        public static void Rozgrywka()
+        {
+            Szachy.PostawPionki();
+            bool koniecrozgrywki = false;
+            switch (Program.playerTeam)
+            {
+                case 'B':
+                    //napisz w czacie $"Gracz {Nick} gra białymi"
+                    Program.AppendText($"EVENT Gracz {Program.Nick} gra białymi", Program.currentfolder, Program.ID);
+                    Program.receivedMessages.Add($"Gracz {Program.Nick} gra białymi");
+                    Program.odebranoWiad = true;
+                    break;
+                case 'C':
+                    break;
+            }
+            for (int tura = 1; !koniecrozgrywki; tura++)
+            {
+                if (tura.ToString().Length == 1)
+                {
+                    Console.WriteLine(new String('-', 36) + $" Tura {tura} " + new String('-', 36));
+                }
+                else if (tura.ToString().Length == 2)
+                {
+                    Console.WriteLine(new String('-', 35) + $" Tura {tura} " + new String('-', 36));
+                }
+                else if (tura.ToString().Length == 3)
+                {
+                    Console.WriteLine(new String('-', 35) + $" Tura {tura} " + new String('-', 35));
+                }
+                else
+                {
+                    //może jakiś algorytm na to here
+                    //if costam % 2 == 0 musi być, kiedyś to napiszę
+                }
+                switch (Program.playerTeam)
+                {
+                    case 'B':
+                        Szachy.NarysujPlansze();
+                        //oznacz szachy
+                        //wykonaj turę
+                        break;
+                    case 'C':
+                        Szachy.NarysujPlansze();
+                        while (!Program.hasEnemyMoved)
+                        {
+                            Thread.Sleep(1000);
+                        }
+                        Program.hasEnemyMoved = false;
+                        //wykonaj swoją turę
+                        //przeciwnik wykonuje ture
+                        break;
+                        //ZANIM NAPISZESZ RESZTĘ DOKOŃCZ OZNACZSZACHY()
+                }
+            }
+        }
     }
     public class Program
     {
-        public static Pozycja PozycjaFrom;
-        public static Pozycja PozycjaTo;
         public static Random rand = new Random();
         public static bool hasOtherPlayerJoined = false;
         public static bool isApppending = false;
@@ -540,7 +655,7 @@ namespace SzachyMulti
                             Pozycja1.Pos2 = moveArgs[0].Last();
                             Pozycja2.Pos1 = SkonwertujLitere(moveArgs[1].First());
                             Pozycja2.Pos2 = moveArgs[1].Last();
-                            Przekazywacz(Pozycja1, Pozycja2);
+                            Szachy.WykonajRuch(Pozycja1, Pozycja2);
                         }
                         else if (lines[i].StartsWith("CLOSING"))
                         {
@@ -843,8 +958,7 @@ namespace SzachyMulti
                         {
                             Thread.Sleep(TimeSpan.FromSeconds(5));
                         }
-
-                        Rozgrywka();
+                        Szachy.Rozgrywka();
                         //(Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds
                     }
                     else if (napewno.ToLower().Contains("nie"))
@@ -905,7 +1019,7 @@ namespace SzachyMulti
                                     playerTeam = 'B';
                                     break;
                             }
-                            Rozgrywka();
+                            Szachy.Rozgrywka();
                         }
                     }
                 }
@@ -946,69 +1060,6 @@ namespace SzachyMulti
             {
                 Chat();
                 Thread.Sleep(500);
-            }
-        }
-        static public void Przekazywacz(Pozycja Pozycja1, Pozycja Pozycja2)
-        {
-            hasEnemyMoved = true;
-            PozycjaFrom = Pozycja1;
-            PozycjaTo = Pozycja2;
-            return;
-        }
-        static void Rozgrywka()
-        {
-            Szachy.PostawPionki();
-            bool koniecrozgrywki = false;
-            switch (playerTeam)
-            {
-                case 'B':
-                    //napisz w czacie $"Gracz {Nick} gra białymi"
-                    AppendText($"EVENT Gracz {Nick} gra białymi", currentfolder, ID);
-                    receivedMessages.Add($"Gracz {Nick} gra białymi");
-                    odebranoWiad = true;
-                    break;
-                case 'C':
-                    break;
-            }
-            for (int tura = 1; !koniecrozgrywki; tura++)
-            {
-                if (tura.ToString().Length == 1)
-                {
-                    Console.WriteLine(new String('-', 36) + $" Tura {tura} " + new String('-', 36));
-                }
-                else if (tura.ToString().Length == 2)
-                {
-                    Console.WriteLine(new String('-', 35) + $" Tura {tura} " + new String('-', 36));
-                }
-                else if (tura.ToString().Length == 3)
-                {
-                    Console.WriteLine(new String('-', 35) + $" Tura {tura} " + new String('-', 35));
-                }
-                else
-                {
-                    //może jakiś algorytm na to here
-                    //if costam % 2 == 0 musi być, kiedyś to napiszę
-                }
-                switch (playerTeam)
-                {
-                    case 'B':
-                        Szachy.NarysujPlansze();
-                        break;
-                    case 'C':
-                        Szachy.NarysujPlansze();
-                        while (!hasEnemyMoved)
-                        {
-                            Thread.Sleep(1000);
-                        }
-                        Szachy.WykonajRuch(PozycjaFrom, PozycjaTo);
-                        //
-                        //DODAJ POZYCJAFROM = NULL i POZYCJATO = NULL NA KOŃCU WYKONAJRUCH()
-                        //
-                        //wykonaj swoją turę
-                        //przeciwnik wykonuje ture
-                        break;
-                        //ZANIM NAPISZESZ RESZTĘ DOKOŃCZ OZNACZSZACHY()
-                }
             }
         }
     }
