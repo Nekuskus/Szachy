@@ -177,6 +177,33 @@ namespace SzachyMulti
                                             }
                                         }
                                     }
+                                    if(!(i - 1 <= -1))
+                                    {
+                                        if(!(i2 - 2 <= -1))
+                                        {
+                                            if(Plansza[i-1,i2-2] == "krolC")
+                                            {
+                                                SzachyB[i-1, i2-2] = true;
+                                            }
+                                        }
+                                        if(!(i2+2>=8))
+                                        {
+                                            if(Plansza[i-1,i2+2] == "krolC")
+                                            {
+                                                SzachyB[i-1,i2+2] = true;
+                                            }
+                                        }
+                                    }
+                                    if(!(i+2 >= 8))
+                                    {
+                                        if(!(i2-1 <= -1))
+                                        {
+                                            if(Plansza[i+2,i2-1] == "krolC")
+                                            {
+                                                SzachyB[i+2,i2-1] = true;
+                                            }
+                                        }
+                                    }
                                     break;
                                 case 'C':
                                     break;
