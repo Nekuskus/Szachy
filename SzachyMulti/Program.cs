@@ -652,7 +652,7 @@ namespace SzachyMulti
             tmp.Write(bytes, 0, bytes.Length);
         }
 
-        public static FtpClient client = null;
+        public static FtpClient client = new FtpClient();
         public static bool czy_odbierac = false;
         public static int SkonwertujLitere(char litera)
         {
@@ -881,7 +881,6 @@ namespace SzachyMulti
             {
                 Console.WriteLine("Podaj swoj nick:");
                 Nick = Console.ReadLine();
-                client = new FtpClient();
                 client.Host = creds.host;
                 client.Port = creds.port;
                 client.Credentials = new NetworkCredential(creds.username, creds.password);
