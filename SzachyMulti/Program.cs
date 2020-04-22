@@ -72,6 +72,10 @@ namespace SzachyMulti
             Plansza[3, 3] = "krolB";
             Plansza[2, 0] = "krolC";
             Plansza[2, 2] = "krolC";
+            Plansza[4, 7] = "kon123C";
+            Plansza[3, 5] = "krolB";
+            Plansza[3, 7] = "krolC";
+            Plansza[2, 5] = "kon123B";
             //DEBUG
             Plansza[7, 0] = "wieza1C";
             Plansza[7, 1] = "kon1C";
