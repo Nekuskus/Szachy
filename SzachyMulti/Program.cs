@@ -706,9 +706,9 @@ namespace SzachyMulti
                 //"Nick: [wydarzenie]"
                 wasContentReceived = true;
                 int i = lastCount + 1;
-                if (!lines[i].StartsWith(Nick))
+                while (i <= lines.Count)
                 {
-                    while (i <= lines.Count)
+                    if (!lines[i].StartsWith(Nick))
                     {
                         lines[i] = lines[i].Substring(enemyNick.Length + 2);
                         if (lines[i].StartsWith("CZAT"))
@@ -758,8 +758,8 @@ namespace SzachyMulti
                         {
                             receivedMessages.Add(lines[i].Substring(0,6));
                         }
-                        i++;
                     }
+                    i++;
                 }
                 lastCount = lines.Count;
             }
