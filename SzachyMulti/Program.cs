@@ -1,6 +1,7 @@
 ﻿using FluentFTP;
 using creds = Credentials.credentials;
 using System;
+using System.Drawing;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -590,7 +591,7 @@ namespace SzachyMulti
             tmp.Write(bytes, 0, bytes.Length);
         }
 
-        public static FtpClient client = null;
+        public static FtpClient client = new FtpClient();
         public static bool czy_odbierac = false;
         public static int SkonwertujLitere(char litera)
         {
@@ -797,7 +798,7 @@ namespace SzachyMulti
                 }
             }
         }
-        static void Main(string[] args)
+        public static ConsoleColor Main(string[] args)
         {
             if (args.Length > 0)
             {
@@ -807,222 +808,232 @@ namespace SzachyMulti
                 }
             }
         menuglowne:
-            Console.WriteLine($"Obecny czas: {DateTime.Now}/{(Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds}");
-            Console.WriteLine("Polaczyc sie z serwerem? Tak/Nie");
-            string czy_polaczyc = Console.ReadLine().ToLower();
-            if (czy_polaczyc.Contains("tak"))
+            try
             {
-                Console.WriteLine("Podaj swoj nick:");
-                Nick = Console.ReadLine();
-                client = new FtpClient();
-                client.Host = creds.host;
-                client.Port = creds.port;
-                client.Credentials = new NetworkCredential(creds.username, creds.password);
-            polacz:
+                Console.WriteLine($"Obecny czas: {DateTime.Now}/{(Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds}");
+                Console.WriteLine("Polaczyc sie z serwerem? Tak/Nie");
+                string czy_polaczyc = Console.ReadLine().ToLower();
+                if (czy_polaczyc.Contains("tak"))
+                {
+                    Console.WriteLine("Podaj swoj nick:");
+                    Nick = Console.ReadLine();
+                    client.Host = creds.host;
+                    client.Port = creds.port;
+                    client.Credentials = new NetworkCredential(creds.username, creds.password);
+                polacz:
+                    try
+                    {
+                        Console.WriteLine("Laczenie...");
+                        client.Connect();
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Nie udalo sie polaczyc z serwerem, sprobowac ponownie?\n//Mozliwe odpowiedzi: Tak, Nie");
+                        string connrepeat = Console.ReadLine().ToLower();
+                        if (connrepeat.Contains("tak"))
+                        {
+                            goto polacz;
+                        }
+                        else if (connrepeat.Contains("nie"))
+                        {
+                            Console.WriteLine("Cofanie do menu glownego");
+                            goto menuglowne;
+                        }
+                    }
+                }
+                else if (czy_polaczyc.Contains("nie"))
+                {
+                    Console.WriteLine("Cofanie do menu glownego");
+                    goto menuglowne;
+                }
+                else
+                {
+                    Console.WriteLine($"Niepoprawna odpowiedz {czy_polaczyc}");
+                    goto menuglowne;
+                }
+            lobby:
                 try
                 {
-                    Console.WriteLine("Laczenie...");
-                    client.Connect();
+                    bool donotincrement = false;
+                    if (client.GetWorkingDirectory() != "/SzachySerwer/StartingSessions/")
+                    {
+                        client.SetWorkingDirectory(@"/SzachySerwer/StartingSessions/");
+                    }
+                    wykonajconnect = false;
+                    odswiezlobby = false;
+                    Console.WriteLine("---Lobby------------------------------------------------------------------------");
+                    Console.WriteLine("Lp. Nazwa pokoju               - ID");
+                    int i = 1;
+                    foreach (var item in client.GetListing(client.GetWorkingDirectory(), FtpListOption.Recursive))
+                    {
+                        donotincrement = false;
+                        var isFile = client.FileExists(item.FullName);
+                        if (isFile == true)
+                        {
+                            var tmp = client.OpenRead($"/SzachySerwer/StartingSessions/{item.Name}");
+                            byte[] buffer = new byte[tmp.Length];
+                            tmp.Read(buffer, 0, (Int32)tmp.Length);
+                            string str = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+                            List<string> lines = str.Split('\n').ToList();
+                            tmp.Close();
+                            if (lines[0] == "public")
+                            {
+                                if (lines[1].Length > 25)
+                                {
+                                    lines[1] = lines[1].Remove(25, lines[1].Length - 25);
+                                }
+                                Console.WriteLine($"{i}.  \"{lines[1]}\"" + new String(' ', 25 - lines[1].Length) + $"- {item.Name.TrimEnd('t', 'x', '.')}");
+                            }
+                            else
+                            {
+                                donotincrement = true;
+                            }
+                        }
+                        if (donotincrement == false)
+                        {
+                            i++;
+                        }
+                    }
+                    client.SetWorkingDirectory(@"/SzachySerwer/");
+                    client.Disconnect();
                 }
                 catch
                 {
-                    Console.WriteLine("Nie udalo sie polaczyc z serwerem, sprobowac ponownie?\n//Mozliwe odpowiedzi: Tak, Nie");
-                    string connrepeat = Console.ReadLine().ToLower();
-                    if (connrepeat.Contains("tak"))
+                    client.Disconnect();
+                    Console.WriteLine("Blad odbierania lobby. Sprobowac ponownie? y/n");
+                    string tryagainlobby = Console.ReadLine();
+                    if (tryagainlobby.ToLower().Contains("y"))
                     {
-                        goto polacz;
-                    }
-                    else if (connrepeat.Contains("nie"))
-                    {
-                        Console.WriteLine("Cofanie do menu glownego");
-                        goto menuglowne;
+                        goto lobby;
                     }
                 }
-            }
-            else if (czy_polaczyc.Contains("nie"))
-            {
-                Console.WriteLine("Cofanie do menu glownego");
-                goto menuglowne;
-            }
-            else
-            {
-                Console.WriteLine($"Niepoprawna odpowiedz {czy_polaczyc}");
-                goto menuglowne;
-            }
-        lobby:
-            try
-            {
-                bool donotincrement = false;
-                if (client.GetWorkingDirectory() != "/SzachySerwer/StartingSessions/")
-                {
-                    client.SetWorkingDirectory(@"/SzachySerwer/StartingSessions/");
-                }
-                wykonajconnect = false;
                 odswiezlobby = false;
-                Console.WriteLine("---Lobby------------------------------------------------------------------------");
-                Console.WriteLine("Lp. Nazwa pokoju               - ID");
-                int i = 1;
-                foreach (var item in client.GetListing(client.GetWorkingDirectory(), FtpListOption.Recursive))
+                wykonajconnect = false;
+                bool isCancel = false;
+                Console.WriteLine("\nPodaj ID sesji publicznej (z lobby) lub prywatnej (otrzymanej od znajomego) aby dolaczyc do niej. Utworz nowa sesje poleceniem \"create\". Odswiez lobby poleceniem \"refresh\"");
+                string connect_to_id = Console.ReadLine();
+                if (connect_to_id.ToLower().Contains("create"))
                 {
-                    donotincrement = false;
-                    var isFile = client.FileExists(item.FullName);
-                    if (isFile == true)
+                    bool isPublic;
+                podajnazwesesji:
+                    Console.Write("\nPodaj nazwe sesji, ktora chcesz stworzyc lub napisz \"cancel\" aby wrocic do lobby");
+                    nazwasesji = Console.ReadLine();
+                    if (nazwasesji.ToLower() == "cancel")
                     {
-                        var tmp = client.OpenRead($"/SzachySerwer/StartingSessions/{item.Name}");
-                        byte[] buffer = new byte[tmp.Length];
-                        tmp.Read(buffer, 0, (Int32)tmp.Length);
-                        string str = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
-                        List<string> lines = str.Split('\n').ToList();
-                        tmp.Close();
-                        if (lines[0] == "public")
+                        goto lobby;
+                    }
+                    if (nazwasesji.Length > 25)
+                    {
+                        Console.WriteLine("Nazwa sesji jest zbyt dluga. Wpisz krotsza nazwe (max 25 znakow)");
+                        goto podajnazwesesji;
+                    }
+                ispublicgoto:
+                    if (isCancel == false)
+                    {
+                        Console.WriteLine("\nCzy sesja ma byc prywatna? Tak/Nie");
+                        string ispublicstr = Console.ReadLine();
+                        if (ispublicstr.ToLower().Contains("tak"))
                         {
-                            if (lines[1].Length > 25)
-                            {
-                                lines[1] = lines[1].Remove(25, lines[1].Length - 25);
-                            }
-                            Console.WriteLine($"{i}.  \"{lines[1]}\"" + new String(' ', 25 - lines[1].Length) + $"- {item.Name.TrimEnd('t', 'x', '.')}");
+                            isPublic = true;
+                        }
+                        else if (ispublicstr.ToLower().Contains("nie"))
+                        {
+                            isPublic = false;
                         }
                         else
                         {
-                            donotincrement = true;
+                            Console.WriteLine("Niepoprawna odpowiedz:" + ispublicstr);
+                            goto ispublicgoto;
                         }
-                    }
-                    if (donotincrement == false)
-                    {
-                        i++;
-                    }
-                }
-                client.SetWorkingDirectory(@"/SzachySerwer/");
-                client.Disconnect();
-            }
-            catch
-            {
-                client.Disconnect();
-                Console.WriteLine("Blad odbierania lobby. Sprobowac ponownie? y/n");
-                string tryagainlobby = Console.ReadLine();
-                if (tryagainlobby.ToLower().Contains("y"))
-                {
-                    goto lobby;
-                }
-            }
-            odswiezlobby = false;
-            wykonajconnect = false;
-            bool isCancel = false;
-            Console.WriteLine("\nPodaj ID sesji publicznej (z lobby) lub prywatnej (otrzymanej od znajomego) aby dolaczyc do niej. Utworz nowa sesje poleceniem \"create\". Odswiez lobby poleceniem \"refresh\"");
-            string connect_to_id = Console.ReadLine();
-            if (connect_to_id.ToLower().Contains("create"))
-            {
-                bool isPublic;
-            podajnazwesesji:
-                Console.Write("\nPodaj nazwe sesji, ktora chcesz stworzyc lub napisz \"cancel\" aby wrocic do lobby");
-                nazwasesji = Console.ReadLine();
-                if (nazwasesji.ToLower() == "cancel")
-                {
-                    goto lobby;
-                }
-                if (nazwasesji.Length > 25)
-                {
-                    Console.WriteLine("Nazwa sesji jest zbyt dluga. Wpisz krotsza nazwe (max 25 znakow)");
-                    goto podajnazwesesji;
-                }
-            ispublicgoto:
-                if (isCancel == false)
-                {
-                    Console.WriteLine("\nCzy sesja ma byc prywatna? Tak/Nie");
-                    string ispublicstr = Console.ReadLine();
-                    if (ispublicstr.ToLower().Contains("tak"))
-                    {
-                        isPublic = true;
-                    }
-                    else if (ispublicstr.ToLower().Contains("nie"))
-                    {
-                        isPublic = false;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Niepoprawna odpowiedz:" + ispublicstr);
-                        goto ispublicgoto;
-                    }
-                    Console.WriteLine($"Tworzenie sesji o nazwie \"{nazwasesji}\", kontynuowac? Tak/Nie");
-                    string napewno = Console.ReadLine();
-                    if (napewno.ToLower().Contains("tak"))
-                    {
-                        ID = Convert.ToString((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds);
-
-                        client.Connect();
-                        CreateSessionFile(ID, isPublic, nazwasesji, Nick);
-                        client.Disconnect();
-                        InitKlient();
-                        Console.WriteLine("Czekanie na drugiego gracza...");
-                        while (!hasOtherPlayerJoined)
+                        Console.WriteLine($"Tworzenie sesji o nazwie \"{nazwasesji}\", kontynuowac? Tak/Nie");
+                        string napewno = Console.ReadLine();
+                        if (napewno.ToLower().Contains("tak"))
                         {
-                            Thread.Sleep(TimeSpan.FromSeconds(5));
-                        }
-                        Szachy.Rozgrywka();
-                        //(Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds
-                    }
-                    else if (napewno.ToLower().Contains("nie"))
-                    {
-                        Console.WriteLine("\nWracanie do lobby...\n");
-                        wykonajconnect = false;
-                        odswiezlobby = true;
-                    }
-                }
-            }
-            else if (connect_to_id.ToLower().Contains("refresh"))
-            {
-                Console.WriteLine("\nOdswiezanie lobby...\n");
-                wykonajconnect = false;
-                odswiezlobby = true;
-                client.Connect();
+                            ID = Convert.ToString((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds);
 
-            }
-            try
-            {
-                if (isCancel == false)
-                {
-                    ID = connect_to_id;
-                    wykonajconnect = true;
-                }
-            }
-            catch (InvalidCastException)
-            {
-                Console.WriteLine("Niepoprawna odpowiedz:" + connect_to_id);
-                Console.WriteLine("Cofanie do lobby...\n");
-                wykonajconnect = false;
-                goto lobby;
-            }
-            if (wykonajconnect == true)
-            {
-                foreach (var item in client.GetNameListing())
-                {
-                    //connect, setdirectory
-                    var isFile = client.FileExists(item);
-                    if (isFile == true)
-                    {
-                        if (item.GetFtpFileName().TrimEnd('.', 't', 'x') == connect_to_id)
-                        {
-                            Console.Clear();
-                            Console.SetWindowSize(80, 50);
-                            ID = connect_to_id;
-                            AppendText($"JOIN: {Nick}", currentfolder, connect_to_id);
+                            client.Connect();
+                            CreateSessionFile(ID, isPublic, nazwasesji, Nick);
+                            client.Disconnect();
                             InitKlient();
-                            nazwasesji = lines[0];
-                            enemyNick = lines[2];
-                            enemyTeam = Convert.ToChar(lines[3]);
-                            switch (enemyTeam)
+                            Console.WriteLine("Czekanie na drugiego gracza...");
+                            while (!hasOtherPlayerJoined)
                             {
-                                case 'B':
-                                    playerTeam = 'C';
-                                    break;
-                                case 'C':
-                                    playerTeam = 'B';
-                                    break;
+                                Thread.Sleep(TimeSpan.FromSeconds(5));
                             }
                             Szachy.Rozgrywka();
+                            //(Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds
+                        }
+                        else if (napewno.ToLower().Contains("nie"))
+                        {
+                            Console.WriteLine("\nWracanie do lobby...\n");
+                            wykonajconnect = false;
+                            odswiezlobby = true;
                         }
                     }
                 }
+                else if (connect_to_id.ToLower().Contains("refresh"))
+                {
+                    Console.WriteLine("\nOdswiezanie lobby...\n");
+                    wykonajconnect = false;
+                    odswiezlobby = true;
+                    client.Connect();
+
+                }
+                try
+                {
+                    if (isCancel == false)
+                    {
+                        ID = connect_to_id;
+                        wykonajconnect = true;
+                    }
+                }
+                catch (InvalidCastException)
+                {
+                    Console.WriteLine("Niepoprawna odpowiedz:" + connect_to_id);
+                    Console.WriteLine("Cofanie do lobby...\n");
+                    wykonajconnect = false;
+                    goto lobby;
+                }
+                if (wykonajconnect == true)
+                {
+                    foreach (var item in client.GetNameListing())
+                    {
+                        //connect, setdirectory
+                        var isFile = client.FileExists(item);
+                        if (isFile == true)
+                        {
+                            if (item.GetFtpFileName().TrimEnd('.', 't', 'x') == connect_to_id)
+                            {
+                                Console.Clear();
+                                Console.SetWindowSize(80, 50);
+                                ID = connect_to_id;
+                                AppendText($"JOIN: {Nick}", currentfolder, connect_to_id);
+                                InitKlient();
+                                nazwasesji = lines[0];
+                                enemyNick = lines[2];
+                                enemyTeam = Convert.ToChar(lines[3]);
+                                switch (enemyTeam)
+                                {
+                                    case 'B':
+                                        playerTeam = 'C';
+                                        break;
+                                    case 'C':
+                                        playerTeam = 'B';
+                                        break;
+                                }
+                                Szachy.Rozgrywka();
+                            }
+                        }
+                    }
+                }
+                //Jakaś interakcja z użytkownikiem po rozgrywce
+                //NAPISZ TO!!!!
+                return ConsoleColor.White;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return ConsoleColor.Red;
             }
         }
         static void SizeCheckThread()
