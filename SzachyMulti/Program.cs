@@ -220,11 +220,11 @@ namespace SzachyMulti
                     Console.Write("\t|");
                     while (x < 8)
                     {
-                        if (Plansza[linia, x] == "krolB")
+                        if (Plansza[linia, x] == "krolC")
                         {
-                            if (SzachyC[linia, x] == true)
+                            if (SzachyB[linia, x] == true)
                             {
-                                Console.ForegroundColor = ConsoleColor.DarkRed;
+                                Console.ForegroundColor = ConsoleColor.Red;
                                 Console.Write(" szach!");
                                 Console.ForegroundColor = ConsoleColor.White;
                                 Console.Write("|");
@@ -261,11 +261,11 @@ namespace SzachyMulti
                     Console.Write("\t|");
                     while (x < 8)
                     {
-                        if (Plansza[linia, x] == "krolC")
+                        if (Plansza[linia, x] == "krolB")
                         {
-                            if (SzachyB[linia, x] == true)
+                            if (SzachyC[linia, x] == true)
                             {
-                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.ForegroundColor = ConsoleColor.DarkRed;
                                 Console.Write(" szach!");
                                 Console.ForegroundColor = ConsoleColor.White;
                                 Console.Write("|");
