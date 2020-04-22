@@ -68,7 +68,7 @@ namespace SzachyMulti
             Plansza[1, 6] = "pionek7B";
             Plansza[1, 7] = "pionek8B";
             //DEBUG
-#if DEBUG
+#if DEV
             Plansza[4, 2] = "pionek1C";
             Plansza[3, 3] = "krolB";
             Plansza[2, 0] = "krolC";
