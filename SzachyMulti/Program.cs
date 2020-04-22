@@ -1028,7 +1028,7 @@ namespace SzachyMulti
                 }
                 //Jakaś interakcja z użytkownikiem po rozgrywce
                 //NAPISZ TO!!!!
-                return ConsoleColor.White;
+                return ConsoleColor.Green;
             }
             catch (Exception e)
             {
