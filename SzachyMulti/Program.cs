@@ -160,6 +160,23 @@ namespace SzachyMulti
                             switch (Plansza[i, i2].Last())
                             {
                                 case 'B':
+                                    if(!(i-2 <= -1))
+                                    {
+                                        if(!(i2 - 1 <= -1))
+                                        {
+                                            if(Plansza[i - 2, i2 - 1] == "krolC")
+                                            {
+                                                SzachyB[i - 2, i2 - 1] = true;
+                                            }
+                                        }
+                                        if(!(i2 + 1 >= 8))
+                                        {
+                                            if(Plansza[i - 2, i2 + 1] == "krolC")
+                                            {
+                                                SzachyB[i - 2, i2 + 1] = true;
+                                            }
+                                        }
+                                    }
                                     break;
                                 case 'C':
                                     break;
@@ -861,7 +878,6 @@ namespace SzachyMulti
         static void Main(string[] args)
         {
             Szachy.PostawPionki();
-            Console.WriteLine(Szachy.Plansza.GetLength(1));
             Szachy.OznaczSzachy();
             Szachy.NarysujPlansze();
             playerTeam = 'C';
