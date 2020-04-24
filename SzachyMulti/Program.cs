@@ -314,7 +314,9 @@ namespace SzachyMulti
                             }
                             void CheckBishopLeftDown(int _i, int _i2)
                             {
-
+                                //costam
+                                //CheckBishopLeftDown() aż nie będzie można
+                                return;
                             }
                             switch (Plansza[i, i2].Last())
                             {
