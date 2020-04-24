@@ -76,6 +76,7 @@ namespace SzachyMulti
             Plansza[3, 5] = "krolB";
             Plansza[3, 7] = "krolC";
             Plansza[2, 5] = "kon123B";
+            Plansza[4, 5] = "kon321B";
             //DEBUG
             Plansza[7, 0] = "wieza1C";
             Plansza[7, 1] = "kon1C";
@@ -117,39 +118,39 @@ namespace SzachyMulti
                             switch (Plansza[i, i2].Last())
                             {
                                 case 'B':
-                                    if (!(i + 1 == 8))
+                                    if (!(i+1 >= 8))
                                     {
-                                        if (!(i2 - 1 == -1))
+                                        if (!(i2-1 <= -1))
                                         {
-                                            if (Plansza[i + 1, i2 - 1] == "krolC")
+                                            if (Plansza[i+1,i2-1] == "krolC")
                                             {
-                                                SzachyB[i + 1, i2 - 1] = true;
+                                                SzachyB[i+1,i2-1] = true;
                                             }
                                         }
-                                        if (!(i2 + 1 == 8))
+                                        if (!(i2+1 >= 8))
                                         {
-                                            if (Plansza[i + 1, i2 + 1] == "krolC")
+                                            if (Plansza[i+1,i2+1] == "krolC")
                                             {
-                                                SzachyB[i + 1, i2 + 1] = true;
+                                                SzachyB[i+1,i2+1] = true;
                                             }
                                         }
                                     }
                                     break;
                                 case 'C':
-                                    if (!(i - 1 == -1))
+                                    if (!(i-1 <= -1))
                                     {
-                                        if (!(i2 + 1 == 8))
+                                        if (!(i2+1 >= 8))
                                         {
-                                            if (Plansza[i - 1, i2 + 1] == "krolB")
+                                            if (Plansza[i-1,i2+1] == "krolB")
                                             {
-                                                SzachyC[i - 1, i2 + 1] = true;
+                                                SzachyC[i-1,i2+1] = true;
                                             }
                                         }
-                                        if (!(i2 - 1 == -1))
+                                        if (!(i2-1 <= -1))
                                         {
-                                            if (Plansza[i - 1, i2 - 1] == "krolB")
+                                            if (Plansza[i-1,i2-1] == "krolB")
                                             {
-                                                SzachyC[i - 1, i2 - 1] = true;
+                                                SzachyC[i-1,i2-1] = true;
                                             }
                                         }
                                     }
@@ -177,7 +178,7 @@ namespace SzachyMulti
                                             }
                                         }
                                     }
-                                    if(!(i - 1 <= -1))
+                                    if(!(i-1 <= -1))
                                     {
                                         if(!(i2 - 2 <= -1))
                                         {
@@ -230,6 +231,10 @@ namespace SzachyMulti
                                     }
                                     break;
                                 case 'C':
+                                    if()
+                                    {
+
+                                    }
                                     break;
                             }
                             break;
