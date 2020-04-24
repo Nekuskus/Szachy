@@ -161,18 +161,18 @@ namespace SzachyMulti
                                 case 'B':
                                     if (!(i-2 <= -1))
                                     {
-                                        if (!(i2 - 1 <= -1))
+                                        if (!(i2-1 <= -1))
                                         {
-                                            if (Plansza[i - 2, i2 - 1] == "krolC")
+                                            if (Plansza[i-2,i2-1] == "krolC")
                                             {
-                                                SzachyB[i - 2, i2 - 1] = true;
+                                                SzachyB[i-2,i2-1] = true;
                                             }
                                         }
-                                        if (!(i2 + 1 >= 8))
+                                        if (!(i2+1 >= 8))
                                         {
-                                            if (Plansza[i - 2, i2 + 1] == "krolC")
+                                            if (Plansza[i-2,i2+1] == "krolC")
                                             {
-                                                SzachyB[i - 2, i2 + 1] = true;
+                                                SzachyB[i-2,i2+1] = true;
                                             }
                                         }
                                     }
@@ -1003,9 +1003,10 @@ namespace SzachyMulti
                     optimizeChecks = Convert.ToBoolean(sr.ReadLine());
                 }
             }
-            catch
+            catch (Exception e)
             {
-                Console.WriteLine("Podczas rozgrywki gra wykonuje wiele operacji, ktore sa przydatne dla programisty, lecz moga delikatnie zmniejszac predkosc gry. Czy chcesz je zoptymalizowac? y/n/t/n\nTo ustawienie da sie rowniez zmienic w lobby.");
+                Console.WriteLine(e);
+                Console.WriteLine("Podczas rozgrywki gra wykonuje wiele operacji, ktore sa przydatne dla programisty, lecz moga delikatnie zmniejszac predkosc gry. Czy chcesz je zoptymalizowac? y/n/t/n\nTo ustawienie da sie rowniez zmienic w lobby. (To powiadomienie nie bedzie sie juz pojawiac)");
                 string shouldoptimize = Console.ReadLine();
                 if (shouldoptimize.ToLower().Contains("y") || shouldoptimize.ToLower().Contains("t"))
                 {
