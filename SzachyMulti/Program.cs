@@ -1,5 +1,4 @@
 ﻿using FluentFTP;
-using creds = Credentials.credentials;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,8 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Web.UI.WebControls;
-using System.Reflection;
+using creds = Credentials.credentials;
 
 namespace SzachyMulti
 {
@@ -99,18 +97,18 @@ namespace SzachyMulti
         {
             SzachyB = new bool[8, 8];
             SzachyC = new bool[8, 8];
-            for(int i = 0, i2 = 0; i < 8; i2++)
+            for (int i = 0, i2 = 0; i < 8; i2++)
             {
-                if(i2 == 8)
+                if (i2 == 8)
                 {
                     i2 = 0;
                     i++;
-                    if(i >= 8)
+                    if (i >= 8)
                     {
                         continue;
                     }
                 }
-                if (!(Plansza[i,i2] == null))
+                if (!(Plansza[i, i2] == null))
                 {
                     switch (Plansza[i, i2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C'))
                     {
@@ -122,16 +120,16 @@ namespace SzachyMulti
                                     {
                                         if (!(i2-1 <= -1))
                                         {
-                                            if (Plansza[i+1,i2-1] == "krolC")
+                                            if (Plansza[i+1, i2-1] == "krolC")
                                             {
-                                                SzachyB[i+1,i2-1] = true;
+                                                SzachyB[i+1, i2-1] = true;
                                             }
                                         }
                                         if (!(i2+1 >= 8))
                                         {
-                                            if (Plansza[i+1,i2+1] == "krolC")
+                                            if (Plansza[i+1, i2+1] == "krolC")
                                             {
-                                                SzachyB[i+1,i2+1] = true;
+                                                SzachyB[i+1, i2+1] = true;
                                             }
                                         }
                                     }
@@ -141,16 +139,16 @@ namespace SzachyMulti
                                     {
                                         if (!(i2+1 >= 8))
                                         {
-                                            if (Plansza[i-1,i2+1] == "krolB")
+                                            if (Plansza[i-1, i2+1] == "krolB")
                                             {
-                                                SzachyC[i-1,i2+1] = true;
+                                                SzachyC[i-1, i2+1] = true;
                                             }
                                         }
                                         if (!(i2-1 <= -1))
                                         {
-                                            if (Plansza[i-1,i2-1] == "krolB")
+                                            if (Plansza[i-1, i2-1] == "krolB")
                                             {
-                                                SzachyC[i-1,i2-1] = true;
+                                                SzachyC[i-1, i2-1] = true;
                                             }
                                         }
                                     }
@@ -161,79 +159,143 @@ namespace SzachyMulti
                             switch (Plansza[i, i2].Last())
                             {
                                 case 'B':
-                                    if(!(i-2 <= -1))
+                                    if (!(i-2 <= -1))
                                     {
-                                        if(!(i2 - 1 <= -1))
+                                        if (!(i2 - 1 <= -1))
                                         {
-                                            if(Plansza[i - 2, i2 - 1] == "krolC")
+                                            if (Plansza[i - 2, i2 - 1] == "krolC")
                                             {
                                                 SzachyB[i - 2, i2 - 1] = true;
                                             }
                                         }
-                                        if(!(i2 + 1 >= 8))
+                                        if (!(i2 + 1 >= 8))
                                         {
-                                            if(Plansza[i - 2, i2 + 1] == "krolC")
+                                            if (Plansza[i - 2, i2 + 1] == "krolC")
                                             {
                                                 SzachyB[i - 2, i2 + 1] = true;
                                             }
                                         }
                                     }
-                                    if(!(i-1 <= -1))
+                                    if (!(i-1 <= -1))
                                     {
-                                        if(!(i2 - 2 <= -1))
+                                        if (!(i2 - 2 <= -1))
                                         {
-                                            if(Plansza[i-1,i2-2] == "krolC")
+                                            if (Plansza[i-1, i2-2] == "krolC")
                                             {
                                                 SzachyB[i-1, i2-2] = true;
                                             }
                                         }
-                                        if(!(i2+2>=8))
+                                        if (!(i2+2>=8))
                                         {
-                                            if(Plansza[i-1,i2+2] == "krolC")
+                                            if (Plansza[i-1, i2+2] == "krolC")
                                             {
-                                                SzachyB[i-1,i2+2] = true;
+                                                SzachyB[i-1, i2+2] = true;
                                             }
                                         }
                                     }
-                                    if(!(i+2 >= 8))
+                                    if (!(i+2 >= 8))
                                     {
-                                        if(!(i2-1 <= -1))
+                                        if (!(i2-1 <= -1))
                                         {
-                                            if(Plansza[i+2,i2-1] == "krolC")
+                                            if (Plansza[i+2, i2-1] == "krolC")
                                             {
-                                                SzachyB[i+2,i2-1] = true;
+                                                SzachyB[i+2, i2-1] = true;
                                             }
                                         }
-                                        if(!(i2+1 >= 8))
+                                        if (!(i2+1 >= 8))
                                         {
-                                            if(Plansza[i+2,i2+1] == "krolC")
+                                            if (Plansza[i+2, i2+1] == "krolC")
                                             {
-                                                SzachyB[i+2,i2+1] = true;
+                                                SzachyB[i+2, i2+1] = true;
                                             }
                                         }
                                     }
-                                    if(!(i+1 >= 8))
+                                    if (!(i+1 >= 8))
                                     {
-                                        if(!(i2-2 <= -1))
+                                        if (!(i2-2 <= -1))
                                         {
-                                            if(Plansza[i+1,i2-2] == "krolC")
+                                            if (Plansza[i+1, i2-2] == "krolC")
                                             {
-                                                SzachyB[i+2,i2+1] = true;
+                                                SzachyB[i+2, i2+1] = true;
                                             }
                                         }
-                                        if(!(i2+2 >= 8))
+                                        if (!(i2+2 >= 8))
                                         {
-                                            if(Plansza[i+1,i2+2] == "krolC")
+                                            if (Plansza[i+1, i2+2] == "krolC")
                                             {
-                                                SzachyB[i+1,i2+2] = true;
+                                                SzachyB[i+1, i2+2] = true;
                                             }
                                         }
                                     }
                                     break;
                                 case 'C':
-                                    if()
+                                    if (!(i-2 <= -1))
                                     {
-
+                                        if (!(i2-1 <= -1))
+                                        {
+                                            if (Plansza[i-2, i2-1] == "krolB")
+                                            {
+                                                SzachyC[i-2, i2-1] = false;
+                                            }
+                                        }
+                                        if (!(i2+1 >= 8))
+                                        {
+                                            if (Plansza[i-2, i2+1] == "krolB")
+                                            {
+                                                SzachyC[i-2, i2+1] = false;
+                                            }
+                                        }
+                                    }
+                                    if (!(i-1 <= -1))
+                                    {
+                                        if (!(i2-2 <= -1))
+                                        {
+                                            if (Plansza[i-1,i2-2] == "krolB")
+                                            {
+                                                SzachyC[i-1,i2-2] = true;
+                                            }
+                                        }
+                                        if (!(i2+2 >= 8))
+                                        {
+                                            if (Plansza[i-1,i2+2] == "krolB")
+                                            {
+                                                SzachyC[i-1,i2+2] = true;
+                                            }
+                                        }
+                                    }
+                                    if (!(i+2 >= 8))
+                                    {
+                                        if (!(i2-1 <= -1))
+                                        {
+                                            if (Plansza[i+2,i2-1] == "krolB")
+                                            {
+                                                SzachyC[i+2,i2-1] = true;
+                                            }
+                                        }
+                                        if (!(i2+1 >= 8))
+                                        {
+                                            if (Plansza[i+2,i2+1] == "krolB")
+                                            {
+                                                SzachyC[i+2,i2+1] = true;
+                                            }
+                                        }
+                                    }
+                                    if (!(i+1 >= 8))
+                                    {
+                                        if (!(i2-2 <= -1))
+                                        {
+                                            if (Plansza[i+1,i2-2] == "krolB")
+                                            {
+                                                SzachyC[i+2,i2+1] = true;
+                                            }
+                                        }
+                                        if (!(i2+2 >= 8))
+                                        {
+                                            if (Plansza[i+1,i2+2] == "krolB")
+                                            {
+                                                SzachyC[i+1,i2+2] = true;
+                                            }
+                                        }
                                     }
                                     break;
                             }
@@ -274,7 +336,7 @@ namespace SzachyMulti
                                     break;
                             }
                             break;
-                    } 
+                    }
                 }
                 //PAMIĘTAJ O SPRAWDZANIU CZY KRÓL MA SZACHA U OBU DRUŻYN
             }
@@ -647,6 +709,7 @@ namespace SzachyMulti
     }
     public class Program
     {
+        public static bool optimizeChecks = new bool();
         public static Random rand = new Random();
         public static bool hasOtherPlayerJoined = false;
         public static bool isApppending = false;
@@ -812,7 +875,7 @@ namespace SzachyMulti
                         }
                         else if (lines[i].StartsWith("EVENT"))
                         {
-                            receivedMessages.Add(lines[i].Substring(0,6));
+                            receivedMessages.Add(lines[i].Substring(0, 6));
                         }
                     }
                     i++;
@@ -933,6 +996,32 @@ namespace SzachyMulti
         }
         static void Main(string[] args)
         {
+            try
+            {
+                using (StreamReader sr = new StreamReader(@".\optimize.txt"))
+                {
+                    optimizeChecks = Convert.ToBoolean(sr.ReadLine());
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Podczas rozgrywki gra wykonuje wiele operacji, ktore sa przydatne dla programisty, lecz moga delikatnie zmniejszac predkosc gry. Czy chcesz je zoptymalizowac? y/n/t/n\nTo ustawienie da sie rowniez zmienic w lobby.");
+                string shouldoptimize = Console.ReadLine();
+                if (shouldoptimize.ToLower().Contains("y") || shouldoptimize.ToLower().Contains("t"))
+                {
+                    File.CreateText(@".\optimize.txt");
+                    using (StreamWriter sw = new StreamWriter(@".\optimize.txt"))
+                        sw.WriteLine("true");
+                    optimizeChecks = true;
+                    Thread.Sleep(2000);
+                    Console.Clear();
+                }
+                else
+                {
+                    Thread.Sleep(1500);
+                    Console.Clear();
+                }
+            }
             Szachy.PostawPionki();
             Szachy.OznaczSzachy();
             Szachy.NarysujPlansze();
