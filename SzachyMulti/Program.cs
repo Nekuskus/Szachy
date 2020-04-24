@@ -74,7 +74,6 @@ namespace SzachyMulti
             Plansza[3, 5] = "krolB";
             Plansza[3, 7] = "krolC";
             Plansza[2, 5] = "kon123B";
-            Plansza[4, 5] = "kon321B";
             //DEBUG
             Plansza[7, 0] = "wieza1C";
             Plansza[7, 1] = "kon1C";
@@ -301,6 +300,22 @@ namespace SzachyMulti
                             }
                             break;
                         case "goniec":
+                            void checkBishopRightUp(int _i, int _i2)
+                            {
+
+                            }
+                            void CheckBishopRightDown(int _i, int _i2)
+                            {
+                                
+                            }
+                            void CheckBishopLeftUp(int _i, int _i2)
+                            {
+
+                            }
+                            void CheckBishopLeftDown(int _i, int _i2)
+                            {
+
+                            }
                             switch (Plansza[i, i2].Last())
                             {
                                 case 'B':
@@ -914,7 +929,6 @@ namespace SzachyMulti
             if (countNow > lastCountChat)
             {
                 isSending = true;
-                //usun z listy poprzednie linijki lub uzyj petli for
                 List<string> sentMessages = new List<string>();
                 for (int i = lastCountChat + 1; i <= countNow; i++)
                 {
