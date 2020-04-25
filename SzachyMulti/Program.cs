@@ -1166,13 +1166,11 @@ namespace SzachyMulti
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
                 Console.WriteLine("Podczas rozgrywki gra wykonuje wiele operacji, ktore sa przydatne dla programisty, lecz moga delikatnie zmniejszac predkosc gry. Czy chcesz je zoptymalizowac? y/n/t/n\nTo ustawienie da sie rowniez zmienic w lobby. (To powiadomienie nie bedzie sie juz pojawiac)");
                 string shouldoptimize = Console.ReadLine();
                 if (shouldoptimize.ToLower().Contains("y") || shouldoptimize.ToLower().Contains("t"))
                 {
-                    File.CreateText(@".\optimize.txt");
-                    using (StreamWriter sw = new StreamWriter(@".\optimize.txt"))
+                    using (StreamWriter sw = File.CreateText(@".\optimize.txt"))
                         sw.WriteLine("true");
                     optimizeChecks = true;
                     Thread.Sleep(2000);
