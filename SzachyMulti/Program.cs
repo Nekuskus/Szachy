@@ -77,6 +77,8 @@ namespace SzachyMulti
             Plansza[3, 5] = "krolB";
             Plansza[3, 7] = "krolC";
             Plansza[2, 5] = "kon123B";
+            Plansza[3, 0] = "krolC";
+            Plansza[5, 2] = "goniecB";
             //DEBUG
             Plansza[7, 0] = "wieza1C";
             Plansza[7, 1] = "kon1C";
@@ -305,11 +307,11 @@ namespace SzachyMulti
                         case "goniec":
                             void CheckBishopRightUp(int _i, int _i2, char Team)
                             {
-                                if(!(_i-1 <= -1) && !(_i2+1 >= 8))
+                                if((_i-1 > -1) && (_i2+1 < 8))
                                 {
                                     if(Plansza[_i-1,_i2+1] != null)
                                     {
-                                        if(Plansza[_i+1, _i2+1].StartsWith("krol"))
+                                        if(Plansza[_i-1, _i2+1].StartsWith("krol"))
                                         {
                                             switch (Team)
                                             {
