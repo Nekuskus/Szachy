@@ -1164,22 +1164,31 @@ namespace SzachyMulti
                     optimizeChecks = Convert.ToBoolean(sr.ReadLine());
                 }
             }
-            catch (Exception e)
+            catch
             {
                 Console.WriteLine("Podczas rozgrywki gra wykonuje wiele operacji, ktore sa przydatne dla programisty, lecz moga delikatnie zmniejszac predkosc gry. Czy chcesz je zoptymalizowac? y/n/t/n\nTo ustawienie da sie rowniez zmienic w lobby. (To powiadomienie nie bedzie sie juz pojawiac)");
+                shouldoptimizegoto:
                 string shouldoptimize = Console.ReadLine();
                 if (shouldoptimize.ToLower().Contains("y") || shouldoptimize.ToLower().Contains("t"))
                 {
                     using (StreamWriter sw = File.CreateText(@".\optimize.txt"))
                         sw.WriteLine("true");
                     optimizeChecks = true;
-                    Thread.Sleep(2000);
+                    Thread.Sleep(1500);
+                    Console.Clear();
+                }
+                else if(shouldoptimize.ToLower().Contains("n"))
+                {
+                    using (StreamWriter sw = File.CreateText(@".\optimize.txt"))
+                        sw.WriteLine("false");
+                    optimizeChecks = false;
+                    Thread.Sleep(1500);
                     Console.Clear();
                 }
                 else
                 {
-                    Thread.Sleep(1500);
-                    Console.Clear();
+                    Console.WriteLine("Niepoprawna odpowiedz");
+                    goto shouldoptimizegoto;
                 }
             }
             Szachy.PostawPionki();
