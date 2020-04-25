@@ -305,27 +305,137 @@ namespace SzachyMulti
                         case "goniec":
                             void CheckBishopRightUp(int _i, int _i2, char Team)
                             {
-
+                                if(!(_i-1 <= -1) && !(_i2+1 >= 8))
+                                {
+                                    if(Plansza[_i-1,_i2+1] != null)
+                                    {
+                                        if(Plansza[_i+1, _i2+1].StartsWith("krol"))
+                                        {
+                                            switch (Team)
+                                            {
+                                                case 'B':
+                                                    if(Plansza[_i-1, _i2+1].Last() == 'C')
+                                                    {
+                                                        SzachyB[_i-1, _i2+1] = true;
+                                                    }
+                                                    break;
+                                                case 'C':
+                                                    if(Plansza[_i-1, _i2+1].Last() == 'B')
+                                                    {
+                                                        SzachyC[_i-1, _i2+1] = true;
+                                                    }
+                                                    break;
+                                            } 
+                                        }
+                                    }
+                                    else
+                                    {
+                                        CheckBishopRightUp(_i-1,_i2+1,Team);
+                                    }
+                                }
                                 return;
                             }
                             void CheckBishopRightDown(int _i, int _i2, char Team)
                             {
-                                
+                                if(!(_i+1 >= 8) && !(_i2+1 >= 8))
+                                {
+                                    if(Plansza[_i+1,_i2+1] != null)
+                                    {
+                                        if(Plansza[_i+1,_i2+1].StartsWith("krol"))
+                                        {
+                                            switch (Team)
+                                            {
+                                                case 'B':
+                                                    if(Plansza[_i+1,_i2+1].Last() == 'C')
+                                                    {
+                                                        SzachyB[_i+1, _i2+1] = true;
+                                                    }
+                                                    break;
+                                                case 'C':
+                                                    if(Plansza[_i+1, _i2+1].Last() == 'B')
+                                                    {
+                                                        SzachyC[_i+1, _i2+1] = true;
+                                                    }
+                                                    break;
+                                            } 
+                                        }
+                                    }
+                                    else
+                                    {
+                                        CheckBishopRightDown(_i+1,_i2+1,Team);
+                                    }
+                                }
                                 return;
                             }
                             void CheckBishopLeftUp(int _i, int _i2, char Team)
                             {
-
+                                if(!(_i-1 <= -1) && !(_i2-1 <= -1))
+                                {
+                                    if(Plansza[_i-1,_i2-1] != null)
+                                    {
+                                        if(Plansza[_i-1,_i2-1].StartsWith("krol"))
+                                        {
+                                            switch(Team)
+                                            {
+                                                case 'B':
+                                                    if(Plansza[_i-1,_i2-1].Last() == 'C')
+                                                    {
+                                                        SzachyB[_i-1,_i2-1] = true;
+                                                    }
+                                                    break;
+                                                case 'C':
+                                                    if(Plansza[_i-1,_i2-1].Last() == 'B')
+                                                    {
+                                                        SzachyC[_i-1,_i2-1] = true;
+                                                    }
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        CheckBishopLeftUp(_i-1,_i2-1,Team);
+                                    }    
+                                }
                                 return;
                             }
                             void CheckBishopLeftDown(int _i, int _i2, char Team)
                             {
                                 //costam
                                 //CheckBishopLeftDown() aż nie będzie można
+                                if(!(_i+1 >= 8) && !(_i2-1 <= -1))
+                                {
+                                    if(Plansza[_i+1,_i2-1] != null)
+                                    {
+                                        if(Plansza[_i+1,_i2-1].StartsWith("krol"))
+                                        {
+                                            switch (Team)
+                                            {
+                                                case 'B':
+                                                    if (Plansza[_i+1, _i2-1].Last() == 'C')
+                                                    {
+                                                        SzachyB[_i+1, _i2-1] = true;
+                                                    }
+                                                    break;
+                                                case 'C':
+                                                    if (Plansza[_i+1,_i2-1].Last() == 'B')
+                                                    {
+                                                        SzachyC[_i+1,_i2-1] = true;
+                                                    }
+                                                    break;
+                                            }
+                                        }    
+                                    }
+                                    else
+                                    {
+                                        CheckBishopLeftDown(_i+1,_i2-1,Team);
+                                    }
+                                }
                                 return;
                             }
                             switch (Plansza[i, i2].Last())
                             {
+                                //TODO: ADD STOPPING THE OTHER THREADS IF KING OF OTHER TEAM FOUND IF PROGRAM.OPTIMIZE == TRUE
                                 case 'B':
                                     //
                                     // Guess who can't use async
