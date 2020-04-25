@@ -5,8 +5,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using creds = Credentials.credentials;
 
 namespace SzachyMulti
@@ -300,19 +303,22 @@ namespace SzachyMulti
                             }
                             break;
                         case "goniec":
-                            void checkBishopRightUp(int _i, int _i2)
+                            void CheckBishopRightUp(int _i, int _i2, char Team)
                             {
 
+                                return;
                             }
-                            void CheckBishopRightDown(int _i, int _i2)
+                            void CheckBishopRightDown(int _i, int _i2, char Team)
                             {
                                 
+                                return;
                             }
-                            void CheckBishopLeftUp(int _i, int _i2)
+                            void CheckBishopLeftUp(int _i, int _i2, char Team)
                             {
 
+                                return;
                             }
-                            void CheckBishopLeftDown(int _i, int _i2)
+                            void CheckBishopLeftDown(int _i, int _i2, char Team)
                             {
                                 //costam
                                 //CheckBishopLeftDown() aż nie będzie można
@@ -321,8 +327,35 @@ namespace SzachyMulti
                             switch (Plansza[i, i2].Last())
                             {
                                 case 'B':
+                                    //
+                                    // Guess who can't use async
+                                    // uwu
+                                    Thread CheckRightUpB = new Thread(() => CheckBishopRightUp(i,i2,'B'));
+                                    Thread CheckRightDownB = new Thread(() => CheckBishopRightDown(i,i2,'B'));
+                                    Thread CheckLeftUpB = new Thread(() => CheckBishopLeftUp(i,i2,'B'));
+                                    Thread CheckLeftDownB = new Thread(() => CheckBishopLeftDown(i,i2,'B'));
+                                    CheckRightUpB.Start();
+                                    CheckRightDownB.Start();
+                                    CheckLeftUpB.Start();
+                                    CheckLeftDownB.Start();
+                                    CheckRightUpB.Join();
+                                    CheckRightDownB.Join();
+                                    CheckLeftUpB.Join();
+                                    CheckLeftDownB.Join();
                                     break;
                                 case 'C':
+                                    Thread CheckRightUpC = new Thread(() => CheckBishopRightUp(i, i2, 'C'));
+                                    Thread CheckRightDownC = new Thread(() => CheckBishopRightDown(i, i2, 'C'));
+                                    Thread CheckLeftUpC = new Thread(() => CheckBishopLeftUp(i, i2, 'C'));
+                                    Thread CheckLeftDownC = new Thread(() => CheckBishopLeftDown(i, i2, 'C'));
+                                    CheckRightUpC.Start();
+                                    CheckRightDownC.Start();
+                                    CheckLeftUpC.Start();
+                                    CheckLeftDownC.Start();
+                                    CheckRightUpC.Join();
+                                    CheckRightDownC.Join();
+                                    CheckLeftUpC.Join();
+                                    CheckLeftDownC.Join();
                                     break;
                             }
                             break;
