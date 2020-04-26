@@ -1136,14 +1136,14 @@ namespace SzachyMulti
                     {
                         if (repeati >= 4)
                         {
-                            Console.WriteLine("Nie udalo sie polaczyc z serwerem, sprobowac ponownie?\n//Mozliwe odpowiedzi: Tak, Nie\n(Odpowiedz \"Nie\" przerywa sesje, nie jest to wskazane.");
+                            Console.Write("Nie udalo sie polaczyc z serwerem, sprobowac ponownie? t/n\n(Odpowiedz \"n\" przerywa sesje, nie jest to wskazane.)\n>");
                         connrepeatgoto:
-                            string connrepeat = Console.ReadLine();
-                            if (connrepeat.ToLower().Contains("tak"))
+                            string connrepeat = Console.ReadLine().ToLower();
+                            if (connrepeat.Contains('t'))
                             {
                                 repeati++;
                             }
-                            else if (connrepeat.ToLower().Contains("nie"))
+                            else if (connrepeat.Contains('n'))
                             {
                                 Console.WriteLine("Konczenie sesji... cofanie do menu glownego");
                                 czy_odbierac = false;
@@ -1170,10 +1170,10 @@ namespace SzachyMulti
             }
             catch
             {
-                Console.WriteLine("Podczas rozgrywki gra wykonuje wiele operacji, ktore sa przydatne dla programisty, lecz moga delikatnie zmniejszac predkosc gry. Czy chcesz je zoptymalizowac? y/n/t/n\nTo ustawienie da sie rowniez zmienic w lobby. (To powiadomienie nie bedzie sie juz pojawiac)");
+                Console.Write("Podczas rozgrywki gra wykonuje wiele operacji, ktore sa przydatne dla dewelopera, lecz moga minimalnie zmniejszac predkosc gry. Czy chcesz je zoptymalizowac? t/n\nTo ustawienie da sie rowniez zmienic w lobby. (To powiadomienie nie bedzie sie juz pojawiac)\n>");
                 shouldoptimizegoto:
-                string shouldoptimize = Console.ReadLine();
-                if (shouldoptimize.ToLower().Contains("y") || shouldoptimize.ToLower().Contains("t"))
+                string shouldoptimize = Console.ReadLine().ToLower();
+                if (shouldoptimize.Contains("t"))
                 {
                     using (StreamWriter sw = File.CreateText(@".\optimize.txt"))
                         sw.WriteLine("true");
@@ -1181,7 +1181,7 @@ namespace SzachyMulti
                     Thread.Sleep(1500);
                     Console.Clear();
                 }
-                else if(shouldoptimize.ToLower().Contains("n"))
+                else if(shouldoptimize.Contains("n"))
                 {
                     using (StreamWriter sw = File.CreateText(@".\optimize.txt"))
                         sw.WriteLine("false");
@@ -1209,11 +1209,11 @@ namespace SzachyMulti
             }
         menuglowne:
             Console.WriteLine($"Obecny czas: {DateTime.Now}/{(Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds}");
-            Console.WriteLine("Polaczyc sie z serwerem? Tak/Nie");
+            Console.Write("Polaczyc sie z serwerem? t/n\n>");
             string czy_polaczyc = Console.ReadLine().ToLower();
-            if (czy_polaczyc.Contains("tak"))
+            if (czy_polaczyc.Contains('t'))
             {
-                Console.WriteLine("Podaj swoj nick:");
+                Console.WriteLine("Podaj swoj nick:\n>");
                 Nick = Console.ReadLine();
                 client.Host = credentials.host;
                 client.Port = credentials.port;
@@ -1226,20 +1226,20 @@ namespace SzachyMulti
                 }
                 catch
                 {
-                    Console.WriteLine("Nie udalo sie polaczyc z serwerem, sprobowac ponownie?\n//Mozliwe odpowiedzi: Tak, Nie");
+                    Console.Write("Nie udalo sie polaczyc z serwerem, sprobowac ponownie? t/n\n>");
                     string connrepeat = Console.ReadLine().ToLower();
-                    if (connrepeat.Contains("tak"))
+                    if (connrepeat.Contains('t'))
                     {
                         goto polacz;
                     }
-                    else if (connrepeat.Contains("nie"))
+                    else if (connrepeat.Contains('n'))
                     {
                         Console.WriteLine("Cofanie do menu glownego");
                         goto menuglowne;
                     }
                 }
             }
-            else if (czy_polaczyc.Contains("nie"))
+            else if (czy_polaczyc.Contains('n'))
             {
                 Console.WriteLine("Cofanie do menu glownego");
                 goto menuglowne;
@@ -1298,9 +1298,9 @@ namespace SzachyMulti
             catch
             {
                 client.Disconnect();
-                Console.WriteLine("Blad odbierania lobby. Sprobowac ponownie? y/n");
+                Console.Write("Blad odbierania lobby. Sprobowac ponownie? t/n\n>");
                 string tryagainlobby = Console.ReadLine();
-                if (tryagainlobby.ToLower().Contains("y"))
+                if (tryagainlobby.ToLower().Contains('t'))
                 {
                     goto lobby;
                 }
@@ -1308,13 +1308,13 @@ namespace SzachyMulti
             odswiezlobby = false;
             wykonajconnect = false;
             bool isCancel = false;
-            Console.WriteLine("\nPodaj ID sesji publicznej (z lobby) lub prywatnej (otrzymanej od znajomego) aby dolaczyc do niej. Utworz nowa sesje poleceniem \"create\". Odswiez lobby poleceniem \"refresh\"");
+            Console.Write("\nPodaj ID sesji publicznej (z lobby) lub prywatnej (otrzymanej od znajomego) aby dolaczyc do niej. Utworz nowa sesje poleceniem \"create\". Odswiez lobby poleceniem \"refresh\"\n>");
             string connect_to_id = Console.ReadLine();
             if (connect_to_id.ToLower().Contains("create"))
             {
                 bool isPublic;
             podajnazwesesji:
-                Console.Write("\nPodaj nazwe sesji, ktora chcesz stworzyc lub napisz \"cancel\" aby wrocic do lobby");
+                Console.Write("\nPodaj nazwe sesji, ktora chcesz stworzyc lub napisz \"cancel\" aby wrocic do lobby\n>");
                 nazwasesji = Console.ReadLine();
                 if (nazwasesji.ToLower() == "cancel")
                 {
@@ -1328,13 +1328,13 @@ namespace SzachyMulti
             ispublicgoto:
                 if (isCancel == false)
                 {
-                    Console.WriteLine("\nCzy sesja ma byc prywatna? Tak/Nie");
-                    string ispublicstr = Console.ReadLine();
-                    if (ispublicstr.ToLower().Contains("tak"))
+                    Console.WriteLine("\nCzy sesja ma byc prywatna? t/n\n>");
+                    string ispublicstr = Console.ReadLine().ToLower();
+                    if (ispublicstr.Contains('t'))
                     {
                         isPublic = true;
                     }
-                    else if (ispublicstr.ToLower().Contains("nie"))
+                    else if (ispublicstr.Contains('n'))
                     {
                         isPublic = false;
                     }
@@ -1343,9 +1343,9 @@ namespace SzachyMulti
                         Console.WriteLine("Niepoprawna odpowiedz:" + ispublicstr);
                         goto ispublicgoto;
                     }
-                    Console.WriteLine($"Tworzenie sesji o nazwie \"{nazwasesji}\", kontynuowac? Tak/Nie");
-                    string napewno = Console.ReadLine();
-                    if (napewno.ToLower().Contains("tak"))
+                    Console.Write($"Tworzenie sesji o nazwie \"{nazwasesji}\", kontynuowac? t/n\n>");
+                    string napewno = Console.ReadLine().ToLower();
+                    if (napewno.Contains('t'))
                     {
                         ID = Convert.ToString((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds);
 
@@ -1361,7 +1361,7 @@ namespace SzachyMulti
                         Szachy.Rozgrywka();
                         //(Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds
                     }
-                    else if (napewno.ToLower().Contains("nie"))
+                    else if (napewno.ToLower().Contains('n'))
                     {
                         Console.WriteLine("\nWracanie do lobby...\n");
                         wykonajconnect = false;
