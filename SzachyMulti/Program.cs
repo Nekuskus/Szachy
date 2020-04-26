@@ -10,7 +10,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using creds = Credentials.credentials;
+using Credentials;
 
 namespace SzachyMulti
 {
@@ -307,24 +307,24 @@ namespace SzachyMulti
                         case "goniec":
                             void CheckBishopRightUp(int _i, int _i2, char Team)
                             {
-                                if((_i-1 > -1) && (_i2+1 < 8))
+                                if((_i > -1) && (_i2 < 8))
                                 {
-                                    if(Plansza[_i-1,_i2+1] != null)
+                                    if(Plansza[_i,_i2] != null)
                                     {
-                                        if(Plansza[_i-1, _i2+1].StartsWith("krol"))
+                                        if(Plansza[_i, _i2].StartsWith("krol"))
                                         {
                                             switch (Team)
                                             {
                                                 case 'B':
-                                                    if(Plansza[_i-1, _i2+1].Last() == 'C')
+                                                    if(Plansza[_i, _i2].Last() == 'C')
                                                     {
-                                                        SzachyB[_i-1, _i2+1] = true;
+                                                        SzachyB[_i, _i2] = true;
                                                     }
                                                     break;
                                                 case 'C':
-                                                    if(Plansza[_i-1, _i2+1].Last() == 'B')
+                                                    if(Plansza[_i, _i2].Last() == 'B')
                                                     {
-                                                        SzachyC[_i-1, _i2+1] = true;
+                                                        SzachyC[_i, _i2] = true;
                                                     }
                                                     break;
                                             } 
@@ -339,24 +339,24 @@ namespace SzachyMulti
                             }
                             void CheckBishopRightDown(int _i, int _i2, char Team)
                             {
-                                if(!(_i+1 >= 8) && !(_i2+1 >= 8))
+                                if(!(_i >= 8) && !(_i2 >= 8))
                                 {
-                                    if(Plansza[_i+1,_i2+1] != null)
+                                    if(Plansza[_i,_i2] != null)
                                     {
-                                        if(Plansza[_i+1,_i2+1].StartsWith("krol"))
+                                        if(Plansza[_i,_i2].StartsWith("krol"))
                                         {
                                             switch (Team)
                                             {
                                                 case 'B':
-                                                    if(Plansza[_i+1,_i2+1].Last() == 'C')
+                                                    if(Plansza[_i,_i2].Last() == 'C')
                                                     {
-                                                        SzachyB[_i+1, _i2+1] = true;
+                                                        SzachyB[_i, _i2] = true;
                                                     }
                                                     break;
                                                 case 'C':
-                                                    if(Plansza[_i+1, _i2+1].Last() == 'B')
+                                                    if(Plansza[_i, _i2].Last() == 'B')
                                                     {
-                                                        SzachyC[_i+1, _i2+1] = true;
+                                                        SzachyC[_i, _i2] = true;
                                                     }
                                                     break;
                                             } 
@@ -371,24 +371,24 @@ namespace SzachyMulti
                             }
                             void CheckBishopLeftUp(int _i, int _i2, char Team)
                             {
-                                if(!(_i-1 <= -1) && !(_i2-1 <= -1))
+                                if(!(_i <= -1) && !(_i2 <= -1))
                                 {
-                                    if(Plansza[_i-1,_i2-1] != null)
+                                    if(Plansza[_i,_i2] != null)
                                     {
-                                        if(Plansza[_i-1,_i2-1].StartsWith("krol"))
+                                        if(Plansza[_i,_i2].StartsWith("krol"))
                                         {
                                             switch(Team)
                                             {
                                                 case 'B':
-                                                    if(Plansza[_i-1,_i2-1].Last() == 'C')
+                                                    if(Plansza[_i,_i2].Last() == 'C')
                                                     {
-                                                        SzachyB[_i-1,_i2-1] = true;
+                                                        SzachyB[_i,_i2] = true;
                                                     }
                                                     break;
                                                 case 'C':
-                                                    if(Plansza[_i-1,_i2-1].Last() == 'B')
+                                                    if(Plansza[_i,_i2].Last() == 'B')
                                                     {
-                                                        SzachyC[_i-1,_i2-1] = true;
+                                                        SzachyC[_i,_i2] = true;
                                                     }
                                                     break;
                                             }
@@ -405,24 +405,24 @@ namespace SzachyMulti
                             {
                                 //costam
                                 //CheckBishopLeftDown() aż nie będzie można
-                                if(!(_i+1 >= 8) && !(_i2-1 <= -1))
+                                if(!(_i >= 8) && !(_i2 <= -1))
                                 {
-                                    if(Plansza[_i+1,_i2-1] != null)
+                                    if(Plansza[_i,_i2] != null)
                                     {
-                                        if(Plansza[_i+1,_i2-1].StartsWith("krol"))
+                                        if(Plansza[_i,_i2].StartsWith("krol"))
                                         {
                                             switch (Team)
                                             {
                                                 case 'B':
-                                                    if (Plansza[_i+1, _i2-1].Last() == 'C')
+                                                    if (Plansza[_i, _i2].Last() == 'C')
                                                     {
-                                                        SzachyB[_i+1, _i2-1] = true;
+                                                        SzachyB[_i, _i2] = true;
                                                     }
                                                     break;
                                                 case 'C':
-                                                    if (Plansza[_i+1,_i2-1].Last() == 'B')
+                                                    if (Plansza[_i,_i2].Last() == 'B')
                                                     {
-                                                        SzachyC[_i+1,_i2-1] = true;
+                                                        SzachyC[_i,_i2] = true;
                                                     }
                                                     break;
                                             }
@@ -442,10 +442,10 @@ namespace SzachyMulti
                                     //
                                     // Guess who can't use async
                                     // uwu
-                                    Thread CheckRightUpB = new Thread(() => CheckBishopRightUp(i,i2,'B'));
-                                    Thread CheckRightDownB = new Thread(() => CheckBishopRightDown(i,i2,'B'));
-                                    Thread CheckLeftUpB = new Thread(() => CheckBishopLeftUp(i,i2,'B'));
-                                    Thread CheckLeftDownB = new Thread(() => CheckBishopLeftDown(i,i2,'B'));
+                                    Thread CheckRightUpB = new Thread(() => CheckBishopRightUp(i-1,i2+1,'B'));
+                                    Thread CheckRightDownB = new Thread(() => CheckBishopRightDown(i+1,i2+1,'B'));
+                                    Thread CheckLeftUpB = new Thread(() => CheckBishopLeftUp(i-1,i2-1,'B'));
+                                    Thread CheckLeftDownB = new Thread(() => CheckBishopLeftDown(i+1,i2-1,'B'));
                                     CheckRightUpB.Start();
                                     CheckRightDownB.Start();
                                     CheckLeftUpB.Start();
@@ -456,10 +456,10 @@ namespace SzachyMulti
                                     CheckLeftDownB.Join();
                                     break;
                                 case 'C':
-                                    Thread CheckRightUpC = new Thread(() => CheckBishopRightUp(i, i2, 'C'));
-                                    Thread CheckRightDownC = new Thread(() => CheckBishopRightDown(i, i2, 'C'));
-                                    Thread CheckLeftUpC = new Thread(() => CheckBishopLeftUp(i, i2, 'C'));
-                                    Thread CheckLeftDownC = new Thread(() => CheckBishopLeftDown(i, i2, 'C'));
+                                    Thread CheckRightUpC = new Thread(() => CheckBishopRightUp(i-1, i2+1, 'C'));
+                                    Thread CheckRightDownC = new Thread(() => CheckBishopRightDown(i+1, i2+1, 'C'));
+                                    Thread CheckLeftUpC = new Thread(() => CheckBishopLeftUp(i-1, i2-1, 'C'));
+                                    Thread CheckLeftDownC = new Thread(() => CheckBishopLeftDown(i+1, i2-1, 'C'));
                                     CheckRightUpC.Start();
                                     CheckRightDownC.Start();
                                     CheckLeftUpC.Start();
@@ -1211,9 +1211,9 @@ namespace SzachyMulti
             {
                 Console.WriteLine("Podaj swoj nick:");
                 Nick = Console.ReadLine();
-                client.Host = creds.host;
-                client.Port = creds.port;
-                client.Credentials = new NetworkCredential(creds.username, creds.password);
+                client.Host = credentials.host;
+                client.Port = credentials.port;
+                client.Credentials = new NetworkCredential(credentials.username, credentials.password);
             polacz:
                 try
                 {
