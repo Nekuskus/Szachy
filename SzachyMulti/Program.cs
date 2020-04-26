@@ -336,6 +336,15 @@ namespace SzachyMulti
                                     }
                                     else
                                     {
+                                        switch (Team)
+                                        {
+                                            case 'B':
+                                                HiddenSzachyB[_i, _i2] = true;
+                                                break;
+                                            case 'C':
+                                                HiddenSzachyC[_i, _i2] = true;
+                                                break;
+                                        }
                                         CheckBishopRightUp(_i-1,_i2+1,Team);
                                     }
                                 }
@@ -368,6 +377,15 @@ namespace SzachyMulti
                                     }
                                     else
                                     {
+                                        switch (Team)
+                                        {
+                                            case 'B':
+                                                HiddenSzachyB[_i, _i2] = true;
+                                                break;
+                                            case 'C':
+                                                HiddenSzachyC[_i, _i2] = true;
+                                                break;
+                                        }
                                         CheckBishopRightDown(_i+1,_i2+1,Team);
                                     }
                                 }
@@ -400,6 +418,15 @@ namespace SzachyMulti
                                     }
                                     else
                                     {
+                                        switch (Team)
+                                        {
+                                            case 'B':
+                                                HiddenSzachyB[_i, _i2] = true;
+                                                break;
+                                            case 'C':
+                                                HiddenSzachyC[_i, _i2] = true;
+                                                break;
+                                        }
                                         CheckBishopLeftUp(_i-1,_i2-1,Team);
                                     }    
                                 }
@@ -434,6 +461,15 @@ namespace SzachyMulti
                                     }
                                     else
                                     {
+                                        switch(Team)
+                                        {
+                                            case 'B':
+                                                HiddenSzachyB[_i,_i2] = true;
+                                                break;
+                                            case 'C':
+                                                HiddenSzachyC[_i,_i2] = true;
+                                                break;
+                                        }
                                         CheckBishopLeftDown(_i+1,_i2-1,Team);
                                     }
                                 }
@@ -441,7 +477,6 @@ namespace SzachyMulti
                             }
                             switch (Plansza[i, i2].Last())
                             {
-                                //TODO: ADD STOPPING THE OTHER THREADS IF KING OF OTHER TEAM FOUND IF PROGRAM.OPTIMIZE == TRUE
                                 case 'B':
                                     //
                                     // Guess who can't use async
