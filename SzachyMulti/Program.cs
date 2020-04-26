@@ -49,6 +49,8 @@ namespace SzachyMulti
         public static string[,] Plansza = new string[8, 8];
         public static bool[,] SzachyB = new bool[8, 8];
         public static bool[,] SzachyC = new bool[8, 8];
+        public static bool[,] HiddenSzachyB = new bool[8,8];
+        public static bool[,] HiddenSzachyC = new bool[8, 8];
         public static void PostawPionki()
         {
             //pierwsze - linia, drugie, kolumna
@@ -101,6 +103,8 @@ namespace SzachyMulti
         {
             SzachyB = new bool[8, 8];
             SzachyC = new bool[8, 8];
+            HiddenSzachyB = new bool[8, 8];
+            HiddenSzachyC = new bool[8, 8];
             for (int i = 0, i2 = 0; i < 8; i2++)
             {
                 if (i2 == 8)
