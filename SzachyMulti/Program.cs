@@ -128,16 +128,30 @@ namespace SzachyMulti
                                     {
                                         if (!(i2-1 <= -1))
                                         {
-                                            if (Plansza[i+1, i2-1] == "krolC")
+                                            if (Plansza[i+2,i2-1] != null)
                                             {
-                                                SzachyB[i+1, i2-1] = true;
+                                                if (Plansza[i+1, i2-1] == "krolC")
+                                                {
+                                                    SzachyB[i+1, i2-1] = true;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                HiddenSzachyB[i+2,i2-1] = true;
                                             }
                                         }
                                         if (!(i2+1 >= 8))
                                         {
-                                            if (Plansza[i+1, i2+1] == "krolC")
+                                            if (Plansza[i+1,i2+1] != null)
                                             {
-                                                SzachyB[i+1, i2+1] = true;
+                                                if (Plansza[i+1, i2+1] == "krolC")
+                                                {
+                                                    SzachyB[i+1, i2+1] = true;
+                                                }
+                                            }
+                                            else 
+                                            {
+                                                HiddenSzachyB[i+1,i2+1] = true;
                                             }
                                         }
                                     }
@@ -147,16 +161,30 @@ namespace SzachyMulti
                                     {
                                         if (!(i2+1 >= 8))
                                         {
-                                            if (Plansza[i-1, i2+1] == "krolB")
+                                            if (Plansza[i-1,i2+1] != null)
                                             {
-                                                SzachyC[i-1, i2+1] = true;
+                                                if (Plansza[i-1, i2+1] == "krolB")
+                                                {
+                                                    SzachyC[i-1, i2+1] = true;
+                                                } 
+                                            }
+                                            else
+                                            {
+                                                HiddenSzachyC[i-1,i2-1] = true;
                                             }
                                         }
                                         if (!(i2-1 <= -1))
                                         {
-                                            if (Plansza[i-1, i2-1] == "krolB")
+                                            if (Plansza[i-1,i2-1] != null)
                                             {
-                                                SzachyC[i-1, i2-1] = true;
+                                                if (Plansza[i-1, i2-1] == "krolB")
+                                                {
+                                                    SzachyC[i-1, i2-1] = true;
+                                                } 
+                                            }
+                                            else
+                                            {
+                                                HiddenSzachyC[i-1,i2-1] = true;
                                             }
                                         }
                                     }
@@ -171,16 +199,30 @@ namespace SzachyMulti
                                     {
                                         if (!(i2-1 <= -1))
                                         {
-                                            if (Plansza[i-2,i2-1] == "krolC")
+                                            if (Plansza[i-2, i2-1] != null)
                                             {
-                                                SzachyB[i-2,i2-1] = true;
+                                                if (Plansza[i-2, i2-1] == "krolC")
+                                                {
+                                                    SzachyB[i-2, i2-1] = true;
+                                                }
+                                            }
+                                            else
+                                            {
+                                               HiddenSzachyB[i-2,i2-1] = true;
                                             }
                                         }
                                         if (!(i2+1 >= 8))
                                         {
-                                            if (Plansza[i-2,i2+1] == "krolC")
+                                            if (Plansza[i-2, i2+1] != null)
                                             {
-                                                SzachyB[i-2,i2+1] = true;
+                                                if (Plansza[i-2, i2+1] == "krolC")
+                                                {
+                                                    SzachyB[i-2, i2+1] = true;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                HiddenSzachyB[i-2, i2+1] = true;
                                             }
                                         }
                                     }
@@ -188,16 +230,30 @@ namespace SzachyMulti
                                     {
                                         if (!(i2 - 2 <= -1))
                                         {
-                                            if (Plansza[i-1, i2-2] == "krolC")
+                                            if (true)
                                             {
-                                                SzachyB[i-1, i2-2] = true;
+                                                if (Plansza[i-1, i2-2] == "krolC")
+                                                {
+                                                    SzachyB[i-1, i2-2] = true;
+                                                } 
+                                            }
+                                            else
+                                            {
+
                                             }
                                         }
                                         if (!(i2+2>=8))
                                         {
-                                            if (Plansza[i-1, i2+2] == "krolC")
+                                            if (true)
                                             {
-                                                SzachyB[i-1, i2+2] = true;
+                                                if (Plansza[i-1, i2+2] == "krolC")
+                                                {
+                                                    SzachyB[i-1, i2+2] = true;
+                                                } 
+                                            }
+                                            else
+                                            {
+
                                             }
                                         }
                                     }
@@ -205,16 +261,30 @@ namespace SzachyMulti
                                     {
                                         if (!(i2-1 <= -1))
                                         {
-                                            if (Plansza[i+2, i2-1] == "krolC")
+                                            if (true)
                                             {
-                                                SzachyB[i+2, i2-1] = true;
+                                                if (Plansza[i+2, i2-1] == "krolC")
+                                                {
+                                                    SzachyB[i+2, i2-1] = true;
+                                                } 
+                                            }
+                                            else
+                                            {
+
                                             }
                                         }
                                         if (!(i2+1 >= 8))
                                         {
-                                            if (Plansza[i+2, i2+1] == "krolC")
+                                            if (true)
                                             {
-                                                SzachyB[i+2, i2+1] = true;
+                                                if (Plansza[i+2, i2+1] == "krolC")
+                                                {
+                                                    SzachyB[i+2, i2+1] = true;
+                                                } 
+                                            }
+                                            else
+                                            {
+
                                             }
                                         }
                                     }
@@ -222,16 +292,30 @@ namespace SzachyMulti
                                     {
                                         if (!(i2-2 <= -1))
                                         {
-                                            if (Plansza[i+1, i2-2] == "krolC")
+                                            if (true)
                                             {
-                                                SzachyB[i+2, i2+1] = true;
+                                                if (Plansza[i+1, i2-2] == "krolC")
+                                                {
+                                                    SzachyB[i+2, i2+1] = true;
+                                                } 
+                                            }
+                                            else
+                                            {
+
                                             }
                                         }
                                         if (!(i2+2 >= 8))
                                         {
-                                            if (Plansza[i+1, i2+2] == "krolC")
+                                            if (true)
                                             {
-                                                SzachyB[i+1, i2+2] = true;
+                                                if (Plansza[i+1, i2+2] == "krolC")
+                                                {
+                                                    SzachyB[i+1, i2+2] = true;
+                                                } 
+                                            }
+                                            else
+                                            {
+
                                             }
                                         }
                                     }
@@ -241,16 +325,30 @@ namespace SzachyMulti
                                     {
                                         if (!(i2-1 <= -1))
                                         {
-                                            if (Plansza[i-2, i2-1] == "krolB")
+                                            if (true)
                                             {
-                                                SzachyC[i-2, i2-1] = false;
+                                                if (Plansza[i-2, i2-1] == "krolB")
+                                                {
+                                                    SzachyC[i-2, i2-1] = false;
+                                                } 
+                                            }
+                                            else
+                                            {
+
                                             }
                                         }
                                         if (!(i2+1 >= 8))
                                         {
-                                            if (Plansza[i-2, i2+1] == "krolB")
+                                            if (true)
                                             {
-                                                SzachyC[i-2, i2+1] = false;
+                                                if (Plansza[i-2, i2+1] == "krolB")
+                                                {
+                                                    SzachyC[i-2, i2+1] = false;
+                                                } 
+                                            }
+                                            else
+                                            {
+
                                             }
                                         }
                                     }
@@ -258,16 +356,30 @@ namespace SzachyMulti
                                     {
                                         if (!(i2-2 <= -1))
                                         {
-                                            if (Plansza[i-1,i2-2] == "krolB")
+                                            if (true)
                                             {
-                                                SzachyC[i-1,i2-2] = true;
+                                                if (Plansza[i-1, i2-2] == "krolB")
+                                                {
+                                                    SzachyC[i-1, i2-2] = true;
+                                                } 
+                                            }
+                                            else
+                                            {
+
                                             }
                                         }
                                         if (!(i2+2 >= 8))
                                         {
-                                            if (Plansza[i-1,i2+2] == "krolB")
+                                            if (true)
                                             {
-                                                SzachyC[i-1,i2+2] = true;
+                                                if (Plansza[i-1, i2+2] == "krolB")
+                                                {
+                                                    SzachyC[i-1, i2+2] = true;
+                                                } 
+                                            }
+                                            else
+                                            {
+
                                             }
                                         }
                                     }
@@ -275,16 +387,30 @@ namespace SzachyMulti
                                     {
                                         if (!(i2-1 <= -1))
                                         {
-                                            if (Plansza[i+2,i2-1] == "krolB")
+                                            if (true)
                                             {
-                                                SzachyC[i+2,i2-1] = true;
+                                                if (Plansza[i+2, i2-1] == "krolB")
+                                                {
+                                                    SzachyC[i+2, i2-1] = true;
+                                                } 
+                                            }
+                                            else
+                                            {
+
                                             }
                                         }
                                         if (!(i2+1 >= 8))
                                         {
-                                            if (Plansza[i+2,i2+1] == "krolB")
+                                            if (true)
                                             {
-                                                SzachyC[i+2,i2+1] = true;
+                                                if (Plansza[i+2, i2+1] == "krolB")
+                                                {
+                                                    SzachyC[i+2, i2+1] = true;
+                                                } 
+                                            }
+                                            else
+                                            {
+
                                             }
                                         }
                                     }
@@ -292,16 +418,30 @@ namespace SzachyMulti
                                     {
                                         if (!(i2-2 <= -1))
                                         {
-                                            if (Plansza[i+1,i2-2] == "krolB")
+                                            if (true)
                                             {
-                                                SzachyC[i+2,i2+1] = true;
+                                                if (Plansza[i+1, i2-2] == "krolB")
+                                                {
+                                                    SzachyC[i+2, i2+1] = true;
+                                                } 
+                                            }
+                                            else
+                                            {
+
                                             }
                                         }
                                         if (!(i2+2 >= 8))
                                         {
-                                            if (Plansza[i+1,i2+2] == "krolB")
+                                            if (true)
                                             {
-                                                SzachyC[i+1,i2+2] = true;
+                                                if (Plansza[i+1, i2+2] == "krolB")
+                                                {
+                                                    SzachyC[i+1, i2+2] = true;
+                                                } 
+                                            }
+                                            else
+                                            {
+
                                             }
                                         }
                                     }
