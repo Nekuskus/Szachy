@@ -100,7 +100,7 @@ namespace SzachyMulti
             Plansza[6, 6] = "pionek7C";
             Plansza[6, 7] = "pionek8C";
         }
-        public static void OznaczSzachy()
+        public static void OznaczSzachy(bool[,] SzachyB, bool[,] SzachyC, bool[,] HiddenSzachyB, bool[,] HiddenSzachyC)
         {
             SzachyB = new bool[8, 8];
             SzachyC = new bool[8, 8];
@@ -1372,7 +1372,7 @@ namespace SzachyMulti
                 }
             }
             Szachy.PostawPionki();
-            Szachy.OznaczSzachy();
+            Szachy.OznaczSzachy(Szachy.SzachyB,Szachy.SzachyC,Szachy.HiddenSzachyB,Szachy.HiddenSzachyC);
             Szachy.NarysujPlansze();
             playerTeam = 'C';
             Szachy.NarysujPlansze();
