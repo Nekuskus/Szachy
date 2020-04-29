@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Credentials;
 using System.Data.SqlTypes;
+using System.Security.Cryptography.X509Certificates;
 
 namespace SzachyMulti
 {
@@ -100,7 +101,7 @@ namespace SzachyMulti
             Plansza[6, 6] = "pionek7C";
             Plansza[6, 7] = "pionek8C";
         }
-        public static void OznaczSzachy(bool[,] SzachyB, bool[,] SzachyC, bool[,] HiddenSzachyB, bool[,] HiddenSzachyC)
+        public static void OznaczSzachy(bool isTestingAfterMove)
         {
             SzachyB = new bool[8, 8];
             SzachyC = new bool[8, 8];
@@ -1372,7 +1373,7 @@ namespace SzachyMulti
                 }
             }
             Szachy.PostawPionki();
-            Szachy.OznaczSzachy(Szachy.SzachyB,Szachy.SzachyC,Szachy.HiddenSzachyB,Szachy.HiddenSzachyC);
+            Szachy.OznaczSzachy();
             Szachy.NarysujPlansze();
             playerTeam = 'C';
             Szachy.NarysujPlansze();
