@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Credentials;
+using System.Data.SqlTypes;
 
 namespace SzachyMulti
 {
@@ -228,9 +229,9 @@ namespace SzachyMulti
                                     }
                                     if (!(i-1 <= -1))
                                     {
-                                        if (!(i2 - 2 <= -1))
+                                        if (!(i2-2 <= -1))
                                         {
-                                            if (true)
+                                            if (Plansza[i-1,i2-2] != null)
                                             {
                                                 if (Plansza[i-1, i2-2] == "krolC")
                                                 {
@@ -239,12 +240,12 @@ namespace SzachyMulti
                                             }
                                             else
                                             {
-
+                                                HiddenSzachyB[i-1,i2-2] = true;
                                             }
                                         }
-                                        if (!(i2+2>=8))
+                                        if (!(i2+2 >= 8))
                                         {
-                                            if (true)
+                                            if (Plansza[i-1,i2+2] != null)
                                             {
                                                 if (Plansza[i-1, i2+2] == "krolC")
                                                 {
@@ -253,7 +254,7 @@ namespace SzachyMulti
                                             }
                                             else
                                             {
-
+                                                HiddenSzachyB[i-1,i2+2] = true;
                                             }
                                         }
                                     }
@@ -261,7 +262,7 @@ namespace SzachyMulti
                                     {
                                         if (!(i2-1 <= -1))
                                         {
-                                            if (true)
+                                            if (Plansza[i+2,i2-1] != null)
                                             {
                                                 if (Plansza[i+2, i2-1] == "krolC")
                                                 {
@@ -270,12 +271,12 @@ namespace SzachyMulti
                                             }
                                             else
                                             {
-
+                                                HiddenSzachyB[i+2,i2-1] = true;
                                             }
                                         }
                                         if (!(i2+1 >= 8))
                                         {
-                                            if (true)
+                                            if (Plansza[i+2,i2-1] != null)
                                             {
                                                 if (Plansza[i+2, i2+1] == "krolC")
                                                 {
@@ -284,7 +285,7 @@ namespace SzachyMulti
                                             }
                                             else
                                             {
-
+                                                HiddenSzachyB[i+2, i2+1] = true;
                                             }
                                         }
                                     }
@@ -292,21 +293,21 @@ namespace SzachyMulti
                                     {
                                         if (!(i2-2 <= -1))
                                         {
-                                            if (true)
+                                            if (Plansza[i+1,i2-1] != null) 
                                             {
                                                 if (Plansza[i+1, i2-2] == "krolC")
                                                 {
-                                                    SzachyB[i+2, i2+1] = true;
+                                                    SzachyB[i+1, i2-2] = true;
                                                 } 
                                             }
                                             else
                                             {
-
+                                                HiddenSzachyB[i+1, i2-2] = true;
                                             }
                                         }
                                         if (!(i2+2 >= 8))
                                         {
-                                            if (true)
+                                            if (Plansza[i+1,i2+2] != null)
                                             {
                                                 if (Plansza[i+1, i2+2] == "krolC")
                                                 {
@@ -315,7 +316,7 @@ namespace SzachyMulti
                                             }
                                             else
                                             {
-
+                                                HiddenSzachyB[i+1, i2+2] = true;
                                             }
                                         }
                                     }
@@ -325,7 +326,7 @@ namespace SzachyMulti
                                     {
                                         if (!(i2-1 <= -1))
                                         {
-                                            if (true)
+                                            if (Plansza[i-2,i2-1] != null)
                                             {
                                                 if (Plansza[i-2, i2-1] == "krolB")
                                                 {
@@ -334,7 +335,7 @@ namespace SzachyMulti
                                             }
                                             else
                                             {
-
+                                                HiddenSzachyB[i-2,i2-1] = true;
                                             }
                                         }
                                         if (!(i2+1 >= 8))
