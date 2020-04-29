@@ -129,7 +129,7 @@ namespace SzachyMulti
                                     {
                                         if (!(i2-1 <= -1))
                                         {
-                                            if (Plansza[i+2,i2-1] != null)
+                                            if (Plansza[i+1,i2-1] != null)
                                             {
                                                 if (Plansza[i+1, i2-1] == "krolC")
                                                 {
@@ -138,7 +138,7 @@ namespace SzachyMulti
                                             }
                                             else
                                             {
-                                                HiddenSzachyB[i+2,i2-1] = true;
+                                                HiddenSzachyB[i+1,i2-1] = true;
                                             }
                                         }
                                         if (!(i2+1 >= 8))
@@ -171,7 +171,7 @@ namespace SzachyMulti
                                             }
                                             else
                                             {
-                                                HiddenSzachyC[i-1,i2-1] = true;
+                                                HiddenSzachyC[i-1,i2+1] = true;
                                             }
                                         }
                                         if (!(i2-1 <= -1))
@@ -276,7 +276,7 @@ namespace SzachyMulti
                                         }
                                         if (!(i2+1 >= 8))
                                         {
-                                            if (Plansza[i+2,i2-1] != null)
+                                            if (Plansza[i+2,i2+1] != null)
                                             {
                                                 if (Plansza[i+2, i2+1] == "krolC")
                                                 {
@@ -293,7 +293,7 @@ namespace SzachyMulti
                                     {
                                         if (!(i2-2 <= -1))
                                         {
-                                            if (Plansza[i+1,i2-1] != null) 
+                                            if (Plansza[i+1,i2-2] != null) 
                                             {
                                                 if (Plansza[i+1, i2-2] == "krolC")
                                                 {
