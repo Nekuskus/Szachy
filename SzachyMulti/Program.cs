@@ -860,17 +860,10 @@ namespace SzachyMulti
         }
         public static void NapiszPionek(int pos1, int pos2)
         {
-            switch (Plansza[pos1, pos2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'C', 'B'))
+            switch(Plansza[pos1, pos2] & ChessPiece.AllPieces) // In memory of the dear Pieces ❤︎ (Plansza[pos1, pos2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'C', 'B'))
             {
-                case "pionek":
-                    if (Plansza[pos1, pos2].Last() == 'C')
-                    {
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    }
-                    else
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                    }
+                case ChessPiece.Pawn:
+                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkGreen + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB)? 0 : 8 ));
                     Console.Write("pionek ");
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
