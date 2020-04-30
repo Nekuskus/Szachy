@@ -59,7 +59,7 @@ namespace SzachyMulti
             Knight = 0b_0000_0010,
             Pawn = 0b_0000_0001,
         }
-        public static string[,] Plansza = new string[8, 8];
+        public static ChessPiece[,] Plansza = new ChessPiece[8, 8];
         public static volatile bool[,] SzachyB = new bool[8, 8];
         public static bool[,] SzachyC = new bool[8, 8];
         public static bool[,] HiddenSzachyB = new bool[8,8];
