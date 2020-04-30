@@ -50,14 +50,16 @@ namespace SzachyMulti
         public enum ChessPiece
         {
             None = 0b_0000_0000,
-            TeamB = 0b_1000_0000,
-            TeamW = 0b_0100_0000,
+            TeamB = 0b_0100_0000,
+            TeamC = 0b_1000_0000,
             King = 0b_0010_0000,
             Queen = 0b_0001_0000,
             Rook = 0b_0000_1000,
-            Bishop = 0b_0000_0100,
-            Knight = 0b_0000_0010,
+            Knight = 0b_0000_0100,
+            Bishop = 0b_0000_0010,
             Pawn = 0b_0000_0001,
+            AllPieces = King | Queen | Rook | Knight | Bishop | Pawn,
+            BothTeams = TeamB | TeamC
         }
         public static ChessPiece[,] Plansza = new ChessPiece[8, 8];
         public static ChessPiece[,] SzachyBC = new ChessPiece[8, 8];
@@ -65,50 +67,51 @@ namespace SzachyMulti
         public static void PostawPionki()
         {
             //pierwsze - linia, drugie, kolumna
-            Plansza[0, 0] = "wieza1B";
-            Plansza[0, 1] = "kon1B";
-            Plansza[0, 2] = "goniec1B";
-            Plansza[0, 3] = "krolowaB";
-            Plansza[0, 4] = "krolB";
-            Plansza[0, 5] = "goniec2B";
-            Plansza[0, 6] = "kon2B";
-            Plansza[0, 7] = "wieza2B";
-            Plansza[1, 0] = "pionek1B";
-            Plansza[1, 1] = "pionek2B";
-            Plansza[1, 2] = "pionek3B";
-            Plansza[1, 3] = "pionek4B";
-            Plansza[1, 4] = "pionek5B";
-            Plansza[1, 5] = "pionek6B";
-            Plansza[1, 6] = "pionek7B";
-            Plansza[1, 7] = "pionek8B";
+            Plansza[0, 0] = ChessPiece.Rook | ChessPiece.TeamB;
+            Plansza[0, 1] = ChessPiece.Knight | ChessPiece.TeamB;
+            Plansza[0, 2] = ChessPiece.Bishop | ChessPiece.TeamB;
+            Plansza[0, 3] = ChessPiece.Queen | ChessPiece.TeamB;
+            Plansza[0, 4] = ChessPiece.King | ChessPiece.TeamB;
+            Plansza[0, 5] = ChessPiece.Bishop | ChessPiece.TeamB;
+            Plansza[0, 6] = ChessPiece.Knight | ChessPiece.TeamB;
+            Plansza[0, 7] = ChessPiece.Rook | ChessPiece.TeamB;
+            Plansza[1, 0] = ChessPiece.Pawn | ChessPiece.TeamB;
+            Plansza[1, 1] = ChessPiece.Pawn | ChessPiece.TeamB;
+            Plansza[1, 2] = ChessPiece.Pawn | ChessPiece.TeamB;
+            Plansza[1, 3] = ChessPiece.Pawn | ChessPiece.TeamB;
+            Plansza[1, 4] = ChessPiece.Pawn | ChessPiece.TeamB;
+            Plansza[1, 5] = ChessPiece.Pawn | ChessPiece.TeamB;
+            Plansza[1, 6] = ChessPiece.Pawn | ChessPiece.TeamB;
+            Plansza[1, 7] = ChessPiece.Pawn | ChessPiece.TeamB;
             //DEBUG
-            Plansza[4, 2] = "pionek1C";
-            Plansza[3, 3] = "krolB";
-            Plansza[2, 0] = "krolC";
-            Plansza[2, 2] = "krolC";
-            Plansza[4, 7] = "kon123C";
-            Plansza[3, 5] = "krolB";
-            Plansza[3, 7] = "krolC";
-            Plansza[2, 5] = "kon123B";
-            Plansza[3, 0] = "krolC";
-            Plansza[5, 2] = "goniecB";
+            Plansza[4, 2] = ChessPiece.Pawn | ChessPiece.TeamC; //"pionek1C" :heart:
+            Plansza[3, 3] = ChessPiece.King | ChessPiece.TeamB; //"krol2B" :heart:
+            Plansza[2, 0] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
+            Plansza[2, 2] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
+            Plansza[4, 7] = ChessPiece.Knight | ChessPiece.TeamC; //"kon123C" :heart:
+            Plansza[3, 5] = ChessPiece.King | ChessPiece.TeamB; //"krolB" :heart:
+            Plansza[3, 7] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
+            Plansza[2, 5] = ChessPiece.Knight | ChessPiece.TeamB; //"kon123B" :heart:
+            Plansza[3, 0] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
+            Plansza[5,2] = ChessPiece.Bishop | ChessPiece.TeamB;
+            //Plansza[5, 2] = "goniecB"; //B :heart:
             //DEBUG
-            Plansza[7, 0] = "wieza1C";
-            Plansza[7, 1] = "kon1C";
-            Plansza[7, 2] = "goniec1C";
-            Plansza[7, 3] = "krolowaC";
-            Plansza[7, 4] = "krolC";
-            Plansza[7, 5] = "goniec2C";
-            Plansza[7, 6] = "kon2C";
-            Plansza[7, 7] = "wieza2C";
-            Plansza[6, 0] = "pionek1C";
-            Plansza[6, 1] = "pionek2C";
-            Plansza[6, 2] = "pionek3C";
-            Plansza[6, 3] = "pionek4C";
-            Plansza[6, 4] = "pionek5C";
-            Plansza[6, 5] = "pionek6C";
-            Plansza[6, 6] = "pionek7C";
-            Plansza[6, 7] = "pionek8C";
+            Plansza[7, 0] = ChessPiece.Rook | ChessPiece.TeamC;
+            Plansza[7, 1] = ChessPiece.Knight | ChessPiece.TeamC;
+            Plansza[7, 2] = ChessPiece.Bishop | ChessPiece.TeamC;
+            Plansza[7, 3] = ChessPiece.Queen | ChessPiece.TeamC;
+            Plansza[7, 4] = ChessPiece.King | ChessPiece.TeamC;
+            Plansza[7, 5] = ChessPiece.Bishop | ChessPiece.TeamC;
+            Plansza[7, 6] = ChessPiece.Knight | ChessPiece.TeamC;
+            Plansza[7, 7] = ChessPiece.Rook | ChessPiece.TeamC;
+            Plansza[6, 0] = ChessPiece.Pawn | ChessPiece.TeamC;
+            Plansza[6, 1] = ChessPiece.Pawn | ChessPiece.TeamC;
+            Plansza[6, 2] = ChessPiece.Pawn | ChessPiece.TeamC;
+            Plansza[6, 3] = ChessPiece.Pawn | ChessPiece.TeamC;
+            Plansza[6, 4] = ChessPiece.Pawn | ChessPiece.TeamC;
+            Plansza[6, 5] = ChessPiece.Pawn | ChessPiece.TeamC;
+            Plansza[6, 6] = ChessPiece.Pawn | ChessPiece.TeamC;
+            Plansza[6, 7] = ChessPiece.Pawn | ChessPiece.TeamC;
         }
         public static void OznaczSzachy(bool isTestingAfterMove)
         {
