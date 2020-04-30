@@ -61,9 +61,11 @@ namespace SzachyMulti
             AllPieces = King | Queen | Rook | Knight | Bishop | Pawn,
             BothTeams = TeamB | TeamC
         }
-        public static ChessPiece[,] Plansza = new ChessPiece[8, 8];
-        public static ChessPiece[,] SzachyBC = new ChessPiece[8, 8];
-        public static ChessPiece[,] HiddenSzachyBC = new ChessPiece[8, 8];
+        public static volatile ChessPiece[,] Plansza = new ChessPiece[8, 8];
+        public static volatile ChessPiece[,] SzachyBC = new ChessPiece[8, 8];
+        public static volatile ChessPiece[,] HiddenSzachyBC = new ChessPiece[8, 8];
+        public static volatile ChessPiece[,] BackupSzachyBC = new ChessPiece[8, 8];
+        public static volatile ChessPiece[,] BackupHiddenSzachyBC = new ChessPiece[8, 8];
         public static void PostawPionki()
         {
             //pierwsze - linia, drugie, kolumna
@@ -84,7 +86,8 @@ namespace SzachyMulti
             Plansza[1, 5] = ChessPiece.Pawn | ChessPiece.TeamB;
             Plansza[1, 6] = ChessPiece.Pawn | ChessPiece.TeamB;
             Plansza[1, 7] = ChessPiece.Pawn | ChessPiece.TeamB;
-            //DEBUG
+            //DEBUG 
+            // Ily ❤︎
             Plansza[4, 2] = ChessPiece.Pawn | ChessPiece.TeamC; //"pionek1C" :heart:
             Plansza[3, 3] = ChessPiece.King | ChessPiece.TeamB; //"krol2B" :heart:
             Plansza[2, 0] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
@@ -96,7 +99,8 @@ namespace SzachyMulti
             Plansza[3, 0] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
             Plansza[5,2] = ChessPiece.Bishop | ChessPiece.TeamB;
             //Plansza[5, 2] = "goniecB"; //B :heart:
-            //DEBUG
+            // ❤︎
+            //DEBUG 
             Plansza[7, 0] = ChessPiece.Rook | ChessPiece.TeamC;
             Plansza[7, 1] = ChessPiece.Knight | ChessPiece.TeamC;
             Plansza[7, 2] = ChessPiece.Bishop | ChessPiece.TeamC;
@@ -114,8 +118,9 @@ namespace SzachyMulti
             Plansza[6, 6] = ChessPiece.Pawn | ChessPiece.TeamC;
             Plansza[6, 7] = ChessPiece.Pawn | ChessPiece.TeamC;
         }
-        public static void OznaczSzachy(bool isTestingAfterMove)
+        public static void OznaczSzachy(/*TODO: REPLACE THIS SINCE IT'S NOT NEEDED, WE HAVE BACKUPS*/bool isTestingAfterMove)
         {
+            //TODO: MAKE BACKUPS BEFORE REDEFINING AND CHANGE BOARDS TO THE MERGED ONES
             SzachyB = new bool[8, 8];
             SzachyC = new bool[8, 8];
             HiddenSzachyB = new bool[8, 8];
@@ -701,9 +706,9 @@ namespace SzachyMulti
         {
             Console.Write("\n\t    A       B       C       D       E       F       G       H\n");
             //\t = 8 *'-'
-            //TODO: dodać rysowanie w drugą stronę i numerowanie pól!
+            //TODO: dodać rysowanie w drugą stronę i numerowanie pól! Done but keeping this for love and affection ❤︎
             //65 - "-----------------------------------------------------------------" (7*8 + 9)
-            if (Program.playerTeam == 'C')
+            if(Program.playerTeam == 'C')
             {
                 for (int linia = 0, x = 0; linia <= 7; linia++)
                 {
@@ -711,9 +716,9 @@ namespace SzachyMulti
                     Console.Write("\t|");
                     while (x < 8)
                     {
-                        if (Plansza[linia, x] == "krolC")
+                        if (Plansza[linia, x].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                         {
-                            if (SzachyB[linia, x] == true)
+                            if (SzachyBC[linia, x].HasFlag(ChessPiece.TeamC))
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.Write(" szach!");
@@ -736,7 +741,7 @@ namespace SzachyMulti
                     Console.Write($"    {linia + 1}   |");
                     while (x < 8)
                     {
-                        if (Plansza[linia, x] != null)
+                        if (Plansza[linia, x].HasFlag(ChessPiece.None))
                         {
                             NapiszPionek(linia, x);
                             Console.Write("|");
@@ -752,11 +757,11 @@ namespace SzachyMulti
                     Console.Write("\t|");
                     while (x < 8)
                     {
-                        if (Plansza[linia, x] == "krolB")
+                        if (Plansza[linia, x].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                         {
-                            if (SzachyC[linia, x] == true)
+                            if (SzachyBC[linia, x].HasFlag(ChessPiece.TeamC))
                             {
-                                Console.ForegroundColor = ConsoleColor.DarkRed;
+                                Console.ForegroundColor = ConsoleColor.Red;
                                 Console.Write(" szach!");
                                 Console.ForegroundColor = ConsoleColor.White;
                                 Console.Write("|");
@@ -785,9 +790,9 @@ namespace SzachyMulti
                     Console.Write("\t|");
                     while (x < 8)
                     {
-                        if (Plansza[linia, x] == "krolB")
+                        if (Plansza[linia, x].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                         {
-                            if (SzachyC[linia, x] == true)
+                            if (SzachyBC[linia, x].HasFlag(ChessPiece.TeamC))
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.Write(" szach!");
@@ -810,7 +815,7 @@ namespace SzachyMulti
                     Console.Write($"    {linia + 1}   |");
                     while (x < 8)
                     {
-                        if (Plansza[linia, x] != null)
+                        if (Plansza[linia, x].HasFlag(ChessPiece.None))
                         {
                             NapiszPionek(linia, x);
                             Console.Write("|");
@@ -826,9 +831,9 @@ namespace SzachyMulti
                     Console.Write("\t|");
                     while (x < 8)
                     {
-                        if (Plansza[linia, x] == "krolC")
+                        if (Plansza[linia, x].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                         {
-                            if (SzachyB[linia, x] == true)
+                            if (SzachyBC[linia, x].HasFlag(ChessPiece.TeamC))
                             {
                                 Console.ForegroundColor = ConsoleColor.DarkRed;
                                 Console.Write(" szach!");
