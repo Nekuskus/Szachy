@@ -67,6 +67,7 @@ namespace SzachyMulti
         public static void PostawPionki()
         {
             //pierwsze - linia, drugie, kolumna
+            //Ily my pieces
             Plansza[0, 0] = ChessPiece.Rook | ChessPiece.TeamB;
             Plansza[0, 1] = ChessPiece.Knight | ChessPiece.TeamB;
             Plansza[0, 2] = ChessPiece.Bishop | ChessPiece.TeamB;
