@@ -60,10 +60,8 @@ namespace SzachyMulti
             Pawn = 0b_0000_0001,
         }
         public static ChessPiece[,] Plansza = new ChessPiece[8, 8];
-        public static volatile bool[,] SzachyB = new bool[8, 8];
-        public static bool[,] SzachyC = new bool[8, 8];
-        public static bool[,] HiddenSzachyB = new bool[8,8];
-        public static bool[,] HiddenSzachyC = new bool[8, 8];
+        public static ChessPiece[,] SzachyBC = new ChessPiece[8, 8];
+        public static ChessPiece[,] HiddenSzachyBC = new ChessPiece[8, 8];
         public static void PostawPionki()
         {
             //pierwsze - linia, drugie, kolumna
