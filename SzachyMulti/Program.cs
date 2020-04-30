@@ -11,8 +11,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Credentials;
-using System.Data.SqlTypes;
-using System.Security.Cryptography.X509Certificates;
 
 namespace SzachyMulti
 {
@@ -48,8 +46,21 @@ namespace SzachyMulti
     };
     public static class Szachy
     {
+        [Flags]
+        public enum ChessPiece
+        {
+            None = 0b_0000_0000,
+            TeamB = 0b_1000_0000,
+            TeamW = 0b_0100_0000,
+            King = 0b_0010_0000,
+            Queen = 0b_0001_0000,
+            Rook = 0b_0000_1000,
+            Bishop = 0b_0000_0100,
+            Knight = 0b_0000_0010,
+            Pawn = 0b_0000_0001,
+        }
         public static string[,] Plansza = new string[8, 8];
-        public static bool[,] SzachyB = new bool[8, 8];
+        public static volatile bool[,] SzachyB = new bool[8, 8];
         public static bool[,] SzachyC = new bool[8, 8];
         public static bool[,] HiddenSzachyB = new bool[8,8];
         public static bool[,] HiddenSzachyC = new bool[8, 8];
@@ -1052,7 +1063,6 @@ namespace SzachyMulti
     }
     public class Program
     {
-        public static bool optimizeChecks = new bool();
         public static Random rand = new Random();
         public static bool hasOtherPlayerJoined = false;
         public static bool isApppending = false;
@@ -1338,42 +1348,8 @@ namespace SzachyMulti
         }
         static void Main(string[] args)
         {
-            try
-            {
-                using (StreamReader sr = new StreamReader(@".\optimize.txt"))
-                {
-                    optimizeChecks = Convert.ToBoolean(sr.ReadLine());
-                }
-            }
-            catch
-            {
-                Console.Write("Podczas rozgrywki gra wykonuje wiele operacji, ktore sa przydatne dla dewelopera, lecz moga minimalnie zmniejszac predkosc gry. Czy chcesz je zoptymalizowac? t/n\nTo ustawienie da sie rowniez zmienic w lobby. (To powiadomienie nie bedzie sie juz pojawiac)\n>");
-                shouldoptimizegoto:
-                string shouldoptimize = Console.ReadLine().ToLower();
-                if (shouldoptimize.Contains("t"))
-                {
-                    using (StreamWriter sw = File.CreateText(@".\optimize.txt"))
-                        sw.WriteLine("true");
-                    optimizeChecks = true;
-                    Thread.Sleep(1500);
-                    Console.Clear();
-                }
-                else if(shouldoptimize.Contains("n"))
-                {
-                    using (StreamWriter sw = File.CreateText(@".\optimize.txt"))
-                        sw.WriteLine("false");
-                    optimizeChecks = false;
-                    Thread.Sleep(1500);
-                    Console.Clear();
-                }
-                else
-                {
-                    Console.WriteLine("Niepoprawna odpowiedz");
-                    goto shouldoptimizegoto;
-                }
-            }
             Szachy.PostawPionki();
-            Szachy.OznaczSzachy();
+            Szachy.OznaczSzachy(false);
             Szachy.NarysujPlansze();
             playerTeam = 'C';
             Szachy.NarysujPlansze();
