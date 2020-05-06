@@ -28,24 +28,22 @@ namespace SzachyMulti
     }
     public abstract class InvalidEnemyMoveException : Exception
     {
-        public override string Message
+        private string _Message
         {
-            get
-            {   
-                return "Enemy client has sent an invalid move: "; //Add information about the move here!
-            }
+            get => _Message;
+            set => _Message = value;
         }
-    }
-    public class InvalidEnemyMoveDerivedException : InvalidEnemyMoveException
-    {
-        private string _Message;
         public override string Message
         {
             get => _Message;
         }
-        public InvalidEnemyMoveDerivedException(string MoveInfo)
+        public InvalidEnemyMoveException()
         {
-            _Message = base.Message + MoveInfo;
+            _Message = "Enemy client has sent an invalid move: "; //Add information about the move here!
+        }
+        public InvalidEnemyMoveException(String message) : base(message)
+        {
+            _Message = "Enemy client has sent an invalid move: " + message;
         }
     }
     public struct Pozycja
@@ -498,7 +496,7 @@ namespace SzachyMulti
                         {
                             if((_i > -1) && (_i2 < 8))
                             {
-                                if(!(Plansza[_i,_i2]== ChessPiece.None))
+                                if(!(Plansza[_i,_i2] == ChessPiece.None))
                                 {
                                     if(Plansza[_i, _i2].HasFlag(ChessPiece.King))
                                     {
@@ -539,22 +537,22 @@ namespace SzachyMulti
                         {
                             if(!(_i >= 8) && !(_i2 >= 8))
                             {
-                                if(Plansza[_i,_i2] != null)
+                                if(!(Plansza[_i,_i2] == ChessPiece.None))
                                 {
-                                    if(Plansza[_i,_i2].StartsWith("krol"))
+                                    if(Plansza[_i,_i2].HasFlag(ChessPiece.King))
                                     {
                                         switch (Team)
                                         {
                                             case 'B':
-                                                if(Plansza[_i,_i2].Last() == 'C')
+                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamC))
                                                 {
-                                                    SzachyB[_i, _i2] = true;
+                                                    SzachyBC[_i, _i2] |= ChessPiece.TeamB;
                                                 }
                                                 break;
                                             case 'C':
-                                                if(Plansza[_i, _i2].Last() == 'B')
+                                                if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamB))
                                                 {
-                                                    SzachyC[_i, _i2] = true;
+                                                    SzachyBC[_i, _i2] |= ChessPiece.TeamC;
                                                 }
                                                 break;
                                         } 
@@ -696,7 +694,8 @@ namespace SzachyMulti
                         }
                     }
                     if(Plansza[i,i2].HasFlag(ChessPiece.Rook))
-                    {   if(Plansza[i,i2].HasFlag(ChessPiece.TeamC))
+                    {   
+                        if(Plansza[i,i2].HasFlag(ChessPiece.TeamC))
                         {
 
                         }
@@ -705,7 +704,7 @@ namespace SzachyMulti
 
                         }
                     }
-                    if(Plansza[i,i2].HasFlag(ChessPiece.Rook))
+                    if (Plansza[i,i2].HasFlag(ChessPiece.King))
                     {
                         if(Plansza[i,i2].HasFlag(ChessPiece.TeamC))
                         {
@@ -732,6 +731,7 @@ namespace SzachyMulti
                     }
                 }
                 //PAMIĘTAJ O SPRAWDZANIU CZY KRÓL MA SZACHA U OBU DRUŻYN
+                //JEŚLI TAK TO PRZYWRÓĆ BACKUP I GŁÓWNEGO I HIDDEN
             }
         }
         public static void NarysujPlansze()
