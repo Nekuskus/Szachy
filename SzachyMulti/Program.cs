@@ -1257,7 +1257,7 @@ namespace SzachyMulti
         }
         static void Chat()
         {
-            StreamReader chatReader = new StreamReader($@".\Chat\Logs\Log{ID}.txt"))
+            StreamReader chatReader = new StreamReader($@".\Chat\Logs\Log{ID}.txt");
             chatLog = null;
             chatLog.AddRange(chatReader.ReadToEnd().Split('\n'));
             int countNow = chatLog.Count();
@@ -1606,7 +1606,7 @@ namespace SzachyMulti
         }
         static void ChatThread()
         {
-            while (true)
+            while(isChatOpen)
             {
                 Chat();
                 Thread.Sleep(500);
