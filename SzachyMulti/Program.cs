@@ -165,7 +165,7 @@ namespace SzachyMulti
                             {
                                 if(!(i2-1 <= -1))
                                 {
-                                    if(!(Plansza[i+1, i2-1].HasFlag(ChessPiece.None)))
+                                    if(!(Plansza[i+1, i2-1] == ChessPiece.None))
                                     {
                                         if(Plansza[i+1, i2-1].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                                         {
@@ -179,7 +179,7 @@ namespace SzachyMulti
                                 }
                                 if(!(i2+1 >= 8))
                                 {
-                                    if(!(Plansza[i+1, i2+1].HasFlag(ChessPiece.None)))
+                                    if(!(Plansza[i+1, i2+1] == ChessPiece.None))
                                     {
                                         if(Plansza[i+1, i2+1].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                                         {
@@ -313,7 +313,7 @@ namespace SzachyMulti
                                 }
                                 if(!(i2+1 >= 8))
                                 {
-                                    if(!(Plansza[i+2, i2+1].HasFlag(ChessPiece.None)))
+                                    if(!(Plansza[i+2, i2+1] == ChessPiece.None))
                                     {
                                         if(Plansza[i+2, i2+1].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                                         {
@@ -330,7 +330,7 @@ namespace SzachyMulti
                             {
                                 if(!(i2-2 <= -1))
                                 {
-                                    if(!(Plansza[i+1, i2-2].HasFlag(ChessPiece.None)))
+                                    if(!(Plansza[i+1, i2-2] == ChessPiece.None))
                                     {
                                         if(Plansza[i+1, i2-2].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                                         {
@@ -344,7 +344,7 @@ namespace SzachyMulti
                                 }
                                 if(!(i2+2 >= 8))
                                 {
-                                    if(!(Plansza[i+1, i2+2].HasFlag(ChessPiece.None)))
+                                    if(!(Plansza[i+1, i2+2] == ChessPiece.None))
                                     {
                                         if(Plansza[i+1, i2+2].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                                         {
@@ -363,7 +363,7 @@ namespace SzachyMulti
                                 {
                                     if(!(i2-1 <= -1))
                                     {
-                                        if(!(Plansza[i-2, i2-1].HasFlag(ChessPiece.None)))
+                                        if(!(Plansza[i-2, i2-1] == ChessPiece.None))
                                         {
                                             if(Plansza[i-2, i2-1].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                             {
@@ -377,7 +377,7 @@ namespace SzachyMulti
                                     }
                                     if(!(i2+1 >= 8))
                                     {
-                                        if(!(Plansza[i-2, i2+1].HasFlag(ChessPiece.None)))
+                                        if(!(Plansza[i-2, i2+1] == ChessPiece.None))
                                         {
                                             if(Plansza[i-2, i2+1].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                             {
@@ -394,7 +394,7 @@ namespace SzachyMulti
                                 {
                                     if(!(i2-2 <= -1))
                                     {
-                                        if(!(Plansza[i-1, i2-2].HasFlag(ChessPiece.None)))
+                                        if(!(Plansza[i-1, i2-2] == ChessPiece.None))
                                         {
                                             if(Plansza[i-1, i2-2].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                             {
@@ -408,7 +408,7 @@ namespace SzachyMulti
                                     }
                                     if(!(i2+2 >= 8))
                                     {
-                                        if(!(Plansza[i-1, i2+2].HasFlag(ChessPiece.None)))
+                                        if(!(Plansza[i-1, i2+2] == ChessPiece.None))
                                         {
                                             if(Plansza[i-1, i2+2].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                             {
@@ -425,7 +425,7 @@ namespace SzachyMulti
                                 {
                                     if(!(i2-1 <= -1))
                                     {
-                                        if(!(Plansza[i+2, i2-1].HasFlag(ChessPiece.None)))
+                                        if(!(Plansza[i+2, i2-1] == ChessPiece.None))
                                         {
                                             if(Plansza[i+2, i2-1].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                             {
@@ -439,7 +439,7 @@ namespace SzachyMulti
                                     }
                                     if(!(i2+1 >= 8))
                                     {
-                                        if(!(Plansza[i+2, i2+1].HasFlag(ChessPiece.None)))
+                                        if(!(Plansza[i+2, i2+1] == ChessPiece.None))
                                         {
                                             if(Plansza[i+2, i2+1].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                             {
@@ -456,7 +456,7 @@ namespace SzachyMulti
                                 {
                                     if(!(i2-2 <= -1))
                                     {
-                                        if(!(Plansza[i+1, i2-2].HasFlag(ChessPiece.None)))
+                                        if(!(Plansza[i+1, i2-2] == ChessPiece.None))
                                         {
                                             if(Plansza[i+1, i2-2].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                             {
@@ -470,7 +470,7 @@ namespace SzachyMulti
                                     }
                                     if(!(i2+2 >= 8))
                                     {
-                                        if(!(Plansza[i+1, i2+2].HasFlag(ChessPiece.None)))
+                                        if(!(Plansza[i+1, i2+2] == ChessPiece.None))
                                         {
                                             if(Plansza[i+1, i2+2].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                             {
@@ -768,7 +768,7 @@ namespace SzachyMulti
                     Console.Write($"    {linia + 1}   |");
                     while(x < 8)
                     {
-                        if(!(Plansza[linia, x].HasFlag(ChessPiece.None)))
+                        if(!(Plansza[linia, x] == ChessPiece.None))
                         {
                             NapiszPionek(linia, x);
                             Console.Write("|");
@@ -842,7 +842,7 @@ namespace SzachyMulti
                     Console.Write($"    {linia + 1}   |");
                     while(x < 8)
                     {
-                        if(!(Plansza[linia, x].HasFlag(ChessPiece.None)))
+                        if(!(Plansza[linia, x] == ChessPiece.None))
                         {
                             NapiszPionek(linia, x);
                             Console.Write("|");
