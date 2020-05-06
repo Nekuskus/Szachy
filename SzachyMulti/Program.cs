@@ -77,7 +77,7 @@ namespace SzachyMulti
             TeamB = 0b_0100_0000,
             TeamC = 0b_1000_0000,
             King = 0b_0010_0000,
-            Queen = 0b_0001_0000,
+            Queen = Rook | Bishop,
             Rook = 0b_0000_1000,
             Knight = 0b_0000_0100,
             Bishop = 0b_0000_0010,
@@ -142,13 +142,13 @@ namespace SzachyMulti
             Plansza[6, 6] = ChessPiece.Pawn | ChessPiece.TeamC;
             Plansza[6, 7] = ChessPiece.Pawn | ChessPiece.TeamC;
         }
-        public static void OznaczSzachy(/*TODO: REPLACE THIS SINCE IT'S NOT NEEDED, WE HAVE BACKUPS*/bool isTestingAfterMove)
+        public static void OznaczSzachy()
         {
-            //TODO: MAKE BACKUPS BEFORE REDEFINING AND CHANGE BOARDS TO THE MERGED ONES
-            SzachyB = new bool[8, 8];
-            SzachyC = new bool[8, 8];
-            HiddenSzachyB = new bool[8, 8];
-            HiddenSzachyC = new bool[8, 8];
+            //DONE: MAKE BACKUPS BEFORE REDEFINING AND CHANGE BOARDS TO THE MERGED ONES
+            BackupSzachyBC = SzachyBC;
+            BackupHiddenSzachyBC = HiddenSzachyBC;
+            SzachyBC = new ChessPiece[8, 8];
+            HiddenSzachyBC = new ChessPiece[8, 8];
             for (int i = 0, i2 = 0; i < 8; i2++)
             {
                 if (i2 == 8)
@@ -160,567 +160,575 @@ namespace SzachyMulti
                         continue;
                     }
                 }
-                if (!(Plansza[i, i2] == null))
+                if (!(Plansza[i,i2] == ChessPiece.None))
                 {
-                    switch (Plansza[i, i2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C'))
+                    //in memory :heart: switch (Plansza[i, i2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C'))
+                    if(Plansza[i,i2].HasFlag(ChessPiece.Pawn))
                     {
-                        case "pionek":
-                            switch (Plansza[i, i2].Last())
+                        // switch (Plansza[i, i2].Last()) :heart:
+                        if(Plansza[i,i2].HasFlag(ChessPiece.TeamB))
+                        {
+                            if (!(i+1 >= 8))
                             {
-                                case 'B':
-                                    if (!(i+1 >= 8))
-                                    {
-                                        if (!(i2-1 <= -1))
-                                        {
-                                            if (Plansza[i+1,i2-1] != null)
-                                            {
-                                                if (Plansza[i+1, i2-1] == "krolC")
-                                                {
-                                                    SzachyB[i+1, i2-1] = true;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyB[i+1,i2-1] = true;
-                                            }
-                                        }
-                                        if (!(i2+1 >= 8))
-                                        {
-                                            if (Plansza[i+1,i2+1] != null)
-                                            {
-                                                if (Plansza[i+1, i2+1] == "krolC")
-                                                {
-                                                    SzachyB[i+1, i2+1] = true;
-                                                }
-                                            }
-                                            else 
-                                            {
-                                                HiddenSzachyB[i+1,i2+1] = true;
-                                            }
-                                        }
-                                    }
-                                    break;
-                                case 'C':
-                                    if (!(i-1 <= -1))
-                                    {
-                                        if (!(i2+1 >= 8))
-                                        {
-                                            if (Plansza[i-1,i2+1] != null)
-                                            {
-                                                if (Plansza[i-1, i2+1] == "krolB")
-                                                {
-                                                    SzachyC[i-1, i2+1] = true;
-                                                } 
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyC[i-1,i2+1] = true;
-                                            }
-                                        }
-                                        if (!(i2-1 <= -1))
-                                        {
-                                            if (Plansza[i-1,i2-1] != null)
-                                            {
-                                                if (Plansza[i-1, i2-1] == "krolB")
-                                                {
-                                                    SzachyC[i-1, i2-1] = true;
-                                                } 
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyC[i-1,i2-1] = true;
-                                            }
-                                        }
-                                    }
-                                    break;
-                            }
-                            break;
-                        case "kon":
-                            switch (Plansza[i, i2].Last())
-                            {
-                                case 'B':
-                                    if (!(i-2 <= -1))
-                                    {
-                                        if (!(i2-1 <= -1))
-                                        {
-                                            if (Plansza[i-2, i2-1] != null)
-                                            {
-                                                if (Plansza[i-2, i2-1] == "krolC")
-                                                {
-                                                    SzachyB[i-2, i2-1] = true;
-                                                }
-                                            }
-                                            else
-                                            {
-                                               HiddenSzachyB[i-2,i2-1] = true;
-                                            }
-                                        }
-                                        if (!(i2+1 >= 8))
-                                        {
-                                            if (Plansza[i-2, i2+1] != null)
-                                            {
-                                                if (Plansza[i-2, i2+1] == "krolC")
-                                                {
-                                                    SzachyB[i-2, i2+1] = true;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyB[i-2, i2+1] = true;
-                                            }
-                                        }
-                                    }
-                                    if (!(i-1 <= -1))
-                                    {
-                                        if (!(i2-2 <= -1))
-                                        {
-                                            if (Plansza[i-1,i2-2] != null)
-                                            {
-                                                if (Plansza[i-1, i2-2] == "krolC")
-                                                {
-                                                    SzachyB[i-1, i2-2] = true;
-                                                } 
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyB[i-1,i2-2] = true;
-                                            }
-                                        }
-                                        if (!(i2+2 >= 8))
-                                        {
-                                            if (Plansza[i-1,i2+2] != null)
-                                            {
-                                                if (Plansza[i-1, i2+2] == "krolC")
-                                                {
-                                                    SzachyB[i-1, i2+2] = true;
-                                                } 
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyB[i-1,i2+2] = true;
-                                            }
-                                        }
-                                    }
-                                    if (!(i+2 >= 8))
-                                    {
-                                        if (!(i2-1 <= -1))
-                                        {
-                                            if (Plansza[i+2,i2-1] != null)
-                                            {
-                                                if (Plansza[i+2, i2-1] == "krolC")
-                                                {
-                                                    SzachyB[i+2, i2-1] = true;
-                                                } 
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyB[i+2,i2-1] = true;
-                                            }
-                                        }
-                                        if (!(i2+1 >= 8))
-                                        {
-                                            if (Plansza[i+2,i2+1] != null)
-                                            {
-                                                if (Plansza[i+2, i2+1] == "krolC")
-                                                {
-                                                    SzachyB[i+2, i2+1] = true;
-                                                } 
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyB[i+2, i2+1] = true;
-                                            }
-                                        }
-                                    }
-                                    if (!(i+1 >= 8))
-                                    {
-                                        if (!(i2-2 <= -1))
-                                        {
-                                            if (Plansza[i+1,i2-2] != null) 
-                                            {
-                                                if (Plansza[i+1, i2-2] == "krolC")
-                                                {
-                                                    SzachyB[i+1, i2-2] = true;
-                                                } 
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyB[i+1, i2-2] = true;
-                                            }
-                                        }
-                                        if (!(i2+2 >= 8))
-                                        {
-                                            if (Plansza[i+1,i2+2] != null)
-                                            {
-                                                if (Plansza[i+1, i2+2] == "krolC")
-                                                {
-                                                    SzachyB[i+1, i2+2] = true;
-                                                } 
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyB[i+1, i2+2] = true;
-                                            }
-                                        }
-                                    }
-                                    break;
-                                case 'C':
-                                    if (!(i-2 <= -1))
-                                    {
-                                        if (!(i2-1 <= -1))
-                                        {
-                                            if (Plansza[i-2,i2-1] != null)
-                                            {
-                                                if (Plansza[i-2, i2-1] == "krolB")
-                                                {
-                                                    SzachyC[i-2, i2-1] = false;
-                                                } 
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyC[i-2, i2-1] = true;
-                                            }
-                                        }
-                                        if (!(i2+1 >= 8))
-                                        {
-                                            if (Plansza[i-2,i2+1] != null)
-                                            {
-                                                if (Plansza[i-2, i2+1] == "krolB")
-                                                {
-                                                    SzachyC[i-2, i2+1] = false;
-                                                } 
-                                            }
-                                            else
-                                            {
-                                                SzachyC[i-2, i2+1] = true;
-                                            }
-                                        }
-                                    }
-                                    if (!(i-1 <= -1))
-                                    {
-                                        if (!(i2-2 <= -1))
-                                        {
-                                            if (Plansza[i-1, i2-2] != null)
-                                            {
-                                                if (Plansza[i-1, i2-2] == "krolB")
-                                                {
-                                                    SzachyC[i-1, i2-2] = true;
-                                                } 
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyC[i-1, i2-2] = true;
-                                            }
-                                        }
-                                        if (!(i2+2 >= 8))
-                                        {
-                                            if (Plansza[i-1, i2+2] != null)
-                                            {
-                                                if (Plansza[i-1, i2+2] == "krolB")
-                                                {
-                                                    SzachyC[i-1, i2+2] = true;
-                                                } 
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyC[i-1, i2+2] = true;
-                                            }
-                                        }
-                                    }
-                                    if (!(i+2 >= 8))
-                                    {
-                                        if (!(i2-1 <= -1))
-                                        {
-                                            if (Plansza[i+2,i2-1] != null)
-                                            {
-                                                if (Plansza[i+2, i2-1] == "krolB")
-                                                {
-                                                    SzachyC[i+2, i2-1] = true;
-                                                } 
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyC[i+2,i2-1] = true;
-                                            }
-                                        }
-                                        if (!(i2+1 >= 8))
-                                        {
-                                            if (Plansza[i+2,i2+1] != null)
-                                            {
-                                                if (Plansza[i+2, i2+1] == "krolB")
-                                                {
-                                                    SzachyC[i+2, i2+1] = true;
-                                                } 
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyC[i+2,i2+1] = true;
-                                            }
-                                        }
-                                    }
-                                    if (!(i+1 >= 8))
-                                    {
-                                        if (!(i2-2 <= -1))
-                                        {
-                                            if (Plansza[i+1,i2-2] != null)
-                                            {
-                                                if (Plansza[i+1, i2-2] == "krolB")
-                                                {
-                                                    SzachyC[i+1, i2-2] = true;
-                                                } 
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyC[i+1, i2-2] = true;
-                                            }
-                                        }
-                                        if (!(i2+2 >= 8))
-                                        {
-                                            if (Plansza[i+1,i2+2] != null)
-                                            {
-                                                if (Plansza[i+1, i2+2] == "krolB")
-                                                {
-                                                    SzachyC[i+1, i2+2] = true;
-                                                } 
-                                            }
-                                            else
-                                            {
-                                                HiddenSzachyC[i+1,i2+2] = true;
-                                            }
-                                        }
-                                    }
-                                    break;
-                            }
-                            break;
-                        case "goniec":
-                            void CheckBishopRightUp(int _i, int _i2, char Team)
-                            {
-                                if((_i > -1) && (_i2 < 8))
+                                if (!(i2-1 <= -1))
                                 {
-                                    if(Plansza[_i,_i2] != null)
+                                    if (!(Plansza[i+1,i2-1].HasFlag(ChessPiece.None)))
                                     {
-                                        if(Plansza[_i, _i2].StartsWith("krol"))
+                                        if (Plansza[i+1,i2-1].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                                         {
-                                            switch (Team)
-                                            {
-                                                case 'B':
-                                                    if(Plansza[_i, _i2].Last() == 'C')
-                                                    {
-                                                        SzachyB[_i, _i2] = true;
-                                                    }
-                                                    break;
-                                                case 'C':
-                                                    if(Plansza[_i, _i2].Last() == 'B')
-                                                    {
-                                                        SzachyC[_i, _i2] = true;
-                                                    }
-                                                    break;
-                                            } 
+                                            SzachyBC[i+1, i2-1] |= ChessPiece.TeamB;
                                         }
                                     }
                                     else
+                                    {
+                                        HiddenSzachyBC[i+1,i2-1] |= ChessPiece.TeamB;
+                                    }
+                                }
+                                if (!(i2+1 >= 8))
+                                {
+                                    if (!(Plansza[i+1,i2+1].HasFlag(ChessPiece.None)))
+                                    {
+                                        if (Plansza[i+1, i2+1].HasFlag(ChessPiece.King | ChessPiece.TeamC))
+                                        {
+                                            SzachyBC[i+1, i2+1] |= ChessPiece.TeamB;
+                                        }
+                                    }
+                                    else 
+                                    {
+                                        HiddenSzachyBC[i+1,i2+1] |= ChessPiece.TeamB;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (!(i-1 <= -1))
+                            {
+                                if (!(i2+1 >= 8))
+                                {
+                                    if (!(Plansza[i-1,i2+1] == ChessPiece.None))
+                                    {
+                                        if (Plansza[i-1, i2+1].HasFlag(ChessPiece.King | ChessPiece.TeamB))
+                                        {
+                                            SzachyBC[i-1, i2+1] |= ChessPiece.TeamC;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyBC[i-1,i2+1] |= ChessPiece.TeamC;
+                                    }
+                                }
+                                if (!(i2-1 <= -1))
+                                {
+                                    if (!(Plansza[i-1,i2-1] == ChessPiece.None))
+                                    {
+                                        if (Plansza[i-1, i2-1].HasFlag(ChessPiece.King | ChessPiece.TeamB))
+                                        {
+                                            SzachyBC[i-1, i2-1] |= ChessPiece.TeamC;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyBC[i-1,i2-1] |= ChessPiece.TeamC;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(Plansza[i, i2].HasFlag(ChessPiece.Knight))
+                    {
+                            //switch (Plansza[i, i2].Last())
+                        if(Plansza[i, i2].HasFlag(ChessPiece.TeamB))
+                        {
+                            if (!(i-2 <= -1))
+                            {
+                                if (!(i2-1 <= -1))
+                                {
+                                    if (Plansza[i-2, i2-1] != null)
+                                    {
+                                        if (Plansza[i-2, i2-1] == "krolC")
+                                        {
+                                            SzachyB[i-2, i2-1] = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyB[i-2,i2-1] = true;
+                                    }
+                                }
+                                if (!(i2+1 >= 8))
+                                {
+                                    if (Plansza[i-2, i2+1] != null)
+                                    {
+                                        if (Plansza[i-2, i2+1] == "krolC")
+                                        {
+                                            SzachyB[i-2, i2+1] = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyB[i-2, i2+1] = true;
+                                    }
+                                }
+                            }
+                            if (!(i-1 <= -1))
+                            {
+                                if (!(i2-2 <= -1))
+                                {
+                                    if (Plansza[i-1,i2-2] != null)
+                                    {
+                                        if (Plansza[i-1, i2-2] == "krolC")
+                                        {
+                                            SzachyB[i-1, i2-2] = true;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyB[i-1,i2-2] = true;
+                                    }
+                                }
+                                if (!(i2+2 >= 8))
+                                {
+                                    if (Plansza[i-1,i2+2] != null)
+                                    {
+                                        if (Plansza[i-1, i2+2] == "krolC")
+                                        {
+                                            SzachyB[i-1, i2+2] = true;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyB[i-1,i2+2] = true;
+                                    }
+                                }
+                            }
+                            if (!(i+2 >= 8))
+                            {
+                                if (!(i2-1 <= -1))
+                                {
+                                    if (Plansza[i+2,i2-1] != null)
+                                    {
+                                        if (Plansza[i+2, i2-1] == "krolC")
+                                        {
+                                            SzachyB[i+2, i2-1] = true;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyB[i+2,i2-1] = true;
+                                    }
+                                }
+                                if (!(i2+1 >= 8))
+                                {
+                                    if (Plansza[i+2,i2+1] != null)
+                                    {
+                                        if (Plansza[i+2, i2+1] == "krolC")
+                                        {
+                                            SzachyB[i+2, i2+1] = true;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyB[i+2, i2+1] = true;
+                                    }
+                                }
+                            }
+                            if (!(i+1 >= 8))
+                            {
+                                if (!(i2-2 <= -1))
+                                {
+                                    if (Plansza[i+1,i2-2] != null) 
+                                    {
+                                        if (Plansza[i+1, i2-2] == "krolC")
+                                        {
+                                            SzachyB[i+1, i2-2] = true;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyB[i+1, i2-2] = true;
+                                    }
+                                }
+                                if (!(i2+2 >= 8))
+                                {
+                                    if (Plansza[i+1,i2+2] != null)
+                                    {
+                                        if (Plansza[i+1, i2+2] == "krolC")
+                                        {
+                                            SzachyB[i+1, i2+2] = true;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyB[i+1, i2+2] = true;
+                                    }
+                                }
+                            }
+                        else
+                        {
+                            if (!(i-2 <= -1))
+                            {
+                                if (!(i2-1 <= -1))
+                                {
+                                    if (Plansza[i-2,i2-1] != null)
+                                    {
+                                        if (Plansza[i-2, i2-1] == "krolB")
+                                        {
+                                            SzachyC[i-2, i2-1] = false;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyC[i-2, i2-1] = true;
+                                    }
+                                }
+                                if (!(i2+1 >= 8))
+                                {
+                                    if (Plansza[i-2,i2+1] != null)
+                                    {
+                                        if (Plansza[i-2, i2+1] == "krolB")
+                                        {
+                                            SzachyC[i-2, i2+1] = false;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        SzachyC[i-2, i2+1] = true;
+                                    }
+                                }
+                            }
+                            if (!(i-1 <= -1))
+                            {
+                                if (!(i2-2 <= -1))
+                                {
+                                    if (Plansza[i-1, i2-2] != null)
+                                    {
+                                        if (Plansza[i-1, i2-2] == "krolB")
+                                        {
+                                            SzachyC[i-1, i2-2] = true;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyC[i-1, i2-2] = true;
+                                    }
+                                }
+                                if (!(i2+2 >= 8))
+                                {
+                                    if (Plansza[i-1, i2+2] != null)
+                                    {
+                                        if (Plansza[i-1, i2+2] == "krolB")
+                                        {
+                                            SzachyC[i-1, i2+2] = true;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyC[i-1, i2+2] = true;
+                                    }
+                                }
+                            }
+                            if (!(i+2 >= 8))
+                            {
+                                if (!(i2-1 <= -1))
+                                {
+                                    if (Plansza[i+2,i2-1] != null)
+                                    {
+                                        if (Plansza[i+2, i2-1] == "krolB")
+                                        {
+                                            SzachyC[i+2, i2-1] = true;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyC[i+2,i2-1] = true;
+                                    }
+                                }
+                                if (!(i2+1 >= 8))
+                                {
+                                    if (Plansza[i+2,i2+1] != null)
+                                    {
+                                        if (Plansza[i+2, i2+1] == "krolB")
+                                        {
+                                            SzachyC[i+2, i2+1] = true;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyC[i+2,i2+1] = true;
+                                    }
+                                }
+                            }
+                            if (!(i+1 >= 8))
+                            {
+                                if (!(i2-2 <= -1))
+                                {
+                                    if (Plansza[i+1,i2-2] != null)
+                                    {
+                                        if (Plansza[i+1, i2-2] == "krolB")
+                                        {
+                                            SzachyC[i+1, i2-2] = true;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyC[i+1, i2-2] = true;
+                                    }
+                                }
+                                if (!(i2+2 >= 8))
+                                {
+                                    if (Plansza[i+1,i2+2] != null)
+                                    {
+                                        if (Plansza[i+1, i2+2] == "krolB")
+                                        {
+                                            SzachyC[i+1, i2+2] = true;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        HiddenSzachyC[i+1,i2+2] = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(Plansza[i,i2].HasFlag(ChessPiece.Bishop))
+                    {
+                        void CheckBishopRightUp(int _i, int _i2, char Team)
+                        {
+                            if((_i > -1) && (_i2 < 8))
+                            {
+                                if(!(Plansza[_i,_i2]== ChessPiece.None))
+                                {
+                                    if(Plansza[_i, _i2].HasFlag(ChessPiece.King))
                                     {
                                         switch (Team)
                                         {
                                             case 'B':
-                                                HiddenSzachyB[_i, _i2] = true;
+                                                if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamC))
+                                                {
+                                                    SzachyBC[_i, _i2] |= ChessPiece.TeamB;
+                                                }
                                                 break;
                                             case 'C':
-                                                HiddenSzachyC[_i, _i2] = true;
+                                                if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamB))
+                                                {
+                                                    SzachyBC[_i, _i2] |= ChessPiece.TeamC;
+                                                }
                                                 break;
-                                        }
-                                        CheckBishopRightUp(_i-1,_i2+1,Team);
+                                        } 
                                     }
                                 }
-                                return;
-                            }
-                            void CheckBishopRightDown(int _i, int _i2, char Team)
-                            {
-                                if(!(_i >= 8) && !(_i2 >= 8))
+                                else
                                 {
-                                    if(Plansza[_i,_i2] != null)
+                                    switch (Team)
                                     {
-                                        if(Plansza[_i,_i2].StartsWith("krol"))
-                                        {
-                                            switch (Team)
-                                            {
-                                                case 'B':
-                                                    if(Plansza[_i,_i2].Last() == 'C')
-                                                    {
-                                                        SzachyB[_i, _i2] = true;
-                                                    }
-                                                    break;
-                                                case 'C':
-                                                    if(Plansza[_i, _i2].Last() == 'B')
-                                                    {
-                                                        SzachyC[_i, _i2] = true;
-                                                    }
-                                                    break;
-                                            } 
-                                        }
+                                        case 'B':
+                                            HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamB;
+                                            break;
+                                        case 'C':
+                                            HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamC;
+                                            break;
                                     }
-                                    else
+                                    CheckBishopRightUp(_i-1,_i2+1,Team);
+                                }
+                            }
+                            return;
+                        }
+                        void CheckBishopRightDown(int _i, int _i2, char Team)
+                        {
+                            if(!(_i >= 8) && !(_i2 >= 8))
+                            {
+                                if(Plansza[_i,_i2] != null)
+                                {
+                                    if(Plansza[_i,_i2].StartsWith("krol"))
                                     {
                                         switch (Team)
                                         {
                                             case 'B':
-                                                HiddenSzachyB[_i, _i2] = true;
+                                                if(Plansza[_i,_i2].Last() == 'C')
+                                                {
+                                                    SzachyB[_i, _i2] = true;
+                                                }
                                                 break;
                                             case 'C':
-                                                HiddenSzachyC[_i, _i2] = true;
+                                                if(Plansza[_i, _i2].Last() == 'B')
+                                                {
+                                                    SzachyC[_i, _i2] = true;
+                                                }
                                                 break;
-                                        }
-                                        CheckBishopRightDown(_i+1,_i2+1,Team);
+                                        } 
                                     }
                                 }
-                                return;
-                            }
-                            void CheckBishopLeftUp(int _i, int _i2, char Team)
-                            {
-                                if(!(_i <= -1) && !(_i2 <= -1))
+                                else
                                 {
-                                    if(Plansza[_i,_i2] != null)
+                                    switch (Team)
                                     {
-                                        if(Plansza[_i,_i2].StartsWith("krol"))
-                                        {
-                                            switch(Team)
-                                            {
-                                                case 'B':
-                                                    if(Plansza[_i,_i2].Last() == 'C')
-                                                    {
-                                                        SzachyB[_i,_i2] = true;
-                                                    }
-                                                    break;
-                                                case 'C':
-                                                    if(Plansza[_i,_i2].Last() == 'B')
-                                                    {
-                                                        SzachyC[_i,_i2] = true;
-                                                    }
-                                                    break;
-                                            }
-                                        }
+                                        case 'B':
+                                            HiddenSzachyB[_i, _i2] = true;
+                                            break;
+                                        case 'C':
+                                            HiddenSzachyC[_i, _i2] = true;
+                                            break;
                                     }
-                                    else
-                                    {
-                                        switch (Team)
-                                        {
-                                            case 'B':
-                                                HiddenSzachyB[_i, _i2] = true;
-                                                break;
-                                            case 'C':
-                                                HiddenSzachyC[_i, _i2] = true;
-                                                break;
-                                        }
-                                        CheckBishopLeftUp(_i-1,_i2-1,Team);
-                                    }    
+                                    CheckBishopRightDown(_i+1,_i2+1,Team);
                                 }
-                                return;
                             }
-                            void CheckBishopLeftDown(int _i, int _i2, char Team)
+                            return;
+                        }
+                        void CheckBishopLeftUp(int _i, int _i2, char Team)
+                        {
+                            if(!(_i <= -1) && !(_i2 <= -1))
                             {
-                                //costam
-                                //CheckBishopLeftDown() aż nie będzie można
-                                if(!(_i >= 8) && !(_i2 <= -1))
+                                if(Plansza[_i,_i2] != null)
                                 {
-                                    if(Plansza[_i,_i2] != null)
-                                    {
-                                        if(Plansza[_i,_i2].StartsWith("krol"))
-                                        {
-                                            switch (Team)
-                                            {
-                                                case 'B':
-                                                    if (Plansza[_i, _i2].Last() == 'C')
-                                                    {
-                                                        SzachyB[_i, _i2] = true;
-                                                    }
-                                                    break;
-                                                case 'C':
-                                                    if (Plansza[_i,_i2].Last() == 'B')
-                                                    {
-                                                        SzachyC[_i,_i2] = true;
-                                                    }
-                                                    break;
-                                            }
-                                        }    
-                                    }
-                                    else
+                                    if(Plansza[_i,_i2].StartsWith("krol"))
                                     {
                                         switch(Team)
                                         {
                                             case 'B':
-                                                HiddenSzachyB[_i,_i2] = true;
+                                                if(Plansza[_i,_i2].Last() == 'C')
+                                                {
+                                                    SzachyB[_i,_i2] = true;
+                                                }
                                                 break;
                                             case 'C':
-                                                HiddenSzachyC[_i,_i2] = true;
+                                                if(Plansza[_i,_i2].Last() == 'B')
+                                                {
+                                                    SzachyC[_i,_i2] = true;
+                                                }
                                                 break;
                                         }
-                                        CheckBishopLeftDown(_i+1,_i2-1,Team);
                                     }
                                 }
-                                return;
+                                else
+                                {
+                                    switch (Team)
+                                    {
+                                        case 'B':
+                                            HiddenSzachyB[_i, _i2] = true;
+                                            break;
+                                        case 'C':
+                                            HiddenSzachyC[_i, _i2] = true;
+                                            break;
+                                    }
+                                    CheckBishopLeftUp(_i-1,_i2-1,Team);
+                                }    
                             }
+                            return;
+                        }
+                        void CheckBishopLeftDown(int _i, int _i2, char Team)
+                        {
+                            //costam
+                            //CheckBishopLeftDown() aż nie będzie można
+                            if(!(_i >= 8) && !(_i2 <= -1))
+                            {
+                                if(Plansza[_i,_i2] != null)
+                                {
+                                    if(Plansza[_i,_i2].StartsWith("krol"))
+                                    {
+                                        switch (Team)
+                                        {
+                                            case 'B':
+                                                if (Plansza[_i, _i2].Last() == 'C')
+                                                {
+                                                    SzachyB[_i, _i2] = true;
+                                                }
+                                                break;
+                                            case 'C':
+                                                if (Plansza[_i,_i2].Last() == 'B')
+                                                {
+                                                    SzachyC[_i,_i2] = true;
+                                                }
+                                                break;
+                                        }
+                                    }    
+                                }
+                                else
+                                {
+                                    switch(Team)
+                                    {
+                                        case 'B':
+                                            HiddenSzachyB[_i,_i2] = true;
+                                            break;
+                                        case 'C':
+                                            HiddenSzachyC[_i,_i2] = true;
+                                            break;
+                                    }
+                                    CheckBishopLeftDown(_i+1,_i2-1,Team);
+                                }
+                            }
+                            return;
+                        }
+                        switch (Plansza[i, i2].Last())
+                        {
+                            case 'B':
+                                //
+                                // Guess who can't use async
+                                // uwu
+                                Thread CheckRightUpB = new Thread(() => CheckBishopRightUp(i-1,i2+1,'B'));
+                                Thread CheckRightDownB = new Thread(() => CheckBishopRightDown(i+1,i2+1,'B'));
+                                Thread CheckLeftUpB = new Thread(() => CheckBishopLeftUp(i-1,i2-1,'B'));
+                                Thread CheckLeftDownB = new Thread(() => CheckBishopLeftDown(i+1,i2-1,'B'));
+                                CheckRightUpB.Start();
+                                CheckRightDownB.Start();
+                                CheckLeftUpB.Start();
+                                CheckLeftDownB.Start();
+                                CheckRightUpB.Join();
+                                CheckRightDownB.Join();
+                                CheckLeftUpB.Join();
+                                CheckLeftDownB.Join();
+                                break;
+                            case 'C':
+                                Thread CheckRightUpC = new Thread(() => CheckBishopRightUp(i-1, i2+1, 'C'));
+                                Thread CheckRightDownC = new Thread(() => CheckBishopRightDown(i+1, i2+1, 'C'));
+                                Thread CheckLeftUpC = new Thread(() => CheckBishopLeftUp(i-1, i2-1, 'C'));
+                                Thread CheckLeftDownC = new Thread(() => CheckBishopLeftDown(i+1, i2-1, 'C'));
+                                CheckRightUpC.Start();
+                                CheckRightDownC.Start();
+                                CheckLeftUpC.Start();
+                                CheckLeftDownC.Start();
+                                CheckRightUpC.Join();
+                                CheckRightDownC.Join();
+                                CheckLeftUpC.Join();
+                                CheckLeftDownC.Join();
+                                break;
+                        }
+                    }
+                    if(Plansza[i,i2].HasFlag(ChessPiece.Rook))
+                    {   if(Plansza[i,i2].HasFlag(ChessPiece.TeamC))
+                        {
+
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                    if(Plansza[i,i2].HasFlag(ChessPiece.Rook))
+                    {
+                        if(Plansza[i,i2].HasFlag(ChessPiece.TeamC))
+                        {
+
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                        /// <summary> 
+                        /// Queen is now marked as Rook | Bishop, therefore she does not have a separate case/if
+                        /// </summary>
+                        /*
+                            case "krolowa":
                             switch (Plansza[i, i2].Last())
                             {
                                 case 'B':
-                                    //
-                                    // Guess who can't use async
-                                    // uwu
-                                    Thread CheckRightUpB = new Thread(() => CheckBishopRightUp(i-1,i2+1,'B'));
-                                    Thread CheckRightDownB = new Thread(() => CheckBishopRightDown(i+1,i2+1,'B'));
-                                    Thread CheckLeftUpB = new Thread(() => CheckBishopLeftUp(i-1,i2-1,'B'));
-                                    Thread CheckLeftDownB = new Thread(() => CheckBishopLeftDown(i+1,i2-1,'B'));
-                                    CheckRightUpB.Start();
-                                    CheckRightDownB.Start();
-                                    CheckLeftUpB.Start();
-                                    CheckLeftDownB.Start();
-                                    CheckRightUpB.Join();
-                                    CheckRightDownB.Join();
-                                    CheckLeftUpB.Join();
-                                    CheckLeftDownB.Join();
-                                    break;
-                                case 'C':
-                                    Thread CheckRightUpC = new Thread(() => CheckBishopRightUp(i-1, i2+1, 'C'));
-                                    Thread CheckRightDownC = new Thread(() => CheckBishopRightDown(i+1, i2+1, 'C'));
-                                    Thread CheckLeftUpC = new Thread(() => CheckBishopLeftUp(i-1, i2-1, 'C'));
-                                    Thread CheckLeftDownC = new Thread(() => CheckBishopLeftDown(i+1, i2-1, 'C'));
-                                    CheckRightUpC.Start();
-                                    CheckRightDownC.Start();
-                                    CheckLeftUpC.Start();
-                                    CheckLeftDownC.Start();
-                                    CheckRightUpC.Join();
-                                    CheckRightDownC.Join();
-                                    CheckLeftUpC.Join();
-                                    CheckLeftDownC.Join();
-                                    break;
-                            }
-                            break;
-                        case "wieza":
-                            switch (Plansza[i, i2].Last())
-                            {
-                                case 'B':
                                     break;
                                 case 'C':
                                     break;
                             }
-                            break;
-                        case "krol":
-                            switch (Plansza[i, i2].Last())
-                            {
-                                case 'B':
-                                    break;
-                                case 'C':
-                                    break;
-                            }
-                            break;
-                        case "krolowa":
-                            switch (Plansza[i, i2].Last())
-                            {
-                                case 'B':
-                                    break;
-                                case 'C':
-                                    break;
-                            }
-                            break;
+                            break;*/
                     }
                 }
                 //PAMIĘTAJ O SPRAWDZANIU CZY KRÓL MA SZACHA U OBU DRUŻYN
@@ -1346,7 +1354,7 @@ namespace SzachyMulti
         static void Main(string[] args)
         {
             Szachy.PostawPionki();
-            Szachy.OznaczSzachy(false);
+            Szachy.OznaczSzachy();
             Szachy.NarysujPlansze();
             playerTeam = 'C';
             Szachy.NarysujPlansze();
