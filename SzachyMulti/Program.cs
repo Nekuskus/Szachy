@@ -894,27 +894,27 @@ namespace SzachyMulti
                     break;
             }
         }
-        public static void WykonajRuch(Pozycja Pozycja1, Pozycja Pozycja2)
+        public static void WykonajISprawdzRuchPrzeciwnika(Pozycja Pozycja1, Pozycja Pozycja2)
         {
-            string figureType = Plansza[Pozycja1.Pos1, Pozycja1.Pos2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C');
-            switch (figureType)
+            //Ily pieces, in memory I'm keeping this. string figureType = Plansza[Pozycja1.Pos1, Pozycja1.Pos2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C');
+            switch (Plansza[Pozycja1.Pos1,Pozycja1.Pos2] & ChessPiece.AllPieces)
             {
-                case "pionek":
+                case ChessPiece.Pawn: //"pionek"
                     RuchPionem(Pozycja1, Pozycja2);
                     break;
-                case "kon":
+                case ChessPiece.Knight: //"kon"
                     RuchKoniem(Pozycja1, Pozycja2);
                     break;
-                case "goniec":
+                case ChessPiece.Bishop: //"goniec"
                     RuchGońcem(Pozycja1, Pozycja2);
                     break;
-                case "wieza":
+                case ChessPiece.Rook: //"wieza"
                     RuchWieżą(Pozycja1, Pozycja2);
                     break;
-                case "krol":
+                case ChessPiece.King: //"krol"
                     RuchKrólem(Pozycja1, Pozycja2);
                     break;
-                case "krolowa":
+                case ChessPiece.Queen: //"krolowa"
                     RuchKrólową(Pozycja1, Pozycja2);
                     break;
             }
@@ -1171,7 +1171,7 @@ namespace SzachyMulti
                             Pozycja1.Pos2 = moveArgs[0].Last();
                             Pozycja2.Pos1 = SkonwertujLitere(moveArgs[1].First());
                             Pozycja2.Pos2 = moveArgs[1].Last();
-                            Szachy.WykonajRuch(Pozycja1, Pozycja2);
+                            Szachy.WykonajISprawdzRuchPrzeciwnika(Pozycja1, Pozycja2);
                         }
                         else if (lines[i].StartsWith("CLOSING"))
                         {
