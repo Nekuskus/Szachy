@@ -237,30 +237,30 @@ namespace SzachyMulti
                             {
                                 if(!(i2-1 <= -1))
                                 {
-                                    if(Plansza[i-2, i2-1] != null)
+                                    if(!(Plansza[i-2, i2-1] == ChessPiece.None))
                                     {
-                                        if(Plansza[i-2, i2-1] == "krolC")
+                                        if(Plansza[i-2, i2-1].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                                         {
-                                            SzachyB[i-2, i2-1] = true;
+                                            SzachyBC[i-2, i2-1] |= ChessPiece.TeamB;
                                         }
                                     }
                                     else
                                     {
-                                        HiddenSzachyB[i-2, i2-1] = true;
+                                        HiddenSzachyBC[i-2, i2-1] |= ChessPiece.TeamB;
                                     }
                                 }
                                 if(!(i2+1 >= 8))
                                 {
-                                    if(Plansza[i-2, i2+1] != null)
+                                    if(!(Plansza[i-2, i2+1] == ChessPiece.None))
                                     {
-                                        if(Plansza[i-2, i2+1] == "krolC")
+                                        if(Plansza[i-2, i2+1].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                                         {
-                                            SzachyB[i-2, i2+1] = true;
+                                            SzachyBC[i-2, i2+1] |= ChessPiece.TeamB;
                                         }
                                     }
                                     else
                                     {
-                                        HiddenSzachyB[i-2, i2+1] = true;
+                                        HiddenSzachyBC[i-2, i2+1] |= ChessPiece.TeamB;
                                     }
                                 }
                             }
@@ -268,30 +268,30 @@ namespace SzachyMulti
                             {
                                 if(!(i2-2 <= -1))
                                 {
-                                    if(Plansza[i-1, i2-2] != null)
+                                    if(!(Plansza[i-1, i2-2] == ChessPiece.None))
                                     {
-                                        if(Plansza[i-1, i2-2] == "krolC")
+                                        if(Plansza[i-1, i2-2].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                                         {
-                                            SzachyB[i-1, i2-2] = true;
+                                            SzachyBC[i-1, i2-2] = ChessPiece.TeamB;
                                         }
                                     }
                                     else
                                     {
-                                        HiddenSzachyB[i-1, i2-2] = true;
+                                        HiddenSzachyBC[i-1, i2-2] |= ChessPiece.TeamB;
                                     }
                                 }
                                 if(!(i2+2 >= 8))
                                 {
-                                    if(Plansza[i-1, i2+2] != null)
+                                    if(!(Plansza[i-1, i2+2] == ChessPiece.None))
                                     {
-                                        if(Plansza[i-1, i2+2] == "krolC")
+                                        if(Plansza[i-1, i2+2].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                                         {
-                                            SzachyB[i-1, i2+2] = true;
+                                            SzachyBC[i-1, i2+2] |= ChessPiece.TeamB;
                                         }
                                     }
                                     else
                                     {
-                                        HiddenSzachyB[i-1, i2+2] = true;
+                                        HiddenSzachyBC[i-1, i2+2] |= ChessPiece.TeamB;
                                     }
                                 }
                             }
@@ -299,30 +299,30 @@ namespace SzachyMulti
                             {
                                 if(!(i2-1 <= -1))
                                 {
-                                    if(Plansza[i+2, i2-1] != null)
+                                    if(!(Plansza[i+2, i2-1] == ChessPiece.None))
                                     {
-                                        if(Plansza[i+2, i2-1] == "krolC")
+                                        if(Plansza[i+2, i2-1].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                                         {
-                                            SzachyB[i+2, i2-1] = true;
+                                            SzachyBC[i+2, i2-1] |= ChessPiece.TeamB;
                                         }
                                     }
                                     else
                                     {
-                                        HiddenSzachyB[i+2, i2-1] = true;
+                                        HiddenSzachyBC[i+2, i2-1] |= ChessPiece.TeamB;
                                     }
                                 }
                                 if(!(i2+1 >= 8))
                                 {
-                                    if(Plansza[i+2, i2+1] != null)
+                                    if(!(Plansza[i+2, i2+1].HasFlag(ChessPiece.None)))
                                     {
-                                        if(Plansza[i+2, i2+1] == "krolC")
+                                        if(Plansza[i+2, i2+1].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                                         {
-                                            SzachyB[i+2, i2+1] = true;
+                                            SzachyBC[i+2, i2+1] |= ChessPiece.TeamB;
                                         }
                                     }
                                     else
                                     {
-                                        HiddenSzachyB[i+2, i2+1] = true;
+                                        HiddenSzachyBC[i+2, i2+1] |= ChessPiece.TeamB;
                                     }
                                 }
                             }
@@ -330,64 +330,63 @@ namespace SzachyMulti
                             {
                                 if(!(i2-2 <= -1))
                                 {
-                                    if(Plansza[i+1, i2-2] != null)
+                                    if(!(Plansza[i+1, i2-2].HasFlag(ChessPiece.None)))
                                     {
-                                        if(Plansza[i+1, i2-2] == "krolC")
+                                        if(Plansza[i+1, i2-2].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                                         {
-                                            SzachyB[i+1, i2-2] = true;
+                                            SzachyBC[i+1, i2-2] |= ChessPiece.TeamB;
                                         }
                                     }
                                     else
                                     {
-                                        HiddenSzachyB[i+1, i2-2] = true;
+                                        HiddenSzachyBC[i+1, i2-2] |= ChessPiece.TeamB;
                                     }
                                 }
                                 if(!(i2+2 >= 8))
                                 {
-                                    if(Plansza[i+1, i2+2] != null)
+                                    if(!(Plansza[i+1, i2+2].HasFlag(ChessPiece.None)))
                                     {
-                                        if(Plansza[i+1, i2+2] == "krolC")
+                                        if(Plansza[i+1, i2+2].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                                         {
-                                            SzachyB[i+1, i2+2] = true;
+                                            SzachyBC[i+1, i2+2] |= ChessPiece.TeamB;
                                         }
                                     }
                                     else
                                     {
-                                        HiddenSzachyB[i+1, i2+2] = true;
+                                        HiddenSzachyBC[i+1, i2+2] |= ChessPiece.TeamB;
                                     }
                                 }
                             }
-
                             else
                             {
                                 if(!(i-2 <= -1))
                                 {
                                     if(!(i2-1 <= -1))
                                     {
-                                        if(Plansza[i-2, i2-1] != null)
+                                        if(!(Plansza[i-2, i2-1].HasFlag(ChessPiece.None)))
                                         {
-                                            if(Plansza[i-2, i2-1] == "krolB")
+                                            if(Plansza[i-2, i2-1].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                             {
-                                                SzachyC[i-2, i2-1] = false;
+                                                SzachyBC[i-2, i2-1] |= ChessPiece.TeamC;
                                             }
                                         }
                                         else
                                         {
-                                            HiddenSzachyC[i-2, i2-1] = true;
+                                            HiddenSzachyBC[i-2, i2-1] |= ChessPiece.TeamC;
                                         }
                                     }
                                     if(!(i2+1 >= 8))
                                     {
-                                        if(Plansza[i-2, i2+1] != null)
+                                        if(!(Plansza[i-2, i2+1].HasFlag(ChessPiece.None)))
                                         {
-                                            if(Plansza[i-2, i2+1] == "krolB")
+                                            if(Plansza[i-2, i2+1].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                             {
-                                                SzachyC[i-2, i2+1] = false;
+                                                SzachyBC[i-2, i2+1] |= ChessPiece.TeamC;
                                             }
                                         }
                                         else
                                         {
-                                            SzachyC[i-2, i2+1] = true;
+                                            SzachyBC[i-2, i2+1] |= ChessPiece.TeamC;
                                         }
                                     }
                                 }
@@ -395,30 +394,30 @@ namespace SzachyMulti
                                 {
                                     if(!(i2-2 <= -1))
                                     {
-                                        if(Plansza[i-1, i2-2] != null)
+                                        if(!(Plansza[i-1, i2-2].HasFlag(ChessPiece.None)))
                                         {
-                                            if(Plansza[i-1, i2-2] == "krolB")
+                                            if(Plansza[i-1, i2-2].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                             {
-                                                SzachyC[i-1, i2-2] = true;
+                                                SzachyBC[i-1, i2-2] |= ChessPiece.TeamC;
                                             }
                                         }
                                         else
                                         {
-                                            HiddenSzachyC[i-1, i2-2] = true;
+                                            HiddenSzachyBC[i-1, i2-2] |= ChessPiece.TeamC;
                                         }
                                     }
                                     if(!(i2+2 >= 8))
                                     {
-                                        if(Plansza[i-1, i2+2] != null)
+                                        if(!(Plansza[i-1, i2+2].HasFlag(ChessPiece.None)))
                                         {
-                                            if(Plansza[i-1, i2+2] == "krolB")
+                                            if(Plansza[i-1, i2+2].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                             {
-                                                SzachyC[i-1, i2+2] = true;
+                                                SzachyBC[i-1, i2+2] |= ChessPiece.TeamC;
                                             }
                                         }
                                         else
                                         {
-                                            HiddenSzachyC[i-1, i2+2] = true;
+                                            HiddenSzachyBC[i-1, i2+2] |= ChessPiece.TeamC;
                                         }
                                     }
                                 }
@@ -426,30 +425,30 @@ namespace SzachyMulti
                                 {
                                     if(!(i2-1 <= -1))
                                     {
-                                        if(Plansza[i+2, i2-1] != null)
+                                        if(!(Plansza[i+2, i2-1].HasFlag(ChessPiece.None)))
                                         {
-                                            if(Plansza[i+2, i2-1] == "krolB")
+                                            if(Plansza[i+2, i2-1].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                             {
-                                                SzachyC[i+2, i2-1] = true;
+                                                SzachyBC[i+2, i2-1] |= ChessPiece.TeamC;
                                             }
                                         }
                                         else
                                         {
-                                            HiddenSzachyC[i+2, i2-1] = true;
+                                            HiddenSzachyBC[i+2, i2-1] |= ChessPiece.TeamC;
                                         }
                                     }
                                     if(!(i2+1 >= 8))
                                     {
-                                        if(Plansza[i+2, i2+1] != null)
+                                        if(!(Plansza[i+2, i2+1].HasFlag(ChessPiece.None)))
                                         {
-                                            if(Plansza[i+2, i2+1] == "krolB")
+                                            if(Plansza[i+2, i2+1].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                             {
-                                                SzachyC[i+2, i2+1] = true;
+                                                SzachyBC[i+2, i2+1] |= ChessPiece.TeamC;
                                             }
                                         }
                                         else
                                         {
-                                            HiddenSzachyC[i+2, i2+1] = true;
+                                            HiddenSzachyBC[i+2, i2+1] |= ChessPiece.TeamC;
                                         }
                                     }
                                 }
@@ -457,30 +456,30 @@ namespace SzachyMulti
                                 {
                                     if(!(i2-2 <= -1))
                                     {
-                                        if(Plansza[i+1, i2-2] != null)
+                                        if(!(Plansza[i+1, i2-2].HasFlag(ChessPiece.None)))
                                         {
-                                            if(Plansza[i+1, i2-2] == "krolB")
+                                            if(Plansza[i+1, i2-2].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                             {
-                                                SzachyC[i+1, i2-2] = true;
+                                                SzachyBC[i+1, i2-2] |= ChessPiece.TeamC;
                                             }
                                         }
                                         else
                                         {
-                                            HiddenSzachyC[i+1, i2-2] = true;
+                                            HiddenSzachyBC[i+1, i2-2] |= ChessPiece.TeamC;
                                         }
                                     }
                                     if(!(i2+2 >= 8))
                                     {
-                                        if(Plansza[i+1, i2+2] != null)
+                                        if(!(Plansza[i+1, i2+2].HasFlag(ChessPiece.None)))
                                         {
-                                            if(Plansza[i+1, i2+2] == "krolB")
+                                            if(Plansza[i+1, i2+2].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                             {
-                                                SzachyC[i+1, i2+2] = true;
+                                                SzachyBC[i+1, i2+2] |= ChessPiece.TeamC;
                                             }
                                         }
                                         else
                                         {
-                                            HiddenSzachyC[i+1, i2+2] = true;
+                                            HiddenSzachyBC[i+1, i2+2] |= ChessPiece.TeamC;
                                         }
                                     }
                                 }
