@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Credentials;
+using System.Web.Hosting;
+using System.Security.Cryptography.X509Certificates;
 
 namespace SzachyMulti
 {
@@ -22,6 +24,28 @@ namespace SzachyMulti
             {
                 return "If you're seeing this, the code is in what I thought was an unreachable state.\nI could give you advice for what to do. But honestly, why should you trust me? I clearly screwed this up. I'm writing a message that should never appear, yet I know it will probably appear someday.\nOn a deep level, I know I'm not up to this task. I'm so sorry.\nhttps://xkcd.com/2200/";
             }
+        }
+    }
+    public abstract class InvalidEnemyMoveException : Exception
+    {
+        public override string Message
+        {
+            get
+            {   
+                return "Enemy client has sent an invalid move: "; //Add information about the move here!
+            }
+        }
+    }
+    public class InvalidEnemyMoveDerivedException : InvalidEnemyMoveException
+    {
+        private string _Message;
+        public override string Message
+        {
+            get => _Message;
+        }
+        public InvalidEnemyMoveDerivedException(string MoveInfo)
+        {
+            _Message = base.Message + MoveInfo;
         }
     }
     public struct Pozycja
@@ -897,28 +921,36 @@ namespace SzachyMulti
         public static void WykonajISprawdzRuchPrzeciwnika(Pozycja Pozycja1, Pozycja Pozycja2)
         {
             //Ily pieces, in memory I'm keeping this. string figureType = Plansza[Pozycja1.Pos1, Pozycja1.Pos2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C');
-            switch (Plansza[Pozycja1.Pos1,Pozycja1.Pos2] & ChessPiece.AllPieces)
+            try
             {
-                case ChessPiece.Pawn: //"pionek"
-                    RuchPionem(Pozycja1, Pozycja2);
-                    break;
-                case ChessPiece.Knight: //"kon"
-                    RuchKoniem(Pozycja1, Pozycja2);
-                    break;
-                case ChessPiece.Bishop: //"goniec"
-                    RuchGońcem(Pozycja1, Pozycja2);
-                    break;
-                case ChessPiece.Rook: //"wieza"
-                    RuchWieżą(Pozycja1, Pozycja2);
-                    break;
-                case ChessPiece.King: //"krol"
-                    RuchKrólem(Pozycja1, Pozycja2);
-                    break;
-                case ChessPiece.Queen: //"krolowa"
-                    RuchKrólową(Pozycja1, Pozycja2);
-                    break;
+                switch (Plansza[Pozycja1.Pos1,Pozycja1.Pos2] & ChessPiece.AllPieces)
+                {
+                    //These functions should throw the InvalidEnemyMoveDerivedExcpetion(MoveInfo) with some info about the error that will get logged and told to the player
+                    case ChessPiece.Pawn: //"pionek"
+                        RuchPionem(Pozycja1, Pozycja2);
+                        break;
+                    case ChessPiece.Knight: //"kon"
+                        RuchKoniem(Pozycja1, Pozycja2);
+                        break;
+                    case ChessPiece.Bishop: //"goniec"
+                        RuchGońcem(Pozycja1, Pozycja2);
+                        break;
+                    case ChessPiece.Rook: //"wieza"
+                        RuchWieżą(Pozycja1, Pozycja2);
+                        break;
+                    case ChessPiece.King: //"krol"
+                        RuchKrólem(Pozycja1, Pozycja2);
+                        break;
+                    case ChessPiece.Queen: //"krolowa"
+                        RuchKrólową(Pozycja1, Pozycja2);
+                        break;
+                }
+                Program.hasEnemyMoved = true;
             }
-            Program.hasEnemyMoved = true;
+            catch(Exception InvalidMove)
+            {
+                //Wyslij do jakiegoś logu błędów na serwerze i powiadom użytkownika, jakoś cofnij ruch może/przerwij sesję
+            }
         }
         public static void RuchPionem(Pozycja Pozycja1, Pozycja Pozycja2)
         {
