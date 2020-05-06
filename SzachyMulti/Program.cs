@@ -992,16 +992,7 @@ namespace SzachyMulti
 
             }
         }
-        public static void WyślijWiadomość(string currentfolder, string wiadomosc, int ID)
-        {
-            Program.isSending = true;
-            if (!Program.client.IsConnected)
-            {
-                Program.client.Connect();
-            }
-            Program.AppendText($"{Program.Nick}: {wiadomosc}", currentfolder, Convert.ToString(ID));
-            Program.isSending = false;
-        }
+        
         public static void Rozgrywka()
         {
             Szachy.PostawPionki();
@@ -1254,10 +1245,19 @@ namespace SzachyMulti
             chat.Start();
             isChatOpen = true;
         }
+        public static void WyślijWiadomość(string currentfolder, string wiadomosc, int ID)
+        {
+            Program.isSending = true;
+            if (!Program.client.IsConnected)
+            {
+                Program.client.Connect();
+            }
+            Program.AppendText($"{Program.Nick}: {wiadomosc}", currentfolder, Convert.ToString(ID));
+            Program.isSending = false;
+        }
         static void Chat()
         {
-            StreamReader chatReader = new StreamReader($@".\Chat\Logs\Log{ID}.txt");
-            StreamWriter chatWriter = new StreamWriter($@".\Chat\Logs\Log{ID}.txt");
+            StreamReader chatReader = new StreamReader($@".\Chat\Logs\Log{ID}.txt"))
             chatLog = null;
             chatLog.AddRange(chatReader.ReadToEnd().Split('\n'));
             int countNow = chatLog.Count();
@@ -1280,7 +1280,6 @@ namespace SzachyMulti
                 {
                     AppendText(msg, currentfolder, Convert.ToString(ID));
                 }
-                sentMessages = null;
                 lastCountChat = chatLog.Count();
                 if (isOdbierz == false)
                 {
@@ -1291,12 +1290,13 @@ namespace SzachyMulti
             }
             if (odebranoWiad)
             {
+                StreamWriter chatWriter = new StreamWriter($@".\Chat\Logs\Log{ID}.txt");
                 chatWriter.Close();
                 //sw = chat.StandardInput;
                 foreach (string receivedMessage in receivedMessages)
                 {
-                    chatWriter.WriteLine($"{enemyNick}: {receivedMessage}");
-                    receivedMessages.Remove(receivedMessage);
+                   chatWriter.WriteLine($"{enemyNick}: {receivedMessage}");
+                   receivedMessages.Remove(receivedMessage);
                 }
                 odebranoWiad = false;
                 chatWriter.Close();
