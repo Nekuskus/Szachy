@@ -1,18 +1,13 @@
-﻿using FluentFTP;
+﻿using Credentials;
+using FluentFTP;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.CompilerServices;
-using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using Credentials;
-using System.Web.Hosting;
-using System.Security.Cryptography.X509Certificates;
 
 namespace SzachyMulti
 {
@@ -119,7 +114,7 @@ namespace SzachyMulti
             Plansza[3, 7] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
             Plansza[2, 5] = ChessPiece.Knight | ChessPiece.TeamB; //"kon123B" :heart:
             Plansza[3, 0] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
-            Plansza[5,2] = ChessPiece.Bishop | ChessPiece.TeamB;
+            Plansza[5, 2] = ChessPiece.Bishop | ChessPiece.TeamB;
             //Plansza[5, 2] = "goniecB"; //B :heart:
             // ❤︎
             //DEBUG 
@@ -147,87 +142,87 @@ namespace SzachyMulti
             BackupHiddenSzachyBC = HiddenSzachyBC;
             SzachyBC = new ChessPiece[8, 8];
             HiddenSzachyBC = new ChessPiece[8, 8];
-            for (int i = 0, i2 = 0; i < 8; i2++)
+            for(int i = 0, i2 = 0; i < 8; i2++)
             {
-                if (i2 == 8)
+                if(i2 == 8)
                 {
                     i2 = 0;
                     i++;
-                    if (i >= 8)
+                    if(i >= 8)
                     {
                         continue;
                     }
                 }
-                if (!(Plansza[i,i2] == ChessPiece.None))
+                if(!(Plansza[i, i2] == ChessPiece.None))
                 {
                     //in memory :heart: switch (Plansza[i, i2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C'))
-                    if(Plansza[i,i2].HasFlag(ChessPiece.Pawn))
+                    if(Plansza[i, i2].HasFlag(ChessPiece.Pawn))
                     {
                         // switch (Plansza[i, i2].Last()) :heart:
-                        if(Plansza[i,i2].HasFlag(ChessPiece.TeamB))
+                        if(Plansza[i, i2].HasFlag(ChessPiece.TeamB))
                         {
-                            if (!(i+1 >= 8))
+                            if(!(i+1 >= 8))
                             {
-                                if (!(i2-1 <= -1))
+                                if(!(i2-1 <= -1))
                                 {
-                                    if (!(Plansza[i+1,i2-1].HasFlag(ChessPiece.None)))
+                                    if(!(Plansza[i+1, i2-1].HasFlag(ChessPiece.None)))
                                     {
-                                        if (Plansza[i+1,i2-1].HasFlag(ChessPiece.King | ChessPiece.TeamC))
+                                        if(Plansza[i+1, i2-1].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                                         {
                                             SzachyBC[i+1, i2-1] |= ChessPiece.TeamB;
                                         }
                                     }
                                     else
                                     {
-                                        HiddenSzachyBC[i+1,i2-1] |= ChessPiece.TeamB;
+                                        HiddenSzachyBC[i+1, i2-1] |= ChessPiece.TeamB;
                                     }
                                 }
-                                if (!(i2+1 >= 8))
+                                if(!(i2+1 >= 8))
                                 {
-                                    if (!(Plansza[i+1,i2+1].HasFlag(ChessPiece.None)))
+                                    if(!(Plansza[i+1, i2+1].HasFlag(ChessPiece.None)))
                                     {
-                                        if (Plansza[i+1, i2+1].HasFlag(ChessPiece.King | ChessPiece.TeamC))
+                                        if(Plansza[i+1, i2+1].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                                         {
                                             SzachyBC[i+1, i2+1] |= ChessPiece.TeamB;
                                         }
                                     }
-                                    else 
+                                    else
                                     {
-                                        HiddenSzachyBC[i+1,i2+1] |= ChessPiece.TeamB;
+                                        HiddenSzachyBC[i+1, i2+1] |= ChessPiece.TeamB;
                                     }
                                 }
                             }
                         }
                         else
                         {
-                            if (!(i-1 <= -1))
+                            if(!(i-1 <= -1))
                             {
-                                if (!(i2+1 >= 8))
+                                if(!(i2+1 >= 8))
                                 {
-                                    if (!(Plansza[i-1,i2+1] == ChessPiece.None))
+                                    if(!(Plansza[i-1, i2+1] == ChessPiece.None))
                                     {
-                                        if (Plansza[i-1, i2+1].HasFlag(ChessPiece.King | ChessPiece.TeamB))
+                                        if(Plansza[i-1, i2+1].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                         {
                                             SzachyBC[i-1, i2+1] |= ChessPiece.TeamC;
-                                        } 
+                                        }
                                     }
                                     else
                                     {
-                                        HiddenSzachyBC[i-1,i2+1] |= ChessPiece.TeamC;
+                                        HiddenSzachyBC[i-1, i2+1] |= ChessPiece.TeamC;
                                     }
                                 }
-                                if (!(i2-1 <= -1))
+                                if(!(i2-1 <= -1))
                                 {
-                                    if (!(Plansza[i-1,i2-1] == ChessPiece.None))
+                                    if(!(Plansza[i-1, i2-1] == ChessPiece.None))
                                     {
-                                        if (Plansza[i-1, i2-1].HasFlag(ChessPiece.King | ChessPiece.TeamB))
+                                        if(Plansza[i-1, i2-1].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                                         {
                                             SzachyBC[i-1, i2-1] |= ChessPiece.TeamC;
-                                        } 
+                                        }
                                     }
                                     else
                                     {
-                                        HiddenSzachyBC[i-1,i2-1] |= ChessPiece.TeamC;
+                                        HiddenSzachyBC[i-1, i2-1] |= ChessPiece.TeamC;
                                     }
                                 }
                             }
@@ -235,30 +230,30 @@ namespace SzachyMulti
                     }
                     if(Plansza[i, i2].HasFlag(ChessPiece.Knight))
                     {
-                            //switch (Plansza[i, i2].Last())
+                        //switch (Plansza[i, i2].Last())
                         if(Plansza[i, i2].HasFlag(ChessPiece.TeamB))
                         {
-                            if (!(i-2 <= -1))
+                            if(!(i-2 <= -1))
                             {
-                                if (!(i2-1 <= -1))
+                                if(!(i2-1 <= -1))
                                 {
-                                    if (Plansza[i-2, i2-1] != null)
+                                    if(Plansza[i-2, i2-1] != null)
                                     {
-                                        if (Plansza[i-2, i2-1] == "krolC")
+                                        if(Plansza[i-2, i2-1] == "krolC")
                                         {
                                             SzachyB[i-2, i2-1] = true;
                                         }
                                     }
                                     else
                                     {
-                                        HiddenSzachyB[i-2,i2-1] = true;
+                                        HiddenSzachyB[i-2, i2-1] = true;
                                     }
                                 }
-                                if (!(i2+1 >= 8))
+                                if(!(i2+1 >= 8))
                                 {
-                                    if (Plansza[i-2, i2+1] != null)
+                                    if(Plansza[i-2, i2+1] != null)
                                     {
-                                        if (Plansza[i-2, i2+1] == "krolC")
+                                        if(Plansza[i-2, i2+1] == "krolC")
                                         {
                                             SzachyB[i-2, i2+1] = true;
                                         }
@@ -269,61 +264,61 @@ namespace SzachyMulti
                                     }
                                 }
                             }
-                            if (!(i-1 <= -1))
+                            if(!(i-1 <= -1))
                             {
-                                if (!(i2-2 <= -1))
+                                if(!(i2-2 <= -1))
                                 {
-                                    if (Plansza[i-1,i2-2] != null)
+                                    if(Plansza[i-1, i2-2] != null)
                                     {
-                                        if (Plansza[i-1, i2-2] == "krolC")
+                                        if(Plansza[i-1, i2-2] == "krolC")
                                         {
                                             SzachyB[i-1, i2-2] = true;
-                                        } 
+                                        }
                                     }
                                     else
                                     {
-                                        HiddenSzachyB[i-1,i2-2] = true;
+                                        HiddenSzachyB[i-1, i2-2] = true;
                                     }
                                 }
-                                if (!(i2+2 >= 8))
+                                if(!(i2+2 >= 8))
                                 {
-                                    if (Plansza[i-1,i2+2] != null)
+                                    if(Plansza[i-1, i2+2] != null)
                                     {
-                                        if (Plansza[i-1, i2+2] == "krolC")
+                                        if(Plansza[i-1, i2+2] == "krolC")
                                         {
                                             SzachyB[i-1, i2+2] = true;
-                                        } 
+                                        }
                                     }
                                     else
                                     {
-                                        HiddenSzachyB[i-1,i2+2] = true;
+                                        HiddenSzachyB[i-1, i2+2] = true;
                                     }
                                 }
                             }
-                            if (!(i+2 >= 8))
+                            if(!(i+2 >= 8))
                             {
-                                if (!(i2-1 <= -1))
+                                if(!(i2-1 <= -1))
                                 {
-                                    if (Plansza[i+2,i2-1] != null)
+                                    if(Plansza[i+2, i2-1] != null)
                                     {
-                                        if (Plansza[i+2, i2-1] == "krolC")
+                                        if(Plansza[i+2, i2-1] == "krolC")
                                         {
                                             SzachyB[i+2, i2-1] = true;
-                                        } 
+                                        }
                                     }
                                     else
                                     {
-                                        HiddenSzachyB[i+2,i2-1] = true;
+                                        HiddenSzachyB[i+2, i2-1] = true;
                                     }
                                 }
-                                if (!(i2+1 >= 8))
+                                if(!(i2+1 >= 8))
                                 {
-                                    if (Plansza[i+2,i2+1] != null)
+                                    if(Plansza[i+2, i2+1] != null)
                                     {
-                                        if (Plansza[i+2, i2+1] == "krolC")
+                                        if(Plansza[i+2, i2+1] == "krolC")
                                         {
                                             SzachyB[i+2, i2+1] = true;
-                                        } 
+                                        }
                                     }
                                     else
                                     {
@@ -331,30 +326,30 @@ namespace SzachyMulti
                                     }
                                 }
                             }
-                            if (!(i+1 >= 8))
+                            if(!(i+1 >= 8))
                             {
-                                if (!(i2-2 <= -1))
+                                if(!(i2-2 <= -1))
                                 {
-                                    if (Plansza[i+1,i2-2] != null) 
+                                    if(Plansza[i+1, i2-2] != null)
                                     {
-                                        if (Plansza[i+1, i2-2] == "krolC")
+                                        if(Plansza[i+1, i2-2] == "krolC")
                                         {
                                             SzachyB[i+1, i2-2] = true;
-                                        } 
+                                        }
                                     }
                                     else
                                     {
                                         HiddenSzachyB[i+1, i2-2] = true;
                                     }
                                 }
-                                if (!(i2+2 >= 8))
+                                if(!(i2+2 >= 8))
                                 {
-                                    if (Plansza[i+1,i2+2] != null)
+                                    if(Plansza[i+1, i2+2] != null)
                                     {
-                                        if (Plansza[i+1, i2+2] == "krolC")
+                                        if(Plansza[i+1, i2+2] == "krolC")
                                         {
                                             SzachyB[i+1, i2+2] = true;
-                                        } 
+                                        }
                                     }
                                     else
                                     {
@@ -362,359 +357,360 @@ namespace SzachyMulti
                                     }
                                 }
                             }
-                        else
-                        {
-                            if (!(i-2 <= -1))
+
+                            else
                             {
-                                if (!(i2-1 <= -1))
+                                if(!(i-2 <= -1))
                                 {
-                                    if (Plansza[i-2,i2-1] != null)
+                                    if(!(i2-1 <= -1))
                                     {
-                                        if (Plansza[i-2, i2-1] == "krolB")
+                                        if(Plansza[i-2, i2-1] != null)
                                         {
-                                            SzachyC[i-2, i2-1] = false;
-                                        } 
+                                            if(Plansza[i-2, i2-1] == "krolB")
+                                            {
+                                                SzachyC[i-2, i2-1] = false;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            HiddenSzachyC[i-2, i2-1] = true;
+                                        }
                                     }
-                                    else
+                                    if(!(i2+1 >= 8))
                                     {
-                                        HiddenSzachyC[i-2, i2-1] = true;
+                                        if(Plansza[i-2, i2+1] != null)
+                                        {
+                                            if(Plansza[i-2, i2+1] == "krolB")
+                                            {
+                                                SzachyC[i-2, i2+1] = false;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            SzachyC[i-2, i2+1] = true;
+                                        }
                                     }
                                 }
-                                if (!(i2+1 >= 8))
+                                if(!(i-1 <= -1))
                                 {
-                                    if (Plansza[i-2,i2+1] != null)
+                                    if(!(i2-2 <= -1))
                                     {
-                                        if (Plansza[i-2, i2+1] == "krolB")
+                                        if(Plansza[i-1, i2-2] != null)
                                         {
-                                            SzachyC[i-2, i2+1] = false;
-                                        } 
+                                            if(Plansza[i-1, i2-2] == "krolB")
+                                            {
+                                                SzachyC[i-1, i2-2] = true;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            HiddenSzachyC[i-1, i2-2] = true;
+                                        }
                                     }
-                                    else
+                                    if(!(i2+2 >= 8))
                                     {
-                                        SzachyC[i-2, i2+1] = true;
+                                        if(Plansza[i-1, i2+2] != null)
+                                        {
+                                            if(Plansza[i-1, i2+2] == "krolB")
+                                            {
+                                                SzachyC[i-1, i2+2] = true;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            HiddenSzachyC[i-1, i2+2] = true;
+                                        }
                                     }
                                 }
-                            }
-                            if (!(i-1 <= -1))
-                            {
-                                if (!(i2-2 <= -1))
+                                if(!(i+2 >= 8))
                                 {
-                                    if (Plansza[i-1, i2-2] != null)
+                                    if(!(i2-1 <= -1))
                                     {
-                                        if (Plansza[i-1, i2-2] == "krolB")
+                                        if(Plansza[i+2, i2-1] != null)
                                         {
-                                            SzachyC[i-1, i2-2] = true;
-                                        } 
+                                            if(Plansza[i+2, i2-1] == "krolB")
+                                            {
+                                                SzachyC[i+2, i2-1] = true;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            HiddenSzachyC[i+2, i2-1] = true;
+                                        }
                                     }
-                                    else
+                                    if(!(i2+1 >= 8))
                                     {
-                                        HiddenSzachyC[i-1, i2-2] = true;
+                                        if(Plansza[i+2, i2+1] != null)
+                                        {
+                                            if(Plansza[i+2, i2+1] == "krolB")
+                                            {
+                                                SzachyC[i+2, i2+1] = true;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            HiddenSzachyC[i+2, i2+1] = true;
+                                        }
                                     }
                                 }
-                                if (!(i2+2 >= 8))
+                                if(!(i+1 >= 8))
                                 {
-                                    if (Plansza[i-1, i2+2] != null)
+                                    if(!(i2-2 <= -1))
                                     {
-                                        if (Plansza[i-1, i2+2] == "krolB")
+                                        if(Plansza[i+1, i2-2] != null)
                                         {
-                                            SzachyC[i-1, i2+2] = true;
-                                        } 
-                                    }
-                                    else
-                                    {
-                                        HiddenSzachyC[i-1, i2+2] = true;
-                                    }
-                                }
-                            }
-                            if (!(i+2 >= 8))
-                            {
-                                if (!(i2-1 <= -1))
-                                {
-                                    if (Plansza[i+2,i2-1] != null)
-                                    {
-                                        if (Plansza[i+2, i2-1] == "krolB")
+                                            if(Plansza[i+1, i2-2] == "krolB")
+                                            {
+                                                SzachyC[i+1, i2-2] = true;
+                                            }
+                                        }
+                                        else
                                         {
-                                            SzachyC[i+2, i2-1] = true;
-                                        } 
+                                            HiddenSzachyC[i+1, i2-2] = true;
+                                        }
                                     }
-                                    else
+                                    if(!(i2+2 >= 8))
                                     {
-                                        HiddenSzachyC[i+2,i2-1] = true;
-                                    }
-                                }
-                                if (!(i2+1 >= 8))
-                                {
-                                    if (Plansza[i+2,i2+1] != null)
-                                    {
-                                        if (Plansza[i+2, i2+1] == "krolB")
+                                        if(Plansza[i+1, i2+2] != null)
                                         {
-                                            SzachyC[i+2, i2+1] = true;
-                                        } 
-                                    }
-                                    else
-                                    {
-                                        HiddenSzachyC[i+2,i2+1] = true;
-                                    }
-                                }
-                            }
-                            if (!(i+1 >= 8))
-                            {
-                                if (!(i2-2 <= -1))
-                                {
-                                    if (Plansza[i+1,i2-2] != null)
-                                    {
-                                        if (Plansza[i+1, i2-2] == "krolB")
+                                            if(Plansza[i+1, i2+2] == "krolB")
+                                            {
+                                                SzachyC[i+1, i2+2] = true;
+                                            }
+                                        }
+                                        else
                                         {
-                                            SzachyC[i+1, i2-2] = true;
-                                        } 
-                                    }
-                                    else
-                                    {
-                                        HiddenSzachyC[i+1, i2-2] = true;
-                                    }
-                                }
-                                if (!(i2+2 >= 8))
-                                {
-                                    if (Plansza[i+1,i2+2] != null)
-                                    {
-                                        if (Plansza[i+1, i2+2] == "krolB")
-                                        {
-                                            SzachyC[i+1, i2+2] = true;
-                                        } 
-                                    }
-                                    else
-                                    {
-                                        HiddenSzachyC[i+1,i2+2] = true;
+                                            HiddenSzachyC[i+1, i2+2] = true;
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                    if(Plansza[i,i2].HasFlag(ChessPiece.Bishop))
-                    {
-                        void CheckBishopRightUp(int _i, int _i2, char Team)
+                        if(Plansza[i, i2].HasFlag(ChessPiece.Bishop))
                         {
-                            if((_i > -1) && (_i2 < 8))
+                            void CheckBishopRightUp(int _i, int _i2, char Team)
                             {
-                                if(!(Plansza[_i,_i2] == ChessPiece.None))
+                                if((_i > -1) && (_i2 < 8))
                                 {
-                                    if(Plansza[_i, _i2].HasFlag(ChessPiece.King))
+                                    if(!(Plansza[_i, _i2] == ChessPiece.None))
                                     {
-                                        switch (Team)
+                                        if(Plansza[_i, _i2].HasFlag(ChessPiece.King))
                                         {
-                                            case 'B':
-                                                if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamC))
-                                                {
-                                                    SzachyBC[_i, _i2] |= ChessPiece.TeamB;
-                                                }
-                                                break;
-                                            case 'C':
-                                                if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamB))
-                                                {
-                                                    SzachyBC[_i, _i2] |= ChessPiece.TeamC;
-                                                }
-                                                break;
-                                        } 
+                                            switch(Team)
+                                            {
+                                                case 'B':
+                                                    if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamC))
+                                                    {
+                                                        SzachyBC[_i, _i2] |= ChessPiece.TeamB;
+                                                    }
+                                                    break;
+                                                case 'C':
+                                                    if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamB))
+                                                    {
+                                                        SzachyBC[_i, _i2] |= ChessPiece.TeamC;
+                                                    }
+                                                    break;
+                                            }
+                                        }
                                     }
-                                }
-                                else
-                                {
-                                    switch (Team)
-                                    {
-                                        case 'B':
-                                            HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamB;
-                                            break;
-                                        case 'C':
-                                            HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamC;
-                                            break;
-                                    }
-                                    CheckBishopRightUp(_i-1,_i2+1,Team);
-                                }
-                            }
-                            return;
-                        }
-                        void CheckBishopRightDown(int _i, int _i2, char Team)
-                        {
-                            if(!(_i >= 8) && !(_i2 >= 8))
-                            {
-                                if(!(Plansza[_i,_i2] == ChessPiece.None))
-                                {
-                                    if(Plansza[_i,_i2].HasFlag(ChessPiece.King))
-                                    {
-                                        switch (Team)
-                                        {
-                                            case 'B':
-                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamC))
-                                                {
-                                                    SzachyBC[_i, _i2] |= ChessPiece.TeamB;
-                                                }
-                                                break;
-                                            case 'C':
-                                                if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamB))
-                                                {
-                                                    SzachyBC[_i, _i2] |= ChessPiece.TeamC;
-                                                }
-                                                break;
-                                        } 
-                                    }
-                                }
-                                else
-                                {
-                                    switch (Team)
-                                    {
-                                        case 'B':
-                                            HiddenSzachyB[_i, _i2] = true;
-                                            break;
-                                        case 'C':
-                                            HiddenSzachyC[_i, _i2] = true;
-                                            break;
-                                    }
-                                    CheckBishopRightDown(_i+1,_i2+1,Team);
-                                }
-                            }
-                            return;
-                        }
-                        void CheckBishopLeftUp(int _i, int _i2, char Team)
-                        {
-                            if(!(_i <= -1) && !(_i2 <= -1))
-                            {
-                                if(Plansza[_i,_i2] != null)
-                                {
-                                    if(Plansza[_i,_i2].StartsWith("krol"))
+                                    else
                                     {
                                         switch(Team)
                                         {
                                             case 'B':
-                                                if(Plansza[_i,_i2].Last() == 'C')
-                                                {
-                                                    SzachyB[_i,_i2] = true;
-                                                }
+                                                HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamB;
                                                 break;
                                             case 'C':
-                                                if(Plansza[_i,_i2].Last() == 'B')
-                                                {
-                                                    SzachyC[_i,_i2] = true;
-                                                }
+                                                HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamC;
                                                 break;
                                         }
+                                        CheckBishopRightUp(_i-1, _i2+1, Team);
                                     }
                                 }
-                                else
-                                {
-                                    switch (Team)
-                                    {
-                                        case 'B':
-                                            HiddenSzachyB[_i, _i2] = true;
-                                            break;
-                                        case 'C':
-                                            HiddenSzachyC[_i, _i2] = true;
-                                            break;
-                                    }
-                                    CheckBishopLeftUp(_i-1,_i2-1,Team);
-                                }    
+                                return;
                             }
-                            return;
-                        }
-                        void CheckBishopLeftDown(int _i, int _i2, char Team)
-                        {
-                            //costam
-                            //CheckBishopLeftDown() aż nie będzie można
-                            if(!(_i >= 8) && !(_i2 <= -1))
+                            void CheckBishopRightDown(int _i, int _i2, char Team)
                             {
-                                if(Plansza[_i,_i2] != null)
+                                if(!(_i >= 8) && !(_i2 >= 8))
                                 {
-                                    if(Plansza[_i,_i2].StartsWith("krol"))
+                                    if(!(Plansza[_i, _i2] == ChessPiece.None))
                                     {
-                                        switch (Team)
+                                        if(Plansza[_i, _i2].HasFlag(ChessPiece.King))
+                                        {
+                                            switch(Team)
+                                            {
+                                                case 'B':
+                                                    if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamC))
+                                                    {
+                                                        SzachyBC[_i, _i2] |= ChessPiece.TeamB;
+                                                    }
+                                                    break;
+                                                case 'C':
+                                                    if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamB))
+                                                    {
+                                                        SzachyBC[_i, _i2] |= ChessPiece.TeamC;
+                                                    }
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        switch(Team)
                                         {
                                             case 'B':
-                                                if (Plansza[_i, _i2].Last() == 'C')
-                                                {
-                                                    SzachyB[_i, _i2] = true;
-                                                }
+                                                HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamB;
                                                 break;
                                             case 'C':
-                                                if (Plansza[_i,_i2].Last() == 'B')
-                                                {
-                                                    SzachyC[_i,_i2] = true;
-                                                }
+                                                HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamC;
                                                 break;
                                         }
-                                    }    
-                                }
-                                else
-                                {
-                                    switch(Team)
-                                    {
-                                        case 'B':
-                                            HiddenSzachyB[_i,_i2] = true;
-                                            break;
-                                        case 'C':
-                                            HiddenSzachyC[_i,_i2] = true;
-                                            break;
+                                        CheckBishopRightDown(_i+1, _i2+1, Team);
                                     }
-                                    CheckBishopLeftDown(_i+1,_i2-1,Team);
                                 }
+                                return;
                             }
-                            return;
+                            void CheckBishopLeftUp(int _i, int _i2, char Team)
+                            {
+                                if(!(_i <= -1) && !(_i2 <= -1))
+                                {
+                                    if(!(Plansza[_i, _i2] == ChessPiece.None))
+                                    {
+                                        if(Plansza[_i, _i2].HasFlag(ChessPiece.King))
+                                        {
+                                            switch(Team)
+                                            {
+                                                case 'B':
+                                                    if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamC))
+                                                    {
+                                                        SzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                                    }
+                                                    break;
+                                                case 'C':
+                                                    if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamB))
+                                                    {
+                                                        SzachyBC[_i, _i2] |= ChessPiece.TeamC;
+                                                    }
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        switch(Team)
+                                        {
+                                            case 'B':
+                                                HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamB;
+                                                break;
+                                            case 'C':
+                                                HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamC;
+                                                break;
+                                        }
+                                        CheckBishopLeftUp(_i-1, _i2-1, Team);
+                                    }
+                                }
+                                return;
+                            }
+                            void CheckBishopLeftDown(int _i, int _i2, char Team)
+                            {
+                                //costam
+                                //CheckBishopLeftDown() aż nie będzie można
+                                if(!(_i >= 8) && !(_i2 <= -1))
+                                {
+                                    if(!(Plansza[_i, _i2] == ChessPiece.None))
+                                    {
+                                        if(Plansza[_i, _i2].HasFlag(ChessPiece.King)) //Plansza[_i, _i2].StartsWith("krol")
+                                        {
+                                            switch(Team)
+                                            {
+                                                case 'B':
+                                                    if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamC)) //Plansza[_i, _i2].Last() == 'C'
+                                                    {
+                                                        SzachyBC[_i, _i2] |= ChessPiece.TeamB;
+                                                    }
+                                                    break;
+                                                case 'C':
+                                                    if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamB)) //Plansza[_i, _i2].Last() == 'B'
+                                                    {
+                                                        SzachyBC[_i, _i2] |= ChessPiece.TeamC;
+                                                    }
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        switch(Team)
+                                        {
+                                            case 'B':
+                                                HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamB;
+                                                break;
+                                            case 'C':
+                                                HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamC;
+                                                break;
+                                        }
+                                        CheckBishopLeftDown(_i+1, _i2-1, Team);
+                                    }
+                                }
+                                return;
+                            }
+                            if(Plansza[i,i2].HasFlag(ChessPiece.TeamB))
+                            {
+                                    // I did not understand async when writing this comment so it's kinda irrelevant
+                                    // 
+                                    // Guess who can't use async
+                                    // uwu
+                                    Thread CheckRightUpB = new Thread(() => CheckBishopRightUp(i-1, i2+1, 'B'));
+                                    Thread CheckRightDownB = new Thread(() => CheckBishopRightDown(i+1, i2+1, 'B'));
+                                    Thread CheckLeftUpB = new Thread(() => CheckBishopLeftUp(i-1, i2-1, 'B'));
+                                    Thread CheckLeftDownB = new Thread(() => CheckBishopLeftDown(i+1, i2-1, 'B'));
+                                    CheckRightUpB.Start();
+                                    CheckRightDownB.Start();
+                                    CheckLeftUpB.Start();
+                                    CheckLeftDownB.Start();
+                                    CheckRightUpB.Join();
+                                    CheckRightDownB.Join();
+                                    CheckLeftUpB.Join();
+                                    CheckLeftDownB.Join();
+                            }
+                            else if(Plansza[i,i2].HasFlag(ChessPiece.TeamC))
+                            {
+                                    Thread CheckRightUpC = new Thread(() => CheckBishopRightUp(i-1, i2+1, 'C'));
+                                    Thread CheckRightDownC = new Thread(() => CheckBishopRightDown(i+1, i2+1, 'C'));
+                                    Thread CheckLeftUpC = new Thread(() => CheckBishopLeftUp(i-1, i2-1, 'C'));
+                                    Thread CheckLeftDownC = new Thread(() => CheckBishopLeftDown(i+1, i2-1, 'C'));
+                                    CheckRightUpC.Start();
+                                    CheckRightDownC.Start();
+                                    CheckLeftUpC.Start();
+                                    CheckLeftDownC.Start();
+                                    CheckRightUpC.Join();
+                                    CheckRightDownC.Join();
+                                    CheckLeftUpC.Join();
+                                    CheckLeftDownC.Join();
+                            }
                         }
-                        switch (Plansza[i, i2].Last())
+                        if(Plansza[i, i2].HasFlag(ChessPiece.Rook))
                         {
-                            case 'B':
-                                //
-                                // Guess who can't use async
-                                // uwu
-                                Thread CheckRightUpB = new Thread(() => CheckBishopRightUp(i-1,i2+1,'B'));
-                                Thread CheckRightDownB = new Thread(() => CheckBishopRightDown(i+1,i2+1,'B'));
-                                Thread CheckLeftUpB = new Thread(() => CheckBishopLeftUp(i-1,i2-1,'B'));
-                                Thread CheckLeftDownB = new Thread(() => CheckBishopLeftDown(i+1,i2-1,'B'));
-                                CheckRightUpB.Start();
-                                CheckRightDownB.Start();
-                                CheckLeftUpB.Start();
-                                CheckLeftDownB.Start();
-                                CheckRightUpB.Join();
-                                CheckRightDownB.Join();
-                                CheckLeftUpB.Join();
-                                CheckLeftDownB.Join();
-                                break;
-                            case 'C':
-                                Thread CheckRightUpC = new Thread(() => CheckBishopRightUp(i-1, i2+1, 'C'));
-                                Thread CheckRightDownC = new Thread(() => CheckBishopRightDown(i+1, i2+1, 'C'));
-                                Thread CheckLeftUpC = new Thread(() => CheckBishopLeftUp(i-1, i2-1, 'C'));
-                                Thread CheckLeftDownC = new Thread(() => CheckBishopLeftDown(i+1, i2-1, 'C'));
-                                CheckRightUpC.Start();
-                                CheckRightDownC.Start();
-                                CheckLeftUpC.Start();
-                                CheckLeftDownC.Start();
-                                CheckRightUpC.Join();
-                                CheckRightDownC.Join();
-                                CheckLeftUpC.Join();
-                                CheckLeftDownC.Join();
-                                break;
-                        }
-                    }
-                    if(Plansza[i,i2].HasFlag(ChessPiece.Rook))
-                    {   
-                        if(Plansza[i,i2].HasFlag(ChessPiece.TeamC))
-                        {
+                            if(Plansza[i, i2].HasFlag(ChessPiece.TeamC))
+                            {
 
-                        }
-                        else
-                        {
+                            }
+                            else
+                            {
 
+                            }
                         }
-                    }
-                    if (Plansza[i,i2].HasFlag(ChessPiece.King))
-                    {
-                        if(Plansza[i,i2].HasFlag(ChessPiece.TeamC))
+                        if(Plansza[i, i2].HasFlag(ChessPiece.King))
                         {
+                            if(Plansza[i, i2].HasFlag(ChessPiece.TeamC))
+                            {
 
-                        }
-                        else
-                        {
+                            }
+                            else
+                            {
 
+                            }
                         }
-                    }
                         /// <summary> 
                         /// Queen is now marked as Rook | Bishop, therefore she does not have a separate case/if
                         /// </summary>
@@ -730,8 +726,8 @@ namespace SzachyMulti
                             break;*/
                     }
                 }
-                //PAMIĘTAJ O SPRAWDZANIU CZY KRÓL MA SZACHA U OBU DRUŻYN
-                //JEŚLI TAK TO PRZYWRÓĆ BACKUP I GŁÓWNEGO I HIDDEN
+                //TODO: PAMIĘTAJ O SPRAWDZANIU CZY KRÓL MA SZACHA U OBU DRUŻYN
+                //TODO: JEŚLI TAK TO PRZYWRÓĆ BACKUP I GŁÓWNEGO I HIDDEN
             }
         }
         public static void NarysujPlansze()
@@ -742,15 +738,15 @@ namespace SzachyMulti
             //65 - "-----------------------------------------------------------------" (7*8 + 9)
             if(Program.playerTeam == 'C')
             {
-                for (int linia = 0, x = 0; linia <= 7; linia++)
+                for(int linia = 0, x = 0; linia <= 7; linia++)
                 {
                     Console.WriteLine("\t-----------------------------------------------------------------");
                     Console.Write("\t|");
-                    while (x < 8)
+                    while(x < 8)
                     {
-                        if (Plansza[linia, x].HasFlag(ChessPiece.King | ChessPiece.TeamC))
+                        if(Plansza[linia, x].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                         {
-                            if (SzachyBC[linia, x].HasFlag(ChessPiece.TeamC))
+                            if(SzachyBC[linia, x].HasFlag(ChessPiece.TeamB))
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.Write(" szach!");
@@ -771,9 +767,9 @@ namespace SzachyMulti
                     x = 0;
                     Console.Write("\n");
                     Console.Write($"    {linia + 1}   |");
-                    while (x < 8)
+                    while(x < 8)
                     {
-                        if (Plansza[linia, x].HasFlag(ChessPiece.None))
+                        if(!(Plansza[linia, x].HasFlag(ChessPiece.None)))
                         {
                             NapiszPionek(linia, x);
                             Console.Write("|");
@@ -787,13 +783,13 @@ namespace SzachyMulti
                     Console.Write("\n");
                     x = 0;
                     Console.Write("\t|");
-                    while (x < 8)
+                    while(x < 8)
                     {
-                        if (Plansza[linia, x].HasFlag(ChessPiece.King | ChessPiece.TeamB))
+                        if(Plansza[linia, x].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                         {
-                            if (SzachyBC[linia, x].HasFlag(ChessPiece.TeamC))
+                            if(SzachyBC[linia, x].HasFlag(ChessPiece.TeamC))
                             {
-                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.ForegroundColor = ConsoleColor.DarkRed;
                                 Console.Write(" szach!");
                                 Console.ForegroundColor = ConsoleColor.White;
                                 Console.Write("|");
@@ -816,15 +812,15 @@ namespace SzachyMulti
             }
             else
             {
-                for (int linia = 7, x = 0; linia > -1; linia--)
+                for(int linia = 7, x = 0; linia > -1; linia--)
                 {
                     Console.WriteLine("\t-----------------------------------------------------------------");
                     Console.Write("\t|");
-                    while (x < 8)
+                    while(x < 8)
                     {
-                        if (Plansza[linia, x].HasFlag(ChessPiece.King | ChessPiece.TeamB))
+                        if(Plansza[linia, x].HasFlag(ChessPiece.King | ChessPiece.TeamB))
                         {
-                            if (SzachyBC[linia, x].HasFlag(ChessPiece.TeamC))
+                            if(SzachyBC[linia, x].HasFlag(ChessPiece.TeamC))
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.Write(" szach!");
@@ -845,9 +841,9 @@ namespace SzachyMulti
                     x = 0;
                     Console.Write("\n");
                     Console.Write($"    {linia + 1}   |");
-                    while (x < 8)
+                    while(x < 8)
                     {
-                        if (Plansza[linia, x].HasFlag(ChessPiece.None))
+                        if(!(Plansza[linia, x].HasFlag(ChessPiece.None)))
                         {
                             NapiszPionek(linia, x);
                             Console.Write("|");
@@ -861,11 +857,11 @@ namespace SzachyMulti
                     Console.Write("\n");
                     x = 0;
                     Console.Write("\t|");
-                    while (x < 8)
+                    while(x < 8)
                     {
-                        if (Plansza[linia, x].HasFlag(ChessPiece.King | ChessPiece.TeamC))
+                        if(Plansza[linia, x].HasFlag(ChessPiece.King | ChessPiece.TeamC))
                         {
-                            if (SzachyBC[linia, x].HasFlag(ChessPiece.TeamC))
+                            if(SzachyBC[linia, x].HasFlag(ChessPiece.TeamB))
                             {
                                 Console.ForegroundColor = ConsoleColor.DarkRed;
                                 Console.Write(" szach!");
@@ -895,32 +891,32 @@ namespace SzachyMulti
             switch(Plansza[pos1, pos2] & ChessPiece.AllPieces) // In memory of the dear Pieces ❤︎ (Plansza[pos1, pos2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'C', 'B'))
             {
                 case ChessPiece.Pawn: //"pionek"
-                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkGreen + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB)? 0 : 8 ));
+                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkGreen + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 0 : 8));
                     Console.Write("pionek ");
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case ChessPiece.Rook: //"wieza"
-                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkBlue + (Plansza[pos1,pos2].HasFlag(ChessPiece.TeamB)? 0 : 8));
+                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkBlue + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 0 : 8));
                     Console.Write(" wieza ");
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case ChessPiece.Knight: //"kon"
-                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkYellow + (Plansza[pos1,pos2].HasFlag(ChessPiece.TeamB)? 0 : 8));
+                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkYellow + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 0 : 8));
                     Console.Write("  kon  ");
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case ChessPiece.Bishop: //"goniec"
-                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkCyan + (Plansza[pos1,pos2].HasFlag(ChessPiece.TeamB)? 0 : 8));
+                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkCyan + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 0 : 8));
                     Console.Write("goniec ");
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case ChessPiece.Queen: //"krolowa"
-                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkMagenta + (Plansza[pos1,pos2].HasFlag(ChessPiece.TeamB)? 0 : 8));
+                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkMagenta + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 0 : 8));
                     Console.Write("krolowa");
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case ChessPiece.King: //"krol"
-                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkGray + (Plansza[pos1,pos2].HasFlag(ChessPiece.TeamB)? 0 : 8));
+                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkGray + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 0 : 8));
                     Console.Write(" krol  ");
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
@@ -931,7 +927,7 @@ namespace SzachyMulti
             //Ily pieces, in memory I'm keeping this. string figureType = Plansza[Pozycja1.Pos1, Pozycja1.Pos2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C');
             try
             {
-                switch (Plansza[Pozycja1.Pos1,Pozycja1.Pos2] & ChessPiece.AllPieces)
+                switch(Plansza[Pozycja1.Pos1, Pozycja1.Pos2] & ChessPiece.AllPieces)
                 {
                     //These functions should throw the InvalidEnemyMoveDerivedExcpetion(MoveInfo) with some info about the error that will get logged and told to the player
                     case ChessPiece.Pawn: //"pionek"
@@ -962,28 +958,28 @@ namespace SzachyMulti
         }
         public static void RuchPionem(Pozycja Pozycja1, Pozycja Pozycja2)
         {
-            switch (Program.playerTeam)
+            switch(Program.playerTeam)
             {
 
             }
         }
         public static void RuchKoniem(Pozycja Pozycja1, Pozycja Pozycja2)
         {
-            switch (Program.playerTeam)
+            switch(Program.playerTeam)
             {
 
             }
         }
         public static void RuchGońcem(Pozycja Pozycja1, Pozycja Pozycja2)
         {
-            switch (Program.playerTeam)
+            switch(Program.playerTeam)
             {
 
             }
         }
         public static void RuchWieżą(Pozycja Pozycja1, Pozycja Pozycja2)
         {
-            switch (Program.playerTeam)
+            switch(Program.playerTeam)
             {
 
             }
@@ -995,17 +991,17 @@ namespace SzachyMulti
         }
         public static void RuchKrólem(Pozycja Pozycja1, Pozycja Pozycja2)
         {
-            switch (Program.playerTeam)
+            switch(Program.playerTeam)
             {
 
             }
         }
-        
+
         public static void Rozgrywka()
         {
             Szachy.PostawPionki();
             bool koniecrozgrywki = false;
-            switch (Program.playerTeam)
+            switch(Program.playerTeam)
             {
                 case 'B':
                     //napisz w czacie $"Gracz {Nick} gra białymi"
@@ -1016,17 +1012,17 @@ namespace SzachyMulti
                 case 'C':
                     break;
             }
-            for (int tura = 1; !koniecrozgrywki; tura++)
+            for(int tura = 1; !koniecrozgrywki; tura++)
             {
-                if (tura.ToString().Length == 1)
+                if(tura.ToString().Length == 1)
                 {
                     Console.WriteLine(new String('-', 36) + $" Tura {tura} " + new String('-', 36));
                 }
-                else if (tura.ToString().Length == 2)
+                else if(tura.ToString().Length == 2)
                 {
                     Console.WriteLine(new String('-', 35) + $" Tura {tura} " + new String('-', 36));
                 }
-                else if (tura.ToString().Length == 3)
+                else if(tura.ToString().Length == 3)
                 {
                     Console.WriteLine(new String('-', 35) + $" Tura {tura} " + new String('-', 35));
                 }
@@ -1035,7 +1031,7 @@ namespace SzachyMulti
                     //może jakiś algorytm na to here
                     //if costam % 2 == 0 musi być, kiedyś to napiszę
                 }
-                switch (Program.playerTeam)
+                switch(Program.playerTeam)
                 {
                     case 'B':
                         Szachy.NarysujPlansze();
@@ -1044,7 +1040,7 @@ namespace SzachyMulti
                         break;
                     case 'C':
                         Szachy.NarysujPlansze();
-                        while (!Program.hasEnemyMoved)
+                        while(!Program.hasEnemyMoved)
                         {
                             Thread.Sleep(1000);
                         }
@@ -1098,7 +1094,7 @@ namespace SzachyMulti
         {
             isApppending = true;
             txt = txt + "\n";
-        writetofile:
+            writetofile:
             try
             {
                 var tmp = client.OpenAppend($"/SzachySerwer/{Folder}/{ID}.txt");
@@ -1119,12 +1115,12 @@ namespace SzachyMulti
         {
             var tmp = client.OpenWrite($"/SzachySerwer/StartingSessions/{ID}.txt");
             string txt = "";
-            if (IsPublic) txt += "public\n";
-            if (!IsPublic) txt += "private\n";
+            if(IsPublic) txt += "public\n";
+            if(!IsPublic) txt += "private\n";
             txt += $"{name}\n";
             txt += $"{nick}\n";
             int playerTeamInt = rand.Next(1, 3);
-            if (playerTeamInt == 2)
+            if(playerTeamInt == 2)
             {
                 playerTeam = 'B';
             }
@@ -1141,7 +1137,7 @@ namespace SzachyMulti
         public static bool czy_odbierac = false;
         public static int SkonwertujLitere(char litera)
         {
-            switch (litera)
+            switch(litera)
             {
                 case 'A':
                     return 0;
@@ -1169,17 +1165,17 @@ namespace SzachyMulti
             client.Connect();
             isOdbierz = true;
             lines = GetContent(currentfolder, Convert.ToString(ID));
-            if (lastCount < lines.Count() || isApppending == false)
+            if(lastCount < lines.Count() || isApppending == false)
             {
                 //"Nick: [wydarzenie]"
                 wasContentReceived = true;
                 int i = lastCount + 1;
-                while (i <= lines.Count)
+                while(i <= lines.Count)
                 {
-                    if (!lines[i].StartsWith(Nick))
+                    if(!lines[i].StartsWith(Nick))
                     {
                         lines[i] = lines[i].Substring(enemyNick.Length + 2);
-                        if (lines[i].StartsWith("CZAT"))
+                        if(lines[i].StartsWith("CZAT"))
                         {
                             lines[i] = lines[i].Substring(enemyNick.Length + 2);
                             odebranoWiad = true;
@@ -1189,7 +1185,7 @@ namespace SzachyMulti
                             lines[i] = lines[i].Insert(0, $"{enemyNick}: ");
                             receivedMessages.Add(lines[i]);
                         }
-                        else if (lines[i].Contains(">>"))
+                        else if(lines[i].Contains(">>"))
                         {
                             lines[i] = lines[i].Substring(enemyNick.Length + 2);
                             //"A1 >> A2"
@@ -1204,25 +1200,25 @@ namespace SzachyMulti
                             Pozycja2.Pos2 = moveArgs[1].Last();
                             Szachy.WykonajISprawdzRuchPrzeciwnika(Pozycja1, Pozycja2);
                         }
-                        else if (lines[i].StartsWith("CLOSING"))
+                        else if(lines[i].StartsWith("CLOSING"))
                         {
                             lines[i] = lines[i].Substring(enemyNick.Length + 2);
                             AppendText("OK", "StartingSessions", ID);
                             currentfolder = "ActiveSessions";
                         }
-                        else if (lines[i].StartsWith("OK"))
+                        else if(lines[i].StartsWith("OK"))
                         {
                             lines[i] = lines[i].Substring(enemyNick.Length + 2);
                             //"OK"
                             client.MoveFile($"/SzachySerwer/StartingSessions/{ID}.txt", $"/SzachySerwer/ActiveSessions/{ID}.txt");
                         }
-                        else if (lines[i].StartsWith("JOIN"))
+                        else if(lines[i].StartsWith("JOIN"))
                         {
                             lines[i] = lines[i].Substring(enemyNick.Length + 2);
                             enemyNick = lines[i].Remove(0, 5).Trim();
                             hasOtherPlayerJoined = true;
                         }
-                        else if (lines[i].StartsWith("EVENT"))
+                        else if(lines[i].StartsWith("EVENT"))
                         {
                             receivedMessages.Add(lines[i].Substring(0, 6));
                         }
@@ -1231,7 +1227,7 @@ namespace SzachyMulti
                 }
                 lastCount = lines.Count;
             }
-            if (!isSending)
+            if(!isSending)
             {
                 client.Disconnect();
             }
@@ -1256,7 +1252,7 @@ namespace SzachyMulti
         public static void WyślijWiadomość(string currentfolder, string wiadomosc, int ID)
         {
             Program.isSending = true;
-            if (!Program.client.IsConnected)
+            if(!Program.client.IsConnected)
             {
                 Program.client.Connect();
             }
@@ -1269,42 +1265,42 @@ namespace SzachyMulti
             chatLog = null;
             chatLog.AddRange(chatReader.ReadToEnd().Split('\n'));
             int countNow = chatLog.Count();
-            if (countNow > lastCountChat)
+            if(countNow > lastCountChat)
             {
                 isSending = true;
                 List<string> sentMessages = new List<string>();
-                for (int i = lastCountChat + 1; i <= countNow; i++)
+                for(int i = lastCountChat + 1; i <= countNow; i++)
                 {
-                    if (!chatLog[i].StartsWith(Nick))
+                    if(!chatLog[i].StartsWith(Nick))
                     {
                         sentMessages.Add($"{Nick}: {chatLog[i]}");
                     }
                 }
-                if (client.IsConnected == false)
+                if(client.IsConnected == false)
                 {
                     client.Connect();
                 }
-                foreach (string msg in sentMessages)
+                foreach(string msg in sentMessages)
                 {
                     AppendText(msg, currentfolder, Convert.ToString(ID));
                 }
                 lastCountChat = chatLog.Count();
-                if (isOdbierz == false)
+                if(isOdbierz == false)
                 {
                     client.Disconnect();
                 }
                 isSending = false;
                 chatReader.Close();
             }
-            if (odebranoWiad)
+            if(odebranoWiad)
             {
                 StreamWriter chatWriter = new StreamWriter($@".\Chat\Logs\Log{ID}.txt");
                 chatWriter.Close();
                 //sw = chat.StandardInput;
-                foreach (string receivedMessage in receivedMessages)
+                foreach(string receivedMessage in receivedMessages)
                 {
-                   chatWriter.WriteLine($"{enemyNick}: {receivedMessage}");
-                   receivedMessages.Remove(receivedMessage);
+                    chatWriter.WriteLine($"{enemyNick}: {receivedMessage}");
+                    receivedMessages.Remove(receivedMessage);
                 }
                 odebranoWiad = false;
                 chatWriter.Close();
@@ -1313,10 +1309,10 @@ namespace SzachyMulti
 
         public static void KlientOdbierajacy()
         {
-            while (true)
+            while(true)
             {
                 int repeati = 0;
-                while (czy_odbierac == true)
+                while(czy_odbierac == true)
                 {
                     try
                     {
@@ -1326,16 +1322,16 @@ namespace SzachyMulti
                     }
                     catch
                     {
-                        if (repeati >= 4)
+                        if(repeati >= 4)
                         {
                             Console.Write("Nie udalo sie polaczyc z serwerem, sprobowac ponownie? t/n\n(Odpowiedz \"n\" przerywa sesje, nie jest to wskazane.)\n>");
-                        connrepeatgoto:
+                            connrepeatgoto:
                             string connrepeat = Console.ReadLine().ToLower();
-                            if (connrepeat.Contains('t'))
+                            if(connrepeat.Contains('t'))
                             {
                                 repeati++;
                             }
-                            else if (connrepeat.Contains('n'))
+                            else if(connrepeat.Contains('n'))
                             {
                                 Console.WriteLine("Konczenie sesji... cofanie do menu glownego");
                                 czy_odbierac = false;
@@ -1358,25 +1354,25 @@ namespace SzachyMulti
             Szachy.NarysujPlansze();
             playerTeam = 'C';
             Szachy.NarysujPlansze();
-            if (args.Length > 0)
+            if(args.Length > 0)
             {
-                if (args[0] == "true")
+                if(args[0] == "true")
                 {
                     BasicIO = true;
                 }
             }
-        menuglowne:
+            menuglowne:
             Console.WriteLine($"Obecny czas: {DateTime.Now}/{(Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds}");
             Console.Write("Polaczyc sie z serwerem? t/n\n>");
             string czy_polaczyc = Console.ReadLine().ToLower();
-            if (czy_polaczyc.Contains('t'))
+            if(czy_polaczyc.Contains('t'))
             {
                 Console.WriteLine("Podaj swoj nick:\n>");
                 Nick = Console.ReadLine();
                 client.Host = credentials.host;
                 client.Port = credentials.port;
                 client.Credentials = new NetworkCredential(credentials.username, credentials.password);
-            polacz:
+                polacz:
                 try
                 {
                     Console.WriteLine("Laczenie...");
@@ -1386,18 +1382,18 @@ namespace SzachyMulti
                 {
                     Console.Write("Nie udalo sie polaczyc z serwerem, sprobowac ponownie? t/n\n>");
                     string connrepeat = Console.ReadLine().ToLower();
-                    if (connrepeat.Contains('t'))
+                    if(connrepeat.Contains('t'))
                     {
                         goto polacz;
                     }
-                    else if (connrepeat.Contains('n'))
+                    else if(connrepeat.Contains('n'))
                     {
                         Console.WriteLine("Cofanie do menu glownego");
                         goto menuglowne;
                     }
                 }
             }
-            else if (czy_polaczyc.Contains('n'))
+            else if(czy_polaczyc.Contains('n'))
             {
                 Console.WriteLine("Cofanie do menu glownego");
                 goto menuglowne;
@@ -1407,11 +1403,11 @@ namespace SzachyMulti
                 Console.WriteLine($"Niepoprawna odpowiedz {czy_polaczyc}");
                 goto menuglowne;
             }
-        lobby:
+            lobby:
             try
             {
                 bool donotincrement = false;
-                if (client.GetWorkingDirectory() != "/SzachySerwer/StartingSessions/")
+                if(client.GetWorkingDirectory() != "/SzachySerwer/StartingSessions/")
                 {
                     client.SetWorkingDirectory(@"/SzachySerwer/StartingSessions/");
                 }
@@ -1420,11 +1416,11 @@ namespace SzachyMulti
                 Console.WriteLine("---Lobby------------------------------------------------------------------------");
                 Console.WriteLine("Lp. Nazwa pokoju               - ID");
                 int i = 1;
-                foreach (var item in client.GetListing(client.GetWorkingDirectory(), FtpListOption.Recursive))
+                foreach(var item in client.GetListing(client.GetWorkingDirectory(), FtpListOption.Recursive))
                 {
                     donotincrement = false;
                     var isFile = client.FileExists(item.FullName);
-                    if (isFile == true)
+                    if(isFile == true)
                     {
                         var tmp = client.OpenRead($"/SzachySerwer/StartingSessions/{item.Name}");
                         byte[] buffer = new byte[tmp.Length];
@@ -1432,9 +1428,9 @@ namespace SzachyMulti
                         string str = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
                         List<string> lines = str.Split('\n').ToList();
                         tmp.Close();
-                        if (lines[0] == "public")
+                        if(lines[0] == "public")
                         {
-                            if (lines[1].Length > 25)
+                            if(lines[1].Length > 25)
                             {
                                 lines[1] = lines[1].Remove(25, lines[1].Length - 25);
                             }
@@ -1445,7 +1441,7 @@ namespace SzachyMulti
                             donotincrement = true;
                         }
                     }
-                    if (donotincrement == false)
+                    if(donotincrement == false)
                     {
                         i++;
                     }
@@ -1458,7 +1454,7 @@ namespace SzachyMulti
                 client.Disconnect();
                 Console.Write("Blad odbierania lobby. Sprobowac ponownie? t/n\n>");
                 string tryagainlobby = Console.ReadLine();
-                if (tryagainlobby.ToLower().Contains('t'))
+                if(tryagainlobby.ToLower().Contains('t'))
                 {
                     goto lobby;
                 }
@@ -1468,31 +1464,31 @@ namespace SzachyMulti
             bool isCancel = false;
             Console.Write("\nPodaj ID sesji publicznej (z lobby) lub prywatnej (otrzymanej od znajomego) aby dolaczyc do niej. Utworz nowa sesje poleceniem \"create\". Odswiez lobby poleceniem \"refresh\"\n>");
             string connect_to_id = Console.ReadLine();
-            if (connect_to_id.ToLower().Contains("create"))
+            if(connect_to_id.ToLower().Contains("create"))
             {
                 bool isPublic;
-            podajnazwesesji:
+                podajnazwesesji:
                 Console.Write("\nPodaj nazwe sesji, ktora chcesz stworzyc lub napisz \"cancel\" aby wrocic do lobby\n>");
                 nazwasesji = Console.ReadLine();
-                if (nazwasesji.ToLower() == "cancel")
+                if(nazwasesji.ToLower() == "cancel")
                 {
                     goto lobby;
                 }
-                if (nazwasesji.Length > 25)
+                if(nazwasesji.Length > 25)
                 {
                     Console.WriteLine("Nazwa sesji jest zbyt dluga. Wpisz krotsza nazwe (max 25 znakow)");
                     goto podajnazwesesji;
                 }
-            ispublicgoto:
-                if (isCancel == false)
+                ispublicgoto:
+                if(isCancel == false)
                 {
                     Console.WriteLine("\nCzy sesja ma byc prywatna? t/n\n>");
                     string ispublicstr = Console.ReadLine().ToLower();
-                    if (ispublicstr.Contains('t'))
+                    if(ispublicstr.Contains('t'))
                     {
                         isPublic = true;
                     }
-                    else if (ispublicstr.Contains('n'))
+                    else if(ispublicstr.Contains('n'))
                     {
                         isPublic = false;
                     }
@@ -1503,7 +1499,7 @@ namespace SzachyMulti
                     }
                     Console.Write($"Tworzenie sesji o nazwie \"{nazwasesji}\", kontynuowac? t/n\n>");
                     string napewno = Console.ReadLine().ToLower();
-                    if (napewno.Contains('t'))
+                    if(napewno.Contains('t'))
                     {
                         ID = Convert.ToString((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds);
 
@@ -1512,14 +1508,14 @@ namespace SzachyMulti
                         client.Disconnect();
                         InitKlient();
                         Console.WriteLine("Czekanie na drugiego gracza...");
-                        while (!hasOtherPlayerJoined)
+                        while(!hasOtherPlayerJoined)
                         {
                             Thread.Sleep(TimeSpan.FromSeconds(5));
                         }
                         Szachy.Rozgrywka();
                         //(Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds
                     }
-                    else if (napewno.ToLower().Contains('n'))
+                    else if(napewno.ToLower().Contains('n'))
                     {
                         Console.WriteLine("\nWracanie do lobby...\n");
                         wykonajconnect = false;
@@ -1527,7 +1523,7 @@ namespace SzachyMulti
                     }
                 }
             }
-            else if (connect_to_id.ToLower().Contains("refresh"))
+            else if(connect_to_id.ToLower().Contains("refresh"))
             {
                 Console.WriteLine("\nOdswiezanie lobby...\n");
                 wykonajconnect = false;
@@ -1537,28 +1533,28 @@ namespace SzachyMulti
             }
             try
             {
-                if (isCancel == false)
+                if(isCancel == false)
                 {
                     ID = connect_to_id;
                     wykonajconnect = true;
                 }
             }
-            catch (InvalidCastException)
+            catch(InvalidCastException)
             {
                 Console.WriteLine("Niepoprawna odpowiedz:" + connect_to_id);
                 Console.WriteLine("Cofanie do lobby...\n");
                 wykonajconnect = false;
                 goto lobby;
             }
-            if (wykonajconnect == true)
+            if(wykonajconnect == true)
             {
-                foreach (var item in client.GetNameListing())
+                foreach(var item in client.GetNameListing())
                 {
                     //connect, setdirectory
                     var isFile = client.FileExists(item);
-                    if (isFile == true)
+                    if(isFile == true)
                     {
-                        if (item.GetFtpFileName().TrimEnd('.', 't', 'x') == connect_to_id)
+                        if(item.GetFtpFileName().TrimEnd('.', 't', 'x') == connect_to_id)
                         {
                             Console.Clear();
                             Console.SetWindowSize(80, 50);
@@ -1568,7 +1564,7 @@ namespace SzachyMulti
                             nazwasesji = lines[0];
                             enemyNick = lines[2];
                             enemyTeam = Convert.ToChar(lines[3]);
-                            switch (enemyTeam)
+                            switch(enemyTeam)
                             {
                                 case 'B':
                                     playerTeam = 'C';
@@ -1585,14 +1581,14 @@ namespace SzachyMulti
         }
         static void SizeCheckThread()
         {
-            if (Console.WindowWidth != 80)
+            if(Console.WindowWidth != 80)
             {
                 Console.SetWindowSize(80, Console.WindowHeight);
             }
         }
         static void SizeCheck()
         {
-            while (true)
+            while(true)
             {
                 SizeCheckThread();
                 Thread.Sleep(1500);
@@ -1603,7 +1599,7 @@ namespace SzachyMulti
         {
             Thread Size = new Thread(new ThreadStart(SizeCheck));
             Size.Start();
-            if (BasicIO == true)
+            if(BasicIO == true)
             {
                 OtwórzCzat();
                 Thread chat = new Thread(new ThreadStart(ChatThread));
