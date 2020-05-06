@@ -915,7 +915,7 @@ namespace SzachyMulti
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case ChessPiece.King: //"krol"
-                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkGray + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 0 : 8));
+                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkGray + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 0 : -1));
                     Console.Write(" krol  ");
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
