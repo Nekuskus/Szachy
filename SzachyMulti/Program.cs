@@ -117,10 +117,10 @@ namespace SzachyMulti
             //Plansza[2, 5] = ChessPiece.Knight | ChessPiece.TeamB; //"kon123B" :heart:
             //Plansza[3, 0] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
             //Plansza[5, 2] = ChessPiece.Bishop | ChessPiece.TeamB; //Plansza[5, 2] = "goniecB"; //B :heart:
-            Plansza[2, 4] = ChessPiece.King | ChessPiece.TeamC;
-            Plansza[4, 4] = ChessPiece.Queen | ChessPiece.TeamB;
-            Plansza[2, 6] = ChessPiece.King | ChessPiece.TeamC;
-            Plansza[4, 2] = ChessPiece.King | ChessPiece.TeamC;
+            //Plansza[2, 4] = ChessPiece.King | ChessPiece.TeamC;
+            //Plansza[4, 4] = ChessPiece.Queen | ChessPiece.TeamB;
+            //Plansza[2, 6] = ChessPiece.King | ChessPiece.TeamC;
+            //Plansza[4, 2] = ChessPiece.King | ChessPiece.TeamC;
             // ❤︎
             //DEBUG 
             Plansza[7, 0] = ChessPiece.Rook | ChessPiece.TeamC;
@@ -135,10 +135,56 @@ namespace SzachyMulti
             Plansza[6, 1] = ChessPiece.Pawn | ChessPiece.TeamC;
             Plansza[6, 2] = ChessPiece.Pawn | ChessPiece.TeamC;
             Plansza[6, 3] = ChessPiece.Pawn | ChessPiece.TeamC;
-            //Plansza[6, 4] = ChessPiece.Pawn | ChessPiece.TeamC;
+            Plansza[6, 4] = ChessPiece.Pawn | ChessPiece.TeamC;
             Plansza[6, 5] = ChessPiece.Pawn | ChessPiece.TeamC;
             Plansza[6, 6] = ChessPiece.Pawn | ChessPiece.TeamC;
             Plansza[6, 7] = ChessPiece.Pawn | ChessPiece.TeamC;
+        }
+        /// <summary>
+        /// This function is a replacement for checking at the end of OznaczSzachy() to use after the move.
+        /// It is checking whether the King of the same team as the param was threatened in the last turn.
+        /// </summary>
+        /// <param name="Team">
+        /// This parameter represents the team that has done the move.
+        /// </param>
+        public static void OznaczSzachyPoRuchuTegoKlienta(char Team)
+        {
+            OznaczSzachy();
+            //TODO: ADD SOME CHECKING HERE IDK
+            for(int i = 0, i2 = 0; i<8; i2++)
+            {
+                if(i2 == 8)
+                {
+                    i2 = 0;
+                    i++;
+                    if(i >= 8)
+                    {
+                        continue;
+                    }
+                }
+                switch(Team)
+                {
+                    case 'B':
+                        if(SzachyBC[i, i2].HasFlag(ChessPiece.TeamC))
+                        {
+                            if(!(BackupSzachyBC[i, i2].HasFlag(ChessPiece.TeamC)))
+                            {
+                                Console.WriteLine("Niewlasciwy ruch! Cofanie.");
+                            }
+                        }
+                        break;
+                    case 'C':
+                        if(SzachyBC[i, i2].HasFlag(ChessPiece.TeamB))
+                        {
+                            if(!(BackupSzachyBC[i, i2].HasFlag(ChessPiece.TeamB)))
+                            {
+                                Console.WriteLine("Niewlasciwy ruch! Cofanie.");
+                            }
+                        }
+                        break;
+                }
+                //TODO: MOVE THIS SOMEWHERE ELSE AND FIX IT
+            }
         }
         public static void OznaczSzachy()
         {
@@ -920,6 +966,10 @@ namespace SzachyMulti
                 //TODO: PAMIĘTAJ O SPRAWDZANIU CZY KRÓL MA SZACHA U OBU DRUŻYN
                 //TODO: JEŚLI TAK TO PRZYWRÓĆ BACKUP I GŁÓWNEGO I HIDDEN
             }
+            ///<summary>
+            /// This is checking for whether a king got threatened as a result of a move. The base logic is: foreach var item
+            /// IMPORTANT: Moved to above function.
+            /// </summary>
         }
         public static void NarysujPlansze()
         {
@@ -1225,7 +1275,8 @@ namespace SzachyMulti
                 switch(Program.playerTeam)
                 {
                     case 'B':
-                        Szachy.NarysujPlansze();
+                        NarysujPlansze();
+                        OznaczSzachy();
                         //oznacz szachy
                         //wykonaj turę
                         break;
@@ -1236,6 +1287,7 @@ namespace SzachyMulti
                             Thread.Sleep(1000);
                         }
                         Program.hasEnemyMoved = false;
+                        //Wykonaj turę przeciwnika
                         //wykonaj swoją turę
                         //przeciwnik wykonuje ture
                         break;
