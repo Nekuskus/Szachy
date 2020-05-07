@@ -941,11 +941,83 @@ namespace SzachyMulti
                     {
                         if(Plansza[i, i2].HasFlag(ChessPiece.TeamC))
                         {
-
+                            //Check up
+                            if(i-1 > -1)
+                            {
+                                if(Plansza[i-1,i2] == ChessPiece.None)
+                                {
+                                    HiddenSzachyBC[i-1,i2] |= ChessPiece.TeamC;
+                                }
+                            }
+                            //Check right-up
+                            if((i-1 > -1) && (i2+1 < 8))
+                            {
+                                if(Plansza[i-1,i2+1] == ChessPiece.None)
+                                {
+                                    HiddenSzachyBC[i-1,i2+1] |= ChessPiece.TeamC;
+                                }
+                            }
+                            //Check right
+                            if(i2 + 1 < 8)
+                            {
+                                if(Plansza[i,i2+1] == ChessPiece.None)
+                                {
+                                    HiddenSzachyBC[i,i2+1] |= ChessPiece.TeamC;
+                                }
+                            }
+                            //Check right-down
+                            if((i+1 < 8) && (i2+1 < 8))
+                            {
+                                if(Plansza[i+1,i2+1] == ChessPiece.None)
+                                {
+                                    HiddenSzachyBC[i+1,i2+1] |= ChessPiece.TeamC;
+                                }
+                            }
+                            //Check down
+                            if(i+1 < 8)
+                            {
+                                if(Plansza[i+1,i2] == ChessPiece.None)
+                                {
+                                    HiddenSzachyBC[i+1,i2] |= ChessPiece.TeamC;
+                                }
+                            }
+                            //Chech left-down
+                            if((i+1 < 8) && (i2-1 > -1))
+                            {
+                                if(Plansza[i+1,i2-1] == ChessPiece.None)
+                                {
+                                    HiddenSzachyBC[i+1,i2-1] |= ChessPiece.TeamC;
+                                }
+                            }
+                            //Check left
+                            if(i2-1 > -1)
+                            {
+                                if(Plansza[i,i2-1] == ChessPiece.None)
+                                {
+                                    HiddenSzachyBC[i,i2-1] |= ChessPiece.TeamC;
+                                }
+                            }
+                            //Check left-up
+                            if((i-1 > -1) && (i2-1 > -1))
+                            {
+                                if(Plansza[i-1,i2-1] == ChessPiece.None)
+                                {
+                                    HiddenSzachyBC[i-1,i2-1] |= ChessPiece.TeamC;
+                                }
+                            }
                         }
                         else
                         {
-
+                            //Check up
+                            if(i-1 > -1)
+                            {
+                                if(Plansza[i-1,i2] == ChessPiece.None)
+                                {
+                                    HiddenSzachyBC[i-1,i2] |= ChessPiece.TeamB;
+                                }
+                            }
+                            //Check right-up
+                            //TODO: Finish this without copying!
                         }
                     }
 
