@@ -1082,22 +1082,22 @@ namespace SzachyMulti
             switch(Plansza[pos1, pos2] & ChessPiece.AllPieces) // In memory of the dear Pieces ❤︎ (Plansza[pos1, pos2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'C', 'B'))
             {
                 case ChessPiece.Pawn: //"pionek"
-                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkGreen + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 0 : 8));
+                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkGreen + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 8 : 0));
                     Console.Write("pionek ");
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case ChessPiece.Rook: //"wieza"
-                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkBlue + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 0 : 8));
+                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkBlue + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 8 : 0));
                     Console.Write(" wieza ");
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case ChessPiece.Knight: //"kon"
-                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkYellow + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 0 : 8));
+                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkYellow + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 8 : 0));
                     Console.Write("  kon  ");
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case ChessPiece.Bishop: //"goniec"
-                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkCyan + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 0 : 8));
+                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkCyan + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 8 : 0));
                     Console.Write("goniec ");
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
