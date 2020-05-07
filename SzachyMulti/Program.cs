@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http.Headers;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading;
 
@@ -105,17 +107,20 @@ namespace SzachyMulti
             Plansza[1, 7] = ChessPiece.Pawn | ChessPiece.TeamB;
             //DEBUG 
             // Ily ❤︎
-            Plansza[4, 2] = ChessPiece.Pawn | ChessPiece.TeamC; //"pionek1C" :heart:
-            Plansza[3, 3] = ChessPiece.King | ChessPiece.TeamB; //"krol2B" :heart:
-            Plansza[2, 0] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
-            Plansza[2, 2] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
-            Plansza[4, 7] = ChessPiece.Knight | ChessPiece.TeamC; //"kon123C" :heart:
-            Plansza[3, 5] = ChessPiece.King | ChessPiece.TeamB; //"krolB" :heart:
-            Plansza[3, 7] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
-            Plansza[2, 5] = ChessPiece.Knight | ChessPiece.TeamB; //"kon123B" :heart:
-            Plansza[3, 0] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
-            Plansza[5, 2] = ChessPiece.Bishop | ChessPiece.TeamB;
-            //Plansza[5, 2] = "goniecB"; //B :heart:
+            //Plansza[4, 2] = ChessPiece.Pawn | ChessPiece.TeamC; //"pionek1C" :heart:
+            //Plansza[3, 3] = ChessPiece.King | ChessPiece.TeamB; //"krol2B" :heart:
+            //Plansza[2, 0] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
+            //Plansza[2, 2] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
+            //Plansza[4, 7] = ChessPiece.Knight | ChessPiece.TeamC; //"kon123C" :heart:
+            //Plansza[3, 5] = ChessPiece.King | ChessPiece.TeamB; //"krolB" :heart:
+            //Plansza[3, 7] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
+            //Plansza[2, 5] = ChessPiece.Knight | ChessPiece.TeamB; //"kon123B" :heart:
+            //Plansza[3, 0] = ChessPiece.King | ChessPiece.TeamC; //"krolC" :heart:
+            //Plansza[5, 2] = ChessPiece.Bishop | ChessPiece.TeamB; //Plansza[5, 2] = "goniecB"; //B :heart:
+            Plansza[2, 4] = ChessPiece.King | ChessPiece.TeamC;
+            Plansza[4, 4] = ChessPiece.Queen | ChessPiece.TeamB;
+            Plansza[2, 6] = ChessPiece.King | ChessPiece.TeamC;
+            Plansza[4, 2] = ChessPiece.King | ChessPiece.TeamC;
             // ❤︎
             //DEBUG 
             Plansza[7, 0] = ChessPiece.Rook | ChessPiece.TeamC;
@@ -130,7 +135,7 @@ namespace SzachyMulti
             Plansza[6, 1] = ChessPiece.Pawn | ChessPiece.TeamC;
             Plansza[6, 2] = ChessPiece.Pawn | ChessPiece.TeamC;
             Plansza[6, 3] = ChessPiece.Pawn | ChessPiece.TeamC;
-            Plansza[6, 4] = ChessPiece.Pawn | ChessPiece.TeamC;
+            //Plansza[6, 4] = ChessPiece.Pawn | ChessPiece.TeamC;
             Plansza[6, 5] = ChessPiece.Pawn | ChessPiece.TeamC;
             Plansza[6, 6] = ChessPiece.Pawn | ChessPiece.TeamC;
             Plansza[6, 7] = ChessPiece.Pawn | ChessPiece.TeamC;
@@ -691,40 +696,199 @@ namespace SzachyMulti
                     }
                     if(Plansza[i, i2].HasFlag(ChessPiece.Rook))
                     {
-                        void CheckRookRightUp(int _i, int _i2, char Team)
+                        void CheckRookUp(int _i, int _i2, char Team)
                         {
-
+                            if(_i > -1)
+                            {
+                                if(!(Plansza[_i,_i2] == ChessPiece.None))
+                                {
+                                    if(Plansza[_i,_i2].HasFlag(ChessPiece.King))
+                                    {
+                                        switch(Team)
+                                        {
+                                            case 'B':
+                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamC))
+                                                {
+                                                    SzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                                }
+                                                break;
+                                            case 'C':
+                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamB))
+                                                {
+                                                    SzachyBC[_i,_i2] |= ChessPiece.TeamC;
+                                                }
+                                                break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    switch(Team)
+                                    {
+                                        case 'B':
+                                            HiddenSzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                            break;
+                                        case 'C':
+                                            HiddenSzachyBC[_i,_i2] |= ChessPiece.TeamC;
+                                            break;
+                                    }
+                                    CheckRookUp(_i-1,_i2,Team);
+                                }
+                            }
+                            return;
                         }
-                        void CheckRookRightDown(int _i, int _i2, char Team)
+                        void CheckRookRight(int _i, int _i2, char Team)
                         {
-
+                            if(_i2 < 8)
+                            {
+                                if(!(Plansza[_i,_i2] == ChessPiece.None))
+                                {
+                                    if(Plansza[_i,_i2].HasFlag(ChessPiece.King))
+                                    {
+                                        switch(Team)
+                                        {
+                                            case 'B':
+                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamC))
+                                                {
+                                                    SzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                                }
+                                                break;
+                                            case 'C':
+                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamB))
+                                                {
+                                                    SzachyBC[_i,_i2] |= ChessPiece.TeamC;
+                                                }
+                                                break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    switch(Team)
+                                    {
+                                        case 'B':
+                                            HiddenSzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                            break;
+                                        case 'C':
+                                            HiddenSzachyBC[_i,_i2] |= ChessPiece.TeamC;
+                                            break;
+                                    }
+                                    CheckRookRight(_i,_i2+1,Team);
+                                }
+                            }
+                            return;
                         }
-                        void CheckRookLeftUp(int _i, int _i2, char Team)
+                        void CheckRookLeft(int _i, int _i2, char Team)
                         {
-
+                            if(_i2 > -1)
+                            {
+                                if(!(Plansza[_i,_i2] == ChessPiece.None))
+                                {
+                                    if(Plansza[_i,_i2].HasFlag(ChessPiece.King))
+                                    {
+                                        switch(Team)
+                                        {
+                                            case 'B':
+                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamC))
+                                                {
+                                                    SzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                                }
+                                                break;
+                                            case 'C':
+                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamB))
+                                                {
+                                                    SzachyBC[_i,_i2] |= ChessPiece.TeamC;
+                                                }
+                                                break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    switch(Team)
+                                    {
+                                        case 'B':
+                                            HiddenSzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                            break;
+                                        case 'C':
+                                            HiddenSzachyBC[_i,_i2] |= ChessPiece.TeamC;
+                                            break;
+                                    }
+                                    CheckRookLeft(_i,_i2-1,Team);
+                                }
+                            }
+                            return;
                         }
-                        void CheckRookLeftDown(int _i, int _i2, char Team)
+                        void CheckRookDown(int _i, int _i2, char Team)
                         {
-
+                            if(_i < 8)
+                            {
+                                if(!(Plansza[_i,_i2] == ChessPiece.None))
+                                {
+                                    if(Plansza[_i,_i2].HasFlag(ChessPiece.King))
+                                    {
+                                        switch(Team)
+                                        {
+                                            case 'B':
+                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamC))
+                                                {
+                                                    SzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                                }
+                                                break;
+                                            case 'C':
+                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamB))
+                                                {
+                                                    SzachyBC[_i,_i2] |= ChessPiece.TeamC;
+                                                }
+                                                break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    switch(Team)
+                                    {
+                                        case 'B':
+                                            HiddenSzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                            break;
+                                        case 'C':
+                                            HiddenSzachyBC[_i,_i2] |= ChessPiece.TeamC;
+                                            break;
+                                    }
+                                    CheckRookDown(_i+1,_i2,Team);
+                                }
+                            }
+                            return;
                         }
                         if(Plansza[i, i2].HasFlag(ChessPiece.TeamC))
                         {
-                            Thread CheckRightUp = new Thread(() => CheckRookRightUp(i,i2,'C'));
-                            Thread CheckRightDown = new Thread(() => CheckRookRightDown(i,i2,'C'));
-                            Thread CheckLeftUp = new Thread(() => CheckRookLeftUp(i,i2,'C'));
-                            Thread CheckLeftDown = new Thread(() => CheckRookLeftDown(i,i2,'C'));
-                            CheckRightUp.Start();
-                            CheckRightDown.Start();
-                            CheckLeftDown.Start();
-                            CheckLeftUp.Start();
-                            CheckRightUp.Join();
-                            CheckRightDown.Join();
-                            CheckLeftUp.Join();
-                            CheckLeftDown.Join();
+                            Thread CheckUp = new Thread(() => CheckRookUp(i-1,i2,'C'));
+                            Thread CheckRight = new Thread(() => CheckRookRight(i,i2+1,'C'));
+                            Thread CheckLeft = new Thread(() => CheckRookLeft(i,i2-1,'C'));
+                            Thread CheckDown = new Thread(() => CheckRookDown(i+1,i2,'C'));
+                            CheckUp.Start();
+                            CheckRight.Start();
+                            CheckLeft.Start();
+                            CheckDown.Start();
+                            CheckUp.Join();
+                            CheckRight.Join();
+                            CheckLeft.Join();
+                            CheckDown.Join();
                         }
                         else
                         {
-
+                            Thread CheckUp = new Thread(() => CheckRookUp(i-1,i2,'B'));
+                            Thread CheckRight = new Thread(() => CheckRookRight(i,i2+1,'B'));
+                            Thread CheckLeft = new Thread(() => CheckRookLeft(i,i2-1,'B'));
+                            Thread CheckDown = new Thread(() => CheckRookDown(i+1,i2,'B'));
+                            CheckUp.Start();
+                            CheckRight.Start();
+                            CheckLeft.Start();
+                            CheckDown.Start();
+                            CheckUp.Join();
+                            CheckRight.Join();
+                            CheckLeft.Join();
+                            CheckDown.Join();
                         }
                     }
                     if(Plansza[i, i2].HasFlag(ChessPiece.King))
@@ -938,12 +1102,12 @@ namespace SzachyMulti
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case ChessPiece.Queen: //"krolowa"
-                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkMagenta + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 0 : 8));
+                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkMagenta + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 8 : 0));
                     Console.Write("krolowa");
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case ChessPiece.King: //"krol"
-                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkGray + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? 0 : -1));
+                    Console.ForegroundColor = (ConsoleColor)((int)ConsoleColor.DarkGray + (Plansza[pos1, pos2].HasFlag(ChessPiece.TeamB) ? -1 : 0));
                     Console.Write(" krol  ");
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
@@ -980,7 +1144,7 @@ namespace SzachyMulti
             }
             catch(Exception InvalidMove)
             {
-                //Wyslij do jakiegoś logu błędów na serwerze i powiadom użytkownika, jakoś cofnij ruch może/przerwij sesję
+                //TODO: Wyslij do jakiegoś logu błędów na serwerze i powiadom użytkownika, jakoś cofnij ruch może/przerwij sesję
             }
         }
         public static void RuchPionem(Pozycja Pozycja1, Pozycja Pozycja2)
@@ -1394,7 +1558,7 @@ namespace SzachyMulti
             string czy_polaczyc = Console.ReadLine().ToLower();
             if(czy_polaczyc.Contains('t'))
             {
-                Console.WriteLine("Podaj swoj nick:\n>");
+                Console.Write("Podaj swoj nick:\n>");
                 Nick = Console.ReadLine();
                 client.Host = credentials.host;
                 client.Port = credentials.port;
@@ -1506,10 +1670,10 @@ namespace SzachyMulti
                     Console.WriteLine("Nazwa sesji jest zbyt dluga. Wpisz krotsza nazwe (max 25 znakow)");
                     goto podajnazwesesji;
                 }
-                ispublicgoto:
                 if(isCancel == false)
                 {
-                    Console.WriteLine("\nCzy sesja ma byc prywatna? t/n\n>");
+                    ispublicgoto:
+                    Console.Write("Czy sesja ma byc prywatna? t/n\n>");
                     string ispublicstr = Console.ReadLine().ToLower();
                     if(ispublicstr.Contains('t'))
                     {
@@ -1604,6 +1768,10 @@ namespace SzachyMulti
                         }
                     }
                 }
+            }
+            else if(odswiezlobby == true)
+            {
+                goto lobby;
             }
         }
         static void SizeCheckThread()
