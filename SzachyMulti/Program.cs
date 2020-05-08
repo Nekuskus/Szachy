@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading;
@@ -1017,7 +1018,62 @@ namespace SzachyMulti
                                 }
                             }
                             //Check right-up
-                            //TODO: Finish this without copying!
+                            if((i-1 > -1) && (i2+1 < 8))
+                            {
+                                if(Plansza[i-1,i2+1] == ChessPiece.None)
+                                {
+                                    HiddenSzachyBC[i-1,i2+1] |= ChessPiece.TeamB;
+                                }
+                            }
+                            //Check right
+                            if(i2+1 < 8)
+                            {
+                                if(Plansza[i,i2+1] == ChessPiece.None)
+                                {
+                                    HiddenSzachyBC[i,i2+1] |= ChessPiece.None;
+                                }
+                            }
+                            //Check right-down
+                            if((i+1 < 8) && (i2+1 < 8))
+                            {
+                                if(Plansza[i+1,i2+1] == ChessPiece.None)
+                                {
+                                    HiddenSzachyBC[i,i2+1] |= ChessPiece.None;
+                                }
+                            }
+                            //Check down
+                            if(i+1 < 8)
+                            {
+                                if(Plansza[i+1,i2] == ChessPiece.None)
+                                {
+                                    HiddenSzachyBC[i+1,i2] |= ChessPiece.None;
+                                }
+                            }
+                            //Check left-down
+                            if((i+1 < 8) && (i2-1 > -1))
+                            {
+                                if(Plansza[i+1,i2-1] == ChessPiece.None)
+                                {
+                                    HiddenSzachyBC[i+1,i2-1] |= ChessPiece.None;
+                                }
+                            }
+                            //Check left
+                            if(i2-1 > -1)
+                            {
+                                if(Plansza[i,i2-1] == ChessPiece.None)
+                                {
+                                    HiddenSzachyBC[i,i2-1] |= ChessPiece.None;
+                                }
+                            }
+                            //Check left-up
+                            if((i-1 > -1) && (i2-1 > -1))
+                            {
+                                if(Plansza[i-1,i2-1] == ChessPiece.None)
+                                {
+                                    HiddenSzachyBC[i-1,i2-1] |= ChessPiece.None;
+                                }
+                            }
+                            //DONE TODO: Finish this without copying!
                         }
                     }
 
@@ -1035,12 +1091,14 @@ namespace SzachyMulti
                         }
                         break;*/
                 }
-                //TODO: PAMIĘTAJ O SPRAWDZANIU CZY KRÓL MA SZACHA U OBU DRUŻYN
-                //TODO: JEŚLI TAK TO PRZYWRÓĆ BACKUP I GŁÓWNEGO I HIDDEN
+                ///<remarks>
+                ///TODO: PAMIĘTAJ O SPRAWDZANIU CZY KRÓL MA SZACHA U OBU DRUŻYN
+                ///TODO: JEŚLI TAK TO PRZYWRÓĆ BACKUP I GŁÓWNEGO I HIDDEN
+                ///</remarks>
             }
+            ///IMPORTANT: Moved to above function.
             ///<summary>
             /// This is checking for whether a king got threatened as a result of a move. The base logic is: foreach var item
-            /// IMPORTANT: Moved to above function.
             /// </summary>
         }
         public static void NarysujPlansze()
