@@ -141,6 +141,23 @@ namespace SzachyMulti
             Plansza[6, 6] = ChessPiece.Pawn | ChessPiece.TeamC;
             Plansza[6, 7] = ChessPiece.Pawn | ChessPiece.TeamC;
         }
+        ///<summary>
+        /// A function for clearing the board 
+        ///     <remarks> It should be used after the match is complete to allow easy starting another one. 
+        ///     My feelings stop me from clearing the backups. I guess I will do without it. </remarks>
+        /// </summary>
+        public static void WyczyscPlansze()
+        {
+            for(int i = 0; i < 8; i++)
+            {
+                for(int i2 = 0; i2 < 8; i2++)
+                {
+                    Plansza[i,i2] = ChessPiece.None;
+                    SzachyBC[i,i2] = ChessPiece.None;
+                    HiddenSzachyBC[i,i2] = ChessPiece.None;
+                }
+            }
+        }
         /// <summary>
         /// This function is a replacement for checking at the end of OznaczSzachy() to use after the move.
         /// It is checking whether the King of the same team as the param was threatened in the last turn.
