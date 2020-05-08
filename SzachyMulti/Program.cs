@@ -9,10 +9,12 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Xml;
 
 namespace SzachyMulti
 {
@@ -26,7 +28,7 @@ namespace SzachyMulti
             }
         }
     }
-    public abstract class InvalidEnemyMoveException : Exception
+    public class InvalidMoveException : Exception
     {
         private string _Message
         {
@@ -37,11 +39,15 @@ namespace SzachyMulti
         {
             get => _Message;
         }
-        public InvalidEnemyMoveException()
+        public InvalidMoveException()
         {
             _Message = "Enemy client has sent an invalid move: "; //Add information about the move here!
         }
-        public InvalidEnemyMoveException(String message) : base(message)
+        public InvalidMoveException(String message) : base(message)
+        {
+            _Message = "Enemy client has sent an invalid move: " + message;
+        }
+        public InvalidMoveException(String message, Exception innerException) : base(message, innerException)
         {
             _Message = "Enemy client has sent an invalid move: " + message;
         }
@@ -1316,7 +1322,22 @@ namespace SzachyMulti
                     break;
             }
         }
+        /// <summary>
+        /// The point of this method being semi-separate is to raise an alarm after the enemy client let trough an invalid move.
+        /// </summary>
+        /// <returns>Either returns an exception or a void if move is incorrect</returns>
         public static void WykonajISprawdzRuchPrzeciwnika(Pozycja Pozycja1, Pozycja Pozycja2)
+        {
+            try
+            {
+                WykonajRuch(Pozycja1,Pozycja2);
+            }
+            catch(InvalidMoveException e)
+            {
+                //InvalidMoveException will be thrown here if the move is
+            }
+        }
+        public static void WykonajRuch(Pozycja Pozycja1, Pozycja Pozycja2)
         {
             char Pos1team = (Plansza[Pozycja1.Pos1,Pozycja1.Pos2] & ChessPiece.BothTeams) == ChessPiece.TeamB ? 'B' : 'C'; // hasflag ? yes : no
             //Ily pieces, in memory I'm keeping this. string figureType = Plansza[Pozycja1.Pos1, Pozycja1.Pos2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C');
@@ -1346,10 +1367,12 @@ namespace SzachyMulti
                 }
                 OznaczSzachyPoRuchu(Pos1team);
                 Program.hasEnemyMoved = true;
+                return;
             }
             catch(Exception InvalidMove)
             {
                 //TODO: Wyslij do jakiegoś logu błędów na serwerze i powiadom użytkownika, jakoś cofnij ruch może/przerwij sesję
+                throw new InvalidMoveException(InvalidMove.Message,InvalidMove);
             }
         }
         public static void RuchPionem(Pozycja Pozycja1, Pozycja Pozycja2)
@@ -1443,8 +1466,8 @@ namespace SzachyMulti
                         string pionekDoRuszenia = Console.ReadLine().ToUpper();
                         if(posregex.IsMatch(pionekDoRuszenia))
                         {
-                            Pozycja pozycja1 = new Pozycja(pionekDoRuszenia.First(),pionekDoRuszenia.Last());
-                            if(Plansza[pozycja1.Pos1,pozycja1.Pos2] == ChessPiece.None)
+                            Pozycja Pozycja1 = new Pozycja(pionekDoRuszenia.First(),pionekDoRuszenia.Last());
+                            if(Plansza[Pozycja1.Pos1,Pozycja1.Pos2] == ChessPiece.None)
                             {
                                 Console.Write("Niepoprawna pozycja\n>");
                                 goto podajpozycje;
@@ -1454,7 +1477,15 @@ namespace SzachyMulti
                             string pozycjaDocelowa = Console.ReadLine().ToUpper();
                             if(posregex.IsMatch(pozycjaDocelowa))
                             {
-                                //TODO: Continue here
+                                Pozycja Pozycja2 = new Pozycja(pozycjaDocelowa.First(),pozycjaDocelowa.Last());
+                                try
+                                {
+                                    WykonajRuch(Pozycja1, Pozycja2);
+                                }
+                                catch
+                                {
+
+                                }
                             }
                             else
                             {
