@@ -1814,6 +1814,7 @@ namespace SzachyMulti
         }
         static void Main(string[] args)
         {
+            throw new Exception_2_rozne_od_2();
             Szachy.PostawPionki();
             Szachy.OznaczSzachy();
             Szachy.NarysujPlansze();
