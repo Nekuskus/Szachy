@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace SzachyMulti
@@ -86,6 +88,7 @@ namespace SzachyMulti
         public static volatile ChessPiece[,] HiddenSzachyBC = new ChessPiece[8, 8];
         public static volatile ChessPiece[,] BackupSzachyBC = new ChessPiece[8, 8];
         public static volatile ChessPiece[,] BackupHiddenSzachyBC = new ChessPiece[8, 8];
+        public static volatile ChessPiece[,] PossibleEnPassants = new ChessPiece[8, 8];
         public static void PostawPionki()
         {
             //pierwsze - linia, drugie, kolumna
@@ -165,7 +168,8 @@ namespace SzachyMulti
         /// <param name="Team">
         /// This parameter represents the team that has done the move.
         /// </param>
-        public static void OznaczSzachyPoRuchuTegoKlienta(char Team)
+        /// <remarks> This will get replaced when moving functions are done. </remarks>
+        public static void OznaczSzachyPoRuchu(char Team)
         {
             OznaczSzachy();
             //TODO: ADD SOME CHECKING HERE IDK
@@ -180,6 +184,7 @@ namespace SzachyMulti
                         continue;
                     }
                 }
+                //TODO: MAKE THIS CHECK BETTER
                 switch(Team)
                 {
                     case 'B':
@@ -188,6 +193,7 @@ namespace SzachyMulti
                             if(!(BackupSzachyBC[i, i2].HasFlag(ChessPiece.TeamC)))
                             {
                                 Console.WriteLine("Niewlasciwy ruch! Cofanie.");
+                                //TODO: Make it throw exception instead
                             }
                         }
                         break;
@@ -197,11 +203,11 @@ namespace SzachyMulti
                             if(!(BackupSzachyBC[i, i2].HasFlag(ChessPiece.TeamB)))
                             {
                                 Console.WriteLine("Niewlasciwy ruch! Cofanie.");
+                                //TODO: Make it throw exception instead
                             }
                         }
                         break;
                 }
-                //TODO: MOVE THIS SOMEWHERE ELSE AND FIX IT
             }
         }
         public static void OznaczSzachy()
@@ -1312,12 +1318,13 @@ namespace SzachyMulti
         }
         public static void WykonajISprawdzRuchPrzeciwnika(Pozycja Pozycja1, Pozycja Pozycja2)
         {
+            char Pos1team = (Plansza[Pozycja1.Pos1,Pozycja1.Pos2] & ChessPiece.BothTeams) == ChessPiece.TeamB ? 'B' : 'C'; // hasflag ? yes : no
             //Ily pieces, in memory I'm keeping this. string figureType = Plansza[Pozycja1.Pos1, Pozycja1.Pos2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C');
             try
             {
                 switch(Plansza[Pozycja1.Pos1, Pozycja1.Pos2] & ChessPiece.AllPieces)
                 {
-                    //These functions should throw the InvalidEnemyMoveDerivedExcpetion(MoveInfo) with some info about the error that will get logged and told to the player
+                    //These functions should throw the InvalidEnemyMoveExcpetion(MoveInfo) with some info about the error that will get logged and told to the player
                     case ChessPiece.Pawn: //"pionek"
                         RuchPionem(Pozycja1, Pozycja2);
                         break;
@@ -1337,6 +1344,7 @@ namespace SzachyMulti
                         RuchKrólową(Pozycja1, Pozycja2);
                         break;
                 }
+                OznaczSzachyPoRuchu(Pos1team);
                 Program.hasEnemyMoved = true;
             }
             catch(Exception InvalidMove)
@@ -1421,11 +1429,44 @@ namespace SzachyMulti
                 }
                 switch(Program.playerTeam)
                 {
+                    //Remember about clearing possible en passants!
                     case 'B':
                         NarysujPlansze();
                         OznaczSzachy();
                         //oznacz szachy
                         //wykonaj turę
+                        Console.WriteLine("Kliknij enter aby wykonac ruch");
+                        Console.ReadKey();
+                        Console.Write("Podaj pozycje pionka, który ma sie poruszyc (np. A1)\n>");
+                        Regex posregex = new Regex("^[A-H][1-8]$");
+                        podajpozycje:
+                        string pionekDoRuszenia = Console.ReadLine().ToUpper();
+                        if(posregex.IsMatch(pionekDoRuszenia))
+                        {
+                            Pozycja pozycja1 = new Pozycja(pionekDoRuszenia.First(),pionekDoRuszenia.Last());
+                            if(Plansza[pozycja1.Pos1,pozycja1.Pos2] == ChessPiece.None)
+                            {
+                                Console.Write("Niepoprawna pozycja\n>");
+                                goto podajpozycje;
+                            }
+                            Console.Write("Podaj pozycje na ktora pionek ma sie poruszyc\n>");
+                            podajpozycjedocelowa:
+                            string pozycjaDocelowa = Console.ReadLine().ToUpper();
+                            if(posregex.IsMatch(pozycjaDocelowa))
+                            {
+                                //TODO: Continue here
+                            }
+                            else
+                            {
+                                Console.Write("Niepoprawna pozycja\n>");
+                                goto podajpozycjedocelowa;
+                            }
+                        }
+                        else
+                        {
+                            Console.Write("Niepoprawna pozycja\n>");
+                            goto podajpozycje;
+                        }
                         break;
                     case 'C':
                         Szachy.NarysujPlansze();
@@ -1446,10 +1487,10 @@ namespace SzachyMulti
     public class Program
     {
         public static Random rand = new Random();
-        public static bool hasOtherPlayerJoined = false;
-        public static bool isApppending = false;
-        public static bool wasContentReceived = false;
-        public static bool isContentBeingReceived = false;
+        public static volatile bool hasOtherPlayerJoined = false;
+        public static volatile bool isApppending = false;
+        public static volatile bool wasContentReceived = false;
+        public static volatile bool isContentBeingReceived = false;
         public static int lastCountChat = 0;
         public static List<string> receivedMessages = new List<string>();
         public static Process chat = new Process();
@@ -1562,6 +1603,15 @@ namespace SzachyMulti
                 int i = lastCount + 1;
                 while(i <= lines.Count)
                 {
+                    if(!hasOtherPlayerJoined)
+                    {
+                        if(lines[i].StartsWith("JOIN"))
+                        {
+                            lines[i] = lines[i].Substring(enemyNick.Length + 2);
+                            enemyNick = lines[i].Remove(0, 5).Trim();
+                            hasOtherPlayerJoined = true;
+                        }
+                    }
                     if(!lines[i].StartsWith(Nick))
                     {
                         lines[i] = lines[i].Substring(enemyNick.Length + 2);
@@ -1601,12 +1651,6 @@ namespace SzachyMulti
                             lines[i] = lines[i].Substring(enemyNick.Length + 2);
                             //"OK"
                             client.MoveFile($"/SzachySerwer/StartingSessions/{ID}.txt", $"/SzachySerwer/ActiveSessions/{ID}.txt");
-                        }
-                        else if(lines[i].StartsWith("JOIN"))
-                        {
-                            lines[i] = lines[i].Substring(enemyNick.Length + 2);
-                            enemyNick = lines[i].Remove(0, 5).Trim();
-                            hasOtherPlayerJoined = true;
                         }
                         else if(lines[i].StartsWith("EVENT"))
                         {
@@ -1892,7 +1936,6 @@ namespace SzachyMulti
                     if(napewno.Contains('t'))
                     {
                         ID = Convert.ToString((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds);
-
                         client.Connect();
                         CreateSessionFile(ID, isPublic, nazwasesji, Nick);
                         client.Disconnect();
@@ -1949,7 +1992,8 @@ namespace SzachyMulti
                             Console.Clear();
                             Console.SetWindowSize(80, 50);
                             ID = connect_to_id;
-                            AppendText($"JOIN: {Nick}", currentfolder, connect_to_id);
+                            joingoto:
+                            try { AppendText($"JOIN: {Nick}", currentfolder, connect_to_id); } catch { Thread.Sleep(rand.Next(150,301)); goto joingoto; }
                             InitKlient();
                             nazwasesji = lines[0];
                             enemyNick = lines[2];
@@ -2012,3 +2056,4 @@ namespace SzachyMulti
         }
     }
 } //As of 14:07 2020-05-08 this is line 2014. I love this moment and want this memory to exist.
+//As of 14:48 2020-05-08 this is now line 2020!
