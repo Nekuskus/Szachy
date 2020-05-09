@@ -5,19 +5,41 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Xml;
 
 namespace SzachyMulti
 {
+    public static class ArrayExtension
+    {
+        /// <summary>
+        /// Used to copy 2dimensional arrays as normal copying with = only makes a set of reference values.
+        /// </summary>
+        /// <typeparam name="T"> Used this to make it work for any type of array, using Array class is not working because it does not have [] indexing as it is only a base for all array types</typeparam>
+        public static void CopyD<T>(this T[,] arr, ref T[,] destination)
+        {
+            if(arr.Rank != destination.Rank)
+            {
+                throw new ArgumentException("The arrays had different numbers of destinations.");
+            }
+            for(int i = 0; i < arr.Rank; i++)
+            {
+                if(arr.GetLength(i) != destination.GetLength(i))
+                {
+                    throw new ArgumentException($"The lenght of arrays' dimension {i} did not match.");
+                }
+            }
+            for(int i = arr.GetLowerBound(0); i <= arr.GetUpperBound(0); i++)
+            {
+                for(int i2 = arr.GetLowerBound(1); i2 <= arr.GetUpperBound(1); i2++)
+                {
+                    destination.SetValue(arr.GetValue(i,i2),i,i2);
+                }
+            }
+        }
+    }
     public class Exception_2_rozne_od_2 : Exception
     {
         public override string Message
@@ -92,6 +114,7 @@ namespace SzachyMulti
         public static volatile ChessPiece[,] Plansza = new ChessPiece[8, 8];
         public static volatile ChessPiece[,] SzachyBC = new ChessPiece[8, 8];
         public static volatile ChessPiece[,] HiddenSzachyBC = new ChessPiece[8, 8];
+        public static volatile ChessPiece[,] BackupPlansza = new ChessPiece[8, 8];
         public static volatile ChessPiece[,] BackupSzachyBC = new ChessPiece[8, 8];
         public static volatile ChessPiece[,] BackupHiddenSzachyBC = new ChessPiece[8, 8];
         public static volatile ChessPiece[,] PossibleEnPassants = new ChessPiece[8, 8];
@@ -161,9 +184,9 @@ namespace SzachyMulti
             {
                 for(int i2 = 0; i2 < 8; i2++)
                 {
-                    Plansza[i,i2] = ChessPiece.None;
-                    SzachyBC[i,i2] = ChessPiece.None;
-                    HiddenSzachyBC[i,i2] = ChessPiece.None;
+                    Plansza[i, i2] = ChessPiece.None;
+                    SzachyBC[i, i2] = ChessPiece.None;
+                    HiddenSzachyBC[i, i2] = ChessPiece.None;
                 }
             }
         }
@@ -219,8 +242,8 @@ namespace SzachyMulti
         public static void OznaczSzachy()
         {
             //DONE: MAKE BACKUPS BEFORE REDEFINING AND CHANGE BOARDS TO THE MERGED ONES
-            BackupSzachyBC = SzachyBC;
-            BackupHiddenSzachyBC = HiddenSzachyBC;
+            SzachyBC.CopyD(ref BackupSzachyBC);
+            HiddenSzachyBC.CopyD(ref BackupHiddenSzachyBC);
             SzachyBC = new ChessPiece[8, 8];
             HiddenSzachyBC = new ChessPiece[8, 8];
             for(int i = 0, i2 = 0; i < 8; i2++)
@@ -776,22 +799,22 @@ namespace SzachyMulti
                         {
                             if(_i > -1)
                             {
-                                if(!(Plansza[_i,_i2] == ChessPiece.None))
+                                if(!(Plansza[_i, _i2] == ChessPiece.None))
                                 {
-                                    if(Plansza[_i,_i2].HasFlag(ChessPiece.King))
+                                    if(Plansza[_i, _i2].HasFlag(ChessPiece.King))
                                     {
                                         switch(Team)
                                         {
                                             case 'B':
-                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamC))
+                                                if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamC))
                                                 {
-                                                    SzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                                    SzachyBC[_i, _i2] |= ChessPiece.TeamB;
                                                 }
                                                 break;
                                             case 'C':
-                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamB))
+                                                if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamB))
                                                 {
-                                                    SzachyBC[_i,_i2] |= ChessPiece.TeamC;
+                                                    SzachyBC[_i, _i2] |= ChessPiece.TeamC;
                                                 }
                                                 break;
                                         }
@@ -802,13 +825,13 @@ namespace SzachyMulti
                                     switch(Team)
                                     {
                                         case 'B':
-                                            HiddenSzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                            HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamB;
                                             break;
                                         case 'C':
-                                            HiddenSzachyBC[_i,_i2] |= ChessPiece.TeamC;
+                                            HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamC;
                                             break;
                                     }
-                                    CheckRookUp(_i-1,_i2,Team);
+                                    CheckRookUp(_i-1, _i2, Team);
                                 }
                             }
                             return;
@@ -817,22 +840,22 @@ namespace SzachyMulti
                         {
                             if(_i2 < 8)
                             {
-                                if(!(Plansza[_i,_i2] == ChessPiece.None))
+                                if(!(Plansza[_i, _i2] == ChessPiece.None))
                                 {
-                                    if(Plansza[_i,_i2].HasFlag(ChessPiece.King))
+                                    if(Plansza[_i, _i2].HasFlag(ChessPiece.King))
                                     {
                                         switch(Team)
                                         {
                                             case 'B':
-                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamC))
+                                                if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamC))
                                                 {
-                                                    SzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                                    SzachyBC[_i, _i2] |= ChessPiece.TeamB;
                                                 }
                                                 break;
                                             case 'C':
-                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamB))
+                                                if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamB))
                                                 {
-                                                    SzachyBC[_i,_i2] |= ChessPiece.TeamC;
+                                                    SzachyBC[_i, _i2] |= ChessPiece.TeamC;
                                                 }
                                                 break;
                                         }
@@ -843,13 +866,13 @@ namespace SzachyMulti
                                     switch(Team)
                                     {
                                         case 'B':
-                                            HiddenSzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                            HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamB;
                                             break;
                                         case 'C':
-                                            HiddenSzachyBC[_i,_i2] |= ChessPiece.TeamC;
+                                            HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamC;
                                             break;
                                     }
-                                    CheckRookRight(_i,_i2+1,Team);
+                                    CheckRookRight(_i, _i2+1, Team);
                                 }
                             }
                             return;
@@ -858,22 +881,22 @@ namespace SzachyMulti
                         {
                             if(_i2 > -1)
                             {
-                                if(!(Plansza[_i,_i2] == ChessPiece.None))
+                                if(!(Plansza[_i, _i2] == ChessPiece.None))
                                 {
-                                    if(Plansza[_i,_i2].HasFlag(ChessPiece.King))
+                                    if(Plansza[_i, _i2].HasFlag(ChessPiece.King))
                                     {
                                         switch(Team)
                                         {
                                             case 'B':
-                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamC))
+                                                if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamC))
                                                 {
-                                                    SzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                                    SzachyBC[_i, _i2] |= ChessPiece.TeamB;
                                                 }
                                                 break;
                                             case 'C':
-                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamB))
+                                                if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamB))
                                                 {
-                                                    SzachyBC[_i,_i2] |= ChessPiece.TeamC;
+                                                    SzachyBC[_i, _i2] |= ChessPiece.TeamC;
                                                 }
                                                 break;
                                         }
@@ -884,13 +907,13 @@ namespace SzachyMulti
                                     switch(Team)
                                     {
                                         case 'B':
-                                            HiddenSzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                            HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamB;
                                             break;
                                         case 'C':
-                                            HiddenSzachyBC[_i,_i2] |= ChessPiece.TeamC;
+                                            HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamC;
                                             break;
                                     }
-                                    CheckRookLeft(_i,_i2-1,Team);
+                                    CheckRookLeft(_i, _i2-1, Team);
                                 }
                             }
                             return;
@@ -899,22 +922,22 @@ namespace SzachyMulti
                         {
                             if(_i < 8)
                             {
-                                if(!(Plansza[_i,_i2] == ChessPiece.None))
+                                if(!(Plansza[_i, _i2] == ChessPiece.None))
                                 {
-                                    if(Plansza[_i,_i2].HasFlag(ChessPiece.King))
+                                    if(Plansza[_i, _i2].HasFlag(ChessPiece.King))
                                     {
                                         switch(Team)
                                         {
                                             case 'B':
-                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamC))
+                                                if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamC))
                                                 {
-                                                    SzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                                    SzachyBC[_i, _i2] |= ChessPiece.TeamB;
                                                 }
                                                 break;
                                             case 'C':
-                                                if(Plansza[_i,_i2].HasFlag(ChessPiece.TeamB))
+                                                if(Plansza[_i, _i2].HasFlag(ChessPiece.TeamB))
                                                 {
-                                                    SzachyBC[_i,_i2] |= ChessPiece.TeamC;
+                                                    SzachyBC[_i, _i2] |= ChessPiece.TeamC;
                                                 }
                                                 break;
                                         }
@@ -925,23 +948,23 @@ namespace SzachyMulti
                                     switch(Team)
                                     {
                                         case 'B':
-                                            HiddenSzachyBC[_i,_i2] |= ChessPiece.TeamB;
+                                            HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamB;
                                             break;
                                         case 'C':
-                                            HiddenSzachyBC[_i,_i2] |= ChessPiece.TeamC;
+                                            HiddenSzachyBC[_i, _i2] |= ChessPiece.TeamC;
                                             break;
                                     }
-                                    CheckRookDown(_i+1,_i2,Team);
+                                    CheckRookDown(_i+1, _i2, Team);
                                 }
                             }
                             return;
                         }
                         if(Plansza[i, i2].HasFlag(ChessPiece.TeamC))
                         {
-                            Thread CheckUp = new Thread(() => CheckRookUp(i-1,i2,'C'));
-                            Thread CheckRight = new Thread(() => CheckRookRight(i,i2+1,'C'));
-                            Thread CheckLeft = new Thread(() => CheckRookLeft(i,i2-1,'C'));
-                            Thread CheckDown = new Thread(() => CheckRookDown(i+1,i2,'C'));
+                            Thread CheckUp = new Thread(() => CheckRookUp(i-1, i2, 'C'));
+                            Thread CheckRight = new Thread(() => CheckRookRight(i, i2+1, 'C'));
+                            Thread CheckLeft = new Thread(() => CheckRookLeft(i, i2-1, 'C'));
+                            Thread CheckDown = new Thread(() => CheckRookDown(i+1, i2, 'C'));
                             CheckUp.Start();
                             CheckRight.Start();
                             CheckLeft.Start();
@@ -953,10 +976,10 @@ namespace SzachyMulti
                         }
                         else
                         {
-                            Thread CheckUp = new Thread(() => CheckRookUp(i-1,i2,'B'));
-                            Thread CheckRight = new Thread(() => CheckRookRight(i,i2+1,'B'));
-                            Thread CheckLeft = new Thread(() => CheckRookLeft(i,i2-1,'B'));
-                            Thread CheckDown = new Thread(() => CheckRookDown(i+1,i2,'B'));
+                            Thread CheckUp = new Thread(() => CheckRookUp(i-1, i2, 'B'));
+                            Thread CheckRight = new Thread(() => CheckRookRight(i, i2+1, 'B'));
+                            Thread CheckLeft = new Thread(() => CheckRookLeft(i, i2-1, 'B'));
+                            Thread CheckDown = new Thread(() => CheckRookDown(i+1, i2, 'B'));
                             CheckUp.Start();
                             CheckRight.Start();
                             CheckLeft.Start();
@@ -974,65 +997,65 @@ namespace SzachyMulti
                             //Check up
                             if(i-1 > -1)
                             {
-                                if(Plansza[i-1,i2] == ChessPiece.None)
+                                if(Plansza[i-1, i2] == ChessPiece.None)
                                 {
-                                    HiddenSzachyBC[i-1,i2] |= ChessPiece.TeamC;
+                                    HiddenSzachyBC[i-1, i2] |= ChessPiece.TeamC;
                                 }
                             }
                             //Check right-up
                             if((i-1 > -1) && (i2+1 < 8))
                             {
-                                if(Plansza[i-1,i2+1] == ChessPiece.None)
+                                if(Plansza[i-1, i2+1] == ChessPiece.None)
                                 {
-                                    HiddenSzachyBC[i-1,i2+1] |= ChessPiece.TeamC;
+                                    HiddenSzachyBC[i-1, i2+1] |= ChessPiece.TeamC;
                                 }
                             }
                             //Check right
                             if(i2 + 1 < 8)
                             {
-                                if(Plansza[i,i2+1] == ChessPiece.None)
+                                if(Plansza[i, i2+1] == ChessPiece.None)
                                 {
-                                    HiddenSzachyBC[i,i2+1] |= ChessPiece.TeamC;
+                                    HiddenSzachyBC[i, i2+1] |= ChessPiece.TeamC;
                                 }
                             }
                             //Check right-down
                             if((i+1 < 8) && (i2+1 < 8))
                             {
-                                if(Plansza[i+1,i2+1] == ChessPiece.None)
+                                if(Plansza[i+1, i2+1] == ChessPiece.None)
                                 {
-                                    HiddenSzachyBC[i+1,i2+1] |= ChessPiece.TeamC;
+                                    HiddenSzachyBC[i+1, i2+1] |= ChessPiece.TeamC;
                                 }
                             }
                             //Check down
                             if(i+1 < 8)
                             {
-                                if(Plansza[i+1,i2] == ChessPiece.None)
+                                if(Plansza[i+1, i2] == ChessPiece.None)
                                 {
-                                    HiddenSzachyBC[i+1,i2] |= ChessPiece.TeamC;
+                                    HiddenSzachyBC[i+1, i2] |= ChessPiece.TeamC;
                                 }
                             }
                             //Chech left-down
                             if((i+1 < 8) && (i2-1 > -1))
                             {
-                                if(Plansza[i+1,i2-1] == ChessPiece.None)
+                                if(Plansza[i+1, i2-1] == ChessPiece.None)
                                 {
-                                    HiddenSzachyBC[i+1,i2-1] |= ChessPiece.TeamC;
+                                    HiddenSzachyBC[i+1, i2-1] |= ChessPiece.TeamC;
                                 }
                             }
                             //Check left
                             if(i2-1 > -1)
                             {
-                                if(Plansza[i,i2-1] == ChessPiece.None)
+                                if(Plansza[i, i2-1] == ChessPiece.None)
                                 {
-                                    HiddenSzachyBC[i,i2-1] |= ChessPiece.TeamC;
+                                    HiddenSzachyBC[i, i2-1] |= ChessPiece.TeamC;
                                 }
                             }
                             //Check left-up
                             if((i-1 > -1) && (i2-1 > -1))
                             {
-                                if(Plansza[i-1,i2-1] == ChessPiece.None)
+                                if(Plansza[i-1, i2-1] == ChessPiece.None)
                                 {
-                                    HiddenSzachyBC[i-1,i2-1] |= ChessPiece.TeamC;
+                                    HiddenSzachyBC[i-1, i2-1] |= ChessPiece.TeamC;
                                 }
                             }
                         }
@@ -1041,65 +1064,65 @@ namespace SzachyMulti
                             //Check up
                             if(i-1 > -1)
                             {
-                                if(Plansza[i-1,i2] == ChessPiece.None)
+                                if(Plansza[i-1, i2] == ChessPiece.None)
                                 {
-                                    HiddenSzachyBC[i-1,i2] |= ChessPiece.TeamB;
+                                    HiddenSzachyBC[i-1, i2] |= ChessPiece.TeamB;
                                 }
                             }
                             //Check right-up
                             if((i-1 > -1) && (i2+1 < 8))
                             {
-                                if(Plansza[i-1,i2+1] == ChessPiece.None)
+                                if(Plansza[i-1, i2+1] == ChessPiece.None)
                                 {
-                                    HiddenSzachyBC[i-1,i2+1] |= ChessPiece.TeamB;
+                                    HiddenSzachyBC[i-1, i2+1] |= ChessPiece.TeamB;
                                 }
                             }
                             //Check right
                             if(i2+1 < 8)
                             {
-                                if(Plansza[i,i2+1] == ChessPiece.None)
+                                if(Plansza[i, i2+1] == ChessPiece.None)
                                 {
-                                    HiddenSzachyBC[i,i2+1] |= ChessPiece.None;
+                                    HiddenSzachyBC[i, i2+1] |= ChessPiece.None;
                                 }
                             }
                             //Check right-down
                             if((i+1 < 8) && (i2+1 < 8))
                             {
-                                if(Plansza[i+1,i2+1] == ChessPiece.None)
+                                if(Plansza[i+1, i2+1] == ChessPiece.None)
                                 {
-                                    HiddenSzachyBC[i,i2+1] |= ChessPiece.None;
+                                    HiddenSzachyBC[i, i2+1] |= ChessPiece.None;
                                 }
                             }
                             //Check down
                             if(i+1 < 8)
                             {
-                                if(Plansza[i+1,i2] == ChessPiece.None)
+                                if(Plansza[i+1, i2] == ChessPiece.None)
                                 {
-                                    HiddenSzachyBC[i+1,i2] |= ChessPiece.None;
+                                    HiddenSzachyBC[i+1, i2] |= ChessPiece.None;
                                 }
                             }
                             //Check left-down
                             if((i+1 < 8) && (i2-1 > -1))
                             {
-                                if(Plansza[i+1,i2-1] == ChessPiece.None)
+                                if(Plansza[i+1, i2-1] == ChessPiece.None)
                                 {
-                                    HiddenSzachyBC[i+1,i2-1] |= ChessPiece.None;
+                                    HiddenSzachyBC[i+1, i2-1] |= ChessPiece.None;
                                 }
                             }
                             //Check left
                             if(i2-1 > -1)
                             {
-                                if(Plansza[i,i2-1] == ChessPiece.None)
+                                if(Plansza[i, i2-1] == ChessPiece.None)
                                 {
-                                    HiddenSzachyBC[i,i2-1] |= ChessPiece.None;
+                                    HiddenSzachyBC[i, i2-1] |= ChessPiece.None;
                                 }
                             }
                             //Check left-up
                             if((i-1 > -1) && (i2-1 > -1))
                             {
-                                if(Plansza[i-1,i2-1] == ChessPiece.None)
+                                if(Plansza[i-1, i2-1] == ChessPiece.None)
                                 {
-                                    HiddenSzachyBC[i-1,i2-1] |= ChessPiece.None;
+                                    HiddenSzachyBC[i-1, i2-1] |= ChessPiece.None;
                                 }
                             }
                             //DONE TODO: Finish this without copying!
@@ -1330,7 +1353,7 @@ namespace SzachyMulti
         {
             try
             {
-                WykonajRuch(Pozycja1,Pozycja2);
+                WykonajRuch(Pozycja1, Pozycja2);
             }
             catch(InvalidMoveException e)
             {
@@ -1339,7 +1362,7 @@ namespace SzachyMulti
         }
         public static void WykonajRuch(Pozycja Pozycja1, Pozycja Pozycja2)
         {
-            char Pos1team = (Plansza[Pozycja1.Pos1,Pozycja1.Pos2] & ChessPiece.BothTeams) == ChessPiece.TeamB ? 'B' : 'C'; // hasflag ? yes : no
+            char Pos1team = (Plansza[Pozycja1.Pos1, Pozycja1.Pos2] & ChessPiece.BothTeams) == ChessPiece.TeamB ? 'B' : 'C'; // hasflag ? yes : no
             //Ily pieces, in memory I'm keeping this. string figureType = Plansza[Pozycja1.Pos1, Pozycja1.Pos2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C');
             try
             {
@@ -1347,22 +1370,22 @@ namespace SzachyMulti
                 {
                     //These functions should throw the InvalidEnemyMoveExcpetion(MoveInfo) with some info about the error that will get logged and told to the player
                     case ChessPiece.Pawn: //"pionek"
-                        RuchPionem(Pozycja1, Pozycja2);
+                        RuchPionem(Pozycja1, Pozycja2, Pos1team);
                         break;
                     case ChessPiece.Knight: //"kon"
-                        RuchKoniem(Pozycja1, Pozycja2);
+                        RuchKoniem(Pozycja1, Pozycja2, Pos1team);
                         break;
                     case ChessPiece.Bishop: //"goniec"
-                        RuchGońcem(Pozycja1, Pozycja2);
+                        RuchGońcem(Pozycja1, Pozycja2, Pos1team);
                         break;
                     case ChessPiece.Rook: //"wieza"
-                        RuchWieżą(Pozycja1, Pozycja2);
+                        RuchWieżą(Pozycja1, Pozycja2, Pos1team);
                         break;
                     case ChessPiece.King: //"krol"
-                        RuchKrólem(Pozycja1, Pozycja2);
+                        RuchKrólem(Pozycja1, Pozycja2, Pos1team);
                         break;
                     case ChessPiece.Queen: //"krolowa"
-                        RuchKrólową(Pozycja1, Pozycja2);
+                        RuchKrólową(Pozycja1, Pozycja2, Pos1team);
                         break;
                 }
                 OznaczSzachyPoRuchu(Pos1team);
@@ -1372,45 +1395,83 @@ namespace SzachyMulti
             catch(Exception InvalidMove)
             {
                 //TODO: Wyslij do jakiegoś logu błędów na serwerze i powiadom użytkownika, jakoś cofnij ruch może/przerwij sesję
-                throw new InvalidMoveException(InvalidMove.Message,InvalidMove);
+                throw new InvalidMoveException(InvalidMove.Message, InvalidMove);
             }
         }
-        public static void RuchPionem(Pozycja Pozycja1, Pozycja Pozycja2)
+        public static void RuchPionem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
-            switch(Program.playerTeam)
+            BackupPlansza = Plansza;
+            switch(Team)
             {
-
+                case 'B':
+                    if(Pozycja1.Pos1+1 < 8)
+                    {
+                        if(Pozycja2.Pos1 == Pozycja1.Pos1+2)
+                        {
+                            if(Pozycja1.Pos1 == 1)
+                            {
+                                if(Pozycja2.Pos2 == Pozycja2.Pos1)
+                                {
+                                    if(Plansza[Pozycja1.Pos1+1,Pozycja1.Pos2] == ChessPiece.None)
+                                    {
+                                        if(Plansza[Pozycja1.Pos1+2,Pozycja1.Pos2] == ChessPiece.None)
+                                        {
+                                            //Wykonaj ruch i potem sprawdz czy szacha ni ma
+                                            Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1,Pozycja1.Pos2];
+                                            Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                        }
+                                        else
+                                        {
+                                            throw new InvalidMoveException("Pionek B probowal poruszyc sie o 2 pola w miejsce gdzie stoi inny pionek");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        throw new InvalidMoveException("Pionek B probowal poruszyc sie o 2 pola przez pionek");
+                                    }
+                                }
+                                else
+                                {
+                                    throw new InvalidMoveException("Pionek B probowal sie ruszyc o 2 pola w bok");
+                                }
+                            }
+                            else
+                            {   
+                                throw new InvalidMoveException("Pionek B probowal sie ruszyc o 2 pola nie stojac w pozycji startowej");
+                            }
+                        }
+                        else if(/*Warunek dla ruchu o jeden/en passant/zbicia*/true)
+                        {
+                            
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidMoveException("Pionek B probowal sie ruszyc poza plansze (Pos1+1 > 8");
+                    }
+                    break;
             }
         }
-        public static void RuchKoniem(Pozycja Pozycja1, Pozycja Pozycja2)
-        {
-            switch(Program.playerTeam)
-            {
-
-            }
-        }
-        public static void RuchGońcem(Pozycja Pozycja1, Pozycja Pozycja2)
-        {
-            switch(Program.playerTeam)
-            {
-
-            }
-        }
-        public static void RuchWieżą(Pozycja Pozycja1, Pozycja Pozycja2)
-        {
-            switch(Program.playerTeam)
-            {
-
-            }
-        }
-
-        public static void RuchKrólową(Pozycja Pozycja1, Pozycja Pozycja2)
+        public static void RuchKoniem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
 
         }
-        public static void RuchKrólem(Pozycja Pozycja1, Pozycja Pozycja2)
+        public static void RuchGońcem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
-            switch(Program.playerTeam)
+
+        }
+        public static void RuchWieżą(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
+        {
+
+        }
+
+        public static void RuchKrólową(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
+        {
+
+        }
+        public static void RuchKrólem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
+        {
+            switch(Team)
             {
 
             }
@@ -1466,8 +1527,8 @@ namespace SzachyMulti
                         string pionekDoRuszenia = Console.ReadLine().ToUpper();
                         if(posregex.IsMatch(pionekDoRuszenia))
                         {
-                            Pozycja Pozycja1 = new Pozycja(pionekDoRuszenia.First(),pionekDoRuszenia.Last());
-                            if(Plansza[Pozycja1.Pos1,Pozycja1.Pos2] == ChessPiece.None)
+                            Pozycja Pozycja1 = new Pozycja(pionekDoRuszenia.First(), pionekDoRuszenia.Last());
+                            if(Plansza[Pozycja1.Pos1, Pozycja1.Pos2] == ChessPiece.None)
                             {
                                 Console.Write("Niepoprawna pozycja\n>");
                                 goto podajpozycje;
@@ -1477,14 +1538,14 @@ namespace SzachyMulti
                             string pozycjaDocelowa = Console.ReadLine().ToUpper();
                             if(posregex.IsMatch(pozycjaDocelowa))
                             {
-                                Pozycja Pozycja2 = new Pozycja(pozycjaDocelowa.First(),pozycjaDocelowa.Last());
+                                Pozycja Pozycja2 = new Pozycja(pozycjaDocelowa.First(), pozycjaDocelowa.Last());
                                 try
                                 {
                                     WykonajRuch(Pozycja1, Pozycja2);
                                 }
                                 catch
                                 {
-
+                                    //Invalid move handler here
                                 }
                             }
                             else
@@ -2024,7 +2085,7 @@ namespace SzachyMulti
                             Console.SetWindowSize(80, 50);
                             ID = connect_to_id;
                             joingoto:
-                            try { AppendText($"JOIN: {Nick}", currentfolder, connect_to_id); } catch { Thread.Sleep(rand.Next(150,301)); goto joingoto; }
+                            try { AppendText($"JOIN: {Nick}", currentfolder, connect_to_id); } catch { Thread.Sleep(rand.Next(150, 301)); goto joingoto; }
                             InitKlient();
                             nazwasesji = lines[0];
                             enemyNick = lines[2];
