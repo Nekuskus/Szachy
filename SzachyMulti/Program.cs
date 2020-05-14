@@ -80,8 +80,8 @@ namespace SzachyMulti
         int _pos2;
         public Pozycja(char pos1, char pos2)
         {
-            _pos1 = Convert.ToInt32(Program.SkonwertujLitere(pos1));
-            _pos2 = Convert.ToInt32(pos2) - 1;
+            _pos1 = Program.SkonwertujLitere(pos1);
+            _pos2 = (int)char.GetNumericValue(pos2) - 1;
         }
         public int Pos1
         {
@@ -92,6 +92,11 @@ namespace SzachyMulti
         {
             get => _pos2;
             set => _pos2 = value;
+        }
+        public override string ToString()
+        {
+            string str = $"{Program.SkonwertujCyfre(this.Pos1)}{this.Pos2+1}";
+            return str;
         }
     };
     public static class Szachy
@@ -175,9 +180,9 @@ namespace SzachyMulti
         }
         ///<summary>
         /// A function for clearing the board 
-        ///     <remarks> It should be used after the match is complete to allow easy starting another one. 
-        ///     My feelings stop me from clearing the backups. I guess I will do without it. </remarks>
         /// </summary>
+        /// <remarks> It should be used after the match is complete to allow easy starting another one. 
+        ///  My feelings stop me from clearing the backups. I guess I will do without it. </remarks>
         public static void WyczyscPlansze()
         {
             for(int i = 0; i < 8; i++)
@@ -237,13 +242,14 @@ namespace SzachyMulti
                         }
                         break;
                 }
+                //if team = playerteam send move
             }
         }
         public static void OznaczSzachy()
         {
             //DONE: MAKE BACKUPS BEFORE REDEFINING AND CHANGE BOARDS TO THE MERGED ONES
-            SzachyBC.CopyD(ref BackupSzachyBC);
-            HiddenSzachyBC.CopyD(ref BackupHiddenSzachyBC);
+            Array.Copy(SzachyBC, BackupSzachyBC, SzachyBC.Length);
+            Array.Copy(HiddenSzachyBC, BackupHiddenSzachyBC, HiddenSzachyBC.Length);
             SzachyBC = new ChessPiece[8, 8];
             HiddenSzachyBC = new ChessPiece[8, 8];
             for(int i = 0, i2 = 0; i < 8; i2++)
@@ -1353,43 +1359,43 @@ namespace SzachyMulti
         {
             try
             {
-                WykonajRuch(Pozycja1, Pozycja2);
+                WykonajRuch(Pozycja1, Pozycja2, Program.enemyNick);
+                Program.hasEnemyMoved = true;
+                return;
             }
             catch(InvalidMoveException e)
             {
-                //InvalidMoveException will be thrown here if the move is
+                //InvalidMoveException will be thrown to here if the move is invalid
             }
         }
-        public static void WykonajRuch(Pozycja Pozycja1, Pozycja Pozycja2)
+        public static void WykonajRuch(Pozycja Pozycja1, Pozycja Pozycja2, string nick)
         {
             char Pos1team = (Plansza[Pozycja1.Pos1, Pozycja1.Pos2] & ChessPiece.BothTeams) == ChessPiece.TeamB ? 'B' : 'C'; // hasflag ? yes : no
             //Ily pieces, in memory I'm keeping this. string figureType = Plansza[Pozycja1.Pos1, Pozycja1.Pos2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C');
             try
             {
-                switch(Plansza[Pozycja1.Pos1, Pozycja1.Pos2] & ChessPiece.AllPieces)
+                //switch(Plansza[Pozycja1.Pos1, Pozycja1.Pos2] & ChessPiece.AllPieces)
+                //These functions should throw the InvalidEnemyMoveExcpetion(MoveInfo) with some info about the error that will get logged and told to the player
+                if(Plansza[Pozycja1.Pos1,Pozycja1.Pos2].HasFlag(ChessPiece.King)) //"krol"
                 {
-                    //These functions should throw the InvalidEnemyMoveExcpetion(MoveInfo) with some info about the error that will get logged and told to the player
-                    case ChessPiece.Pawn: //"pionek"
-                        RuchPionem(Pozycja1, Pozycja2, Pos1team);
-                        break;
+                    RuchKrólem(Pozycja1, Pozycja2, Pos1team);
+                }
+                else
+                {
+                    if(Plansza[Pozycja1.Pos1, Pozycja1.Pos2].HasFlag(ChessPiece.Queen)) //"krolowa"
+                        RuchKrólową(Pozycja1, Pozycja2, Pos1team);
+                    //(Plansza[Pozycja1.Pos2,Pozycja1.Pos2].HasFlag(ChessPiece.Pawn)) //"pionek"
+                    RuchPionem(Pozycja1, Pozycja2, Pos1team);
                     case ChessPiece.Knight: //"kon"
                         RuchKoniem(Pozycja1, Pozycja2, Pos1team);
-                        break;
                     case ChessPiece.Bishop: //"goniec"
                         RuchGońcem(Pozycja1, Pozycja2, Pos1team);
-                        break;
                     case ChessPiece.Rook: //"wieza"
                         RuchWieżą(Pozycja1, Pozycja2, Pos1team);
-                        break;
-                    case ChessPiece.King: //"krol"
-                        RuchKrólem(Pozycja1, Pozycja2, Pos1team);
-                        break;
-                    case ChessPiece.Queen: //"krolowa"
-                        RuchKrólową(Pozycja1, Pozycja2, Pos1team);
-                        break;
+                    
                 }
                 OznaczSzachyPoRuchu(Pos1team);
-                Program.hasEnemyMoved = true;
+                //TODO: After validation Program.AppendText($"{nick}: {Pozycja1.ToString()} >> {Pozycja2.ToString()}", Program.currentfolder, Program.ID);
                 return;
             }
             catch(Exception InvalidMove)
@@ -1400,25 +1406,28 @@ namespace SzachyMulti
         }
         public static void RuchPionem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
-            BackupPlansza = Plansza;
+            Array.Copy(Plansza, BackupPlansza, Plansza.Length);
             switch(Team)
             {
                 case 'B':
                     if(Pozycja1.Pos1+1 < 8)
                     {
+                        //Warunek dla ruchu o 2
                         if(Pozycja2.Pos1 == Pozycja1.Pos1+2)
                         {
                             if(Pozycja1.Pos1 == 1)
                             {
-                                if(Pozycja2.Pos2 == Pozycja2.Pos1)
+                                if(Pozycja1.Pos2 == Pozycja2.Pos2)
                                 {
                                     if(Plansza[Pozycja1.Pos1+1,Pozycja1.Pos2] == ChessPiece.None)
                                     {
                                         if(Plansza[Pozycja1.Pos1+2,Pozycja1.Pos2] == ChessPiece.None)
                                         {
                                             //Wykonaj ruch i potem sprawdz czy szacha ni ma
-                                            Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1,Pozycja1.Pos2];
+                                            Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
                                             Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            PossibleEnPassants[Pozycja2.Pos1,Pozycja2.Pos2] |= ChessPiece.TeamB;
+                                            //TODO: Usuń możliwy en passant kiedy znowu jest tura białego zaraz na początku tury forem!
                                         }
                                         else
                                         {
@@ -1432,7 +1441,7 @@ namespace SzachyMulti
                                 }
                                 else
                                 {
-                                    throw new InvalidMoveException("Pionek B probowal sie ruszyc o 2 pola w bok");
+                                    throw new InvalidMoveException("Pionek B probowal sie ruszyc o 2 pola i w bok");
                                 }
                             }
                             else
@@ -1440,14 +1449,235 @@ namespace SzachyMulti
                                 throw new InvalidMoveException("Pionek B probowal sie ruszyc o 2 pola nie stojac w pozycji startowej");
                             }
                         }
-                        else if(/*Warunek dla ruchu o jeden/en passant/zbicia*/true)
+                        //Warunek dla bicia
+                        else if(Pozycja2.Pos2 == Pozycja1.Pos2 - 1 || Pozycja2.Pos2 == Pozycja1.Pos2 + 1)
                         {
-                            
+                            if(Pozycja2.Pos1 == Pozycja1.Pos1 + 1)
+                            {
+                                //W lewo
+                                if(Pozycja2.Pos2 == Pozycja1.Pos2 + 1)
+                                {
+                                    if(Pozycja2.Pos2 < 8)
+                                    {
+                                        if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
+                                        {
+                                            //Zbij
+                                            Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                            Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                        }
+                                        else if(PossibleEnPassants[Pozycja2.Pos1-1, Pozycja2.Pos2] == ChessPiece.TeamC)
+                                        {
+                                            //Wykonaj en passant
+                                            Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                            Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            Plansza[Pozycja2.Pos1-1, Pozycja2.Pos2] = ChessPiece.None;
+                                            PossibleEnPassants[Pozycja2.Pos1-1, Pozycja2.Pos2] = ChessPiece.None;
+                                        }
+                                        else
+                                        {
+                                            throw new InvalidMoveException("Pionek B probowal sie ruszyc po skos bez zbijania (takze bez en passant)");
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        throw new InvalidMoveException("Pionek B probowal sie ruszyc po skosie poza plansze w lewo (Pozycja2.Pos2 > 8)");
+                                    }
+                                }
+                                //W prawo
+                                else if(Pozycja2.Pos2 == Pozycja1.Pos2 - 1)
+                                {
+                                    if(Pozycja2.Pos2 > -1)
+                                    {
+                                        if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
+                                        {
+                                            //Zbij
+                                            Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                            Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                        }
+                                        else if(PossibleEnPassants[Pozycja2.Pos1-1, Pozycja2.Pos2] == ChessPiece.TeamC)
+                                        {
+                                            //Wykonaj en passant
+                                            Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                            Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            Plansza[Pozycja2.Pos1-1, Pozycja2.Pos2] = ChessPiece.None;
+                                            PossibleEnPassants[Pozycja2.Pos1-1, Pozycja2.Pos2] = ChessPiece.None;
+                                        }
+                                        else
+                                        {
+                                            throw new InvalidMoveException("Pionek B probowal sie ruszyc po skos bez zbijania (takze bez en passant)");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        throw new InvalidMoveException("Pionek B probowal sie ruszyc po skosie poza plansze w lewo (Pozycja2.Pos2 < -1)");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                throw new InvalidMoveException("Pionek B probowal sie ruszyc w bok bez ruszania sie do przodu");
+                            }
+                        }
+                        //Warunek dla ruchu do przodu o jeden
+                        else if(Pozycja2.Pos1 == Pozycja1.Pos1+1)
+                        {
+                            if(Pozycja2.Pos2 == Pozycja1.Pos2)
+                            {
+                                if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] == ChessPiece.None)
+                                {
+                                    Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                    Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None; 
+                                }
+                                else
+                                {
+                                    throw new InvalidMoveException($"Pionek B probowal sie ruszyc o jedno pole w miejsce gdzie stoi inny pionek");
+                                }
+                            }
+                            else
+                            {
+                                throw new InvalidMoveException($"Pionek B probowal sie ruszyc o jedno pole w bok bez zbijania i to nie powinno sie nigdy zdarzyc bo to bylo sprawdzane wczesniej w elseifie");
+                            }
+                        }
+                        else
+                        {
+                            throw new InvalidMoveException($"Jakis dziwny ruch piona B: {Pozycja1}, {Pozycja2}");
                         }
                     }
                     else
                     {
-                        throw new InvalidMoveException("Pionek B probowal sie ruszyc poza plansze (Pos1+1 > 8");
+                        throw new InvalidMoveException("Pionek B probowal sie ruszyc poza plansze (Pos1+1 > 8)");
+                    }
+                    break;
+                case 'C':
+                    if(Pozycja1.Pos1-1 > -1)
+                    {
+                        //Warunek dla ruchu o 2
+                        if(Pozycja2.Pos1 == Pozycja1.Pos1-2)
+                        {
+                            if(Pozycja1.Pos1 == 6)
+                            {
+                                if(Pozycja1.Pos2 == Pozycja2.Pos2)
+                                {
+                                    if(Plansza[Pozycja1.Pos1-1,Pozycja1.Pos2] == ChessPiece.None)
+                                    {
+                                        if(Plansza[Pozycja1.Pos1-2, Pozycja1.Pos2] == ChessPiece.None)
+                                        {
+                                            Plansza[Pozycja2.Pos1,Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                            Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            PossibleEnPassants[Pozycja2.Pos1, Pozycja2.Pos2] |= ChessPiece.TeamC;
+                                        }
+                                        else
+                                        {
+                                            throw new InvalidMoveException("Pionek C probowal sie poruszyc o 2 pola w miejsce gdzie stoi pionek");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        throw new InvalidMoveException("Pionek C probowal poruszyc sie o 2 pola przez pionek");
+                                    }
+                                }
+                                else
+                                {
+                                    throw new InvalidMoveException("Pionek C probowal sie ruszyc o 2 pola i w bok");
+                                }
+                            }
+                            else
+                            {
+                                throw new InvalidMoveException("Pionek C probowal sie ruszyc o 2 pola nie stojac w pozycji startowej");
+                            }
+                        }
+                        //Warunek dla bicia
+                        else if(Pozycja2.Pos2 == Pozycja1.Pos2 - 1 || Pozycja2.Pos2 == Pozycja1.Pos2 + 1)
+                        {
+                            if(Pozycja2.Pos1 == Pozycja1.Pos1 - 1)
+                            {
+                                //W lewo
+                                if(Pozycja2.Pos2 == Pozycja1.Pos2 - 1)
+                                {
+                                    if(Pozycja2.Pos2 > -1)
+                                    {
+                                        if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
+                                        {
+                                            //Zbij
+                                            Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1,Pozycja1.Pos2];
+                                            Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                        }
+                                        else if(PossibleEnPassants[Pozycja2.Pos1+1, Pozycja2.Pos2] == ChessPiece.TeamB)
+                                        {
+                                            //Wykonaj en passant
+                                            Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1,Pozycja1.Pos2];
+                                            Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            Plansza[Pozycja2.Pos1+1, Pozycja2.Pos2] = ChessPiece.None;
+                                            PossibleEnPassants[Pozycja2.Pos1+1, Pozycja2.Pos2] = ChessPiece.None;
+                                        }
+                                        else
+                                        {
+                                            //Rzuc blad
+                                            throw new InvalidMoveException("Pionek C probowal sie ruszyc po skos bez zbijania (takze bez en passant)");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        throw new InvalidMoveException("Pionek C probowal sie ruszyc po skosie poza plansze w lewo (Pozycja2.Pos2 <= -1");
+                                    }
+                                }
+                                //W prawo
+                                else if(Pozycja2.Pos2 == Pozycja1.Pos2 + 1)
+                                {
+                                    if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
+                                    {
+                                        //Zbij
+                                        Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                        Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                    }
+                                    else if(PossibleEnPassants[Pozycja2.Pos1+1, Pozycja2.Pos2] == ChessPiece.TeamB)
+                                    {
+                                        //Wykonaj en passant
+                                        Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                        Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                        Plansza[Pozycja2.Pos1+1, Pozycja2.Pos2] = ChessPiece.None;
+                                        PossibleEnPassants[Pozycja2.Pos1+1, Pozycja2.Pos2] = ChessPiece.None;
+                                    }
+                                    else
+                                    {
+                                        //Rzuc blad
+                                        throw new InvalidMoveException("Pionek C probowal sie ruszyc po skos bez zbijania (takze bez en passant)");
+                                    }
+                                } 
+                            }
+                            else
+                            {
+                                throw new InvalidMoveException("Pionek C probowal ruszyc sie o w bok bez ruszania sie do przodu");
+                            }
+                        }
+                        //Warunek dla ruchu do przodu o jeden
+                        else if(Pozycja2.Pos1 == Pozycja1.Pos1 - 1)
+                        {
+                            if(Pozycja2.Pos2 == Pozycja1.Pos2)
+                            {
+                                if(Plansza[Pozycja2.Pos1,Pozycja2.Pos2] == ChessPiece.None)
+                                {
+                                    Plansza[Pozycja2.Pos1,Pozycja2.Pos2] = Plansza[Pozycja1.Pos1,Pozycja1.Pos2];
+                                    Plansza[Pozycja1.Pos1,Pozycja1.Pos2] = ChessPiece.None;
+                                }
+                                else
+                                {
+                                    throw new InvalidMoveException($"Pionek C probowal sie ruszyc o jedno pole w miejsce gdzie stoi inny pionek");
+                                }
+                            }
+                            else
+                            {
+                                throw new InvalidMoveException($"Pionek C probowal sie ruszyc o jedno pole w bok bez zbijania i to nie powinno sie nigdy zdarzyc bo to bylo sprawdzane wczesniej w elseifie");
+                            }
+                        }
+                        else
+                        {
+                            throw new InvalidMoveException($"Jakis dziwny ruch piona C: {Pozycja1}, {Pozycja2}");
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidMoveException("Pionek C probowal sie ruszyc poza plansze(Pos1-1 < -1");
                     }
                     break;
             }
@@ -1514,13 +1744,16 @@ namespace SzachyMulti
                 switch(Program.playerTeam)
                 {
                     //Remember about clearing possible en passants!
+                    //TODO: ADD CLEARING EN PASSANTS OF THE TEAMS AT THE BEGINNING
                     case 'B':
+                        //TODO: ADD CLEARING WHITE ENPASSANTS HERE
                         NarysujPlansze();
                         OznaczSzachy();
                         //oznacz szachy
                         //wykonaj turę
                         Console.WriteLine("Kliknij enter aby wykonac ruch");
                         Console.ReadKey();
+                        //TODO: ZASTĄP Z WSPARCIEM ROSZADY/WYMIANY PIONA ETC MOZE Z ?:
                         Console.Write("Podaj pozycje pionka, który ma sie poruszyc (np. A1)\n>");
                         Regex posregex = new Regex("^[A-H][1-8]$");
                         podajpozycje:
@@ -1541,7 +1774,7 @@ namespace SzachyMulti
                                 Pozycja Pozycja2 = new Pozycja(pozycjaDocelowa.First(), pozycjaDocelowa.Last());
                                 try
                                 {
-                                    WykonajRuch(Pozycja1, Pozycja2);
+                                    WykonajRuch(Pozycja1, Pozycja2, Program.Nick);
                                 }
                                 catch
                                 {
@@ -1600,7 +1833,6 @@ namespace SzachyMulti
         public static string ID;
         public static bool isOdbierz;
         public static bool BasicIO;
-        public static bool odswiezlobby;
         public static bool wykonajconnect = true;
         public static string nazwasesji;
         public static bool hasEnemyMoved;
@@ -1683,6 +1915,31 @@ namespace SzachyMulti
                     throw new Exception_2_rozne_od_2();
             }
         }
+        public static char SkonwertujCyfre(int cyfra)
+        {
+            switch(cyfra)
+            {
+                case 0:
+                    return 'A';
+                case 1:
+                    return 'B';
+                case 2:
+                    return 'C';
+                case 3:
+                    return 'D';
+                case 4:
+                    return 'E';
+                case 5:
+                    return 'F';
+                case 6:
+                    return 'G';
+                case 7:
+                    return 'H';
+                default:
+                    Console.WriteLine("Damian co ty zrobiles to nie powinno nigdy sie stac");
+                    throw new Exception_2_rozne_od_2();
+            }
+        }
         public static void Odbierz()
         {
             client.Connect();
@@ -1743,6 +2000,7 @@ namespace SzachyMulti
                             lines[i] = lines[i].Substring(enemyNick.Length + 2);
                             //"OK"
                             client.MoveFile($"/SzachySerwer/StartingSessions/{ID}.txt", $"/SzachySerwer/ActiveSessions/{ID}.txt");
+                            currentfolder = "ActiveSessions";
                         }
                         else if(lines[i].StartsWith("EVENT"))
                         {
@@ -1762,14 +2020,19 @@ namespace SzachyMulti
         }
         public static void OtwórzCzat()
         {
-            File.CreateText($@".\Chat\Logs\Log{ID}.txt");
+            if(!Directory.Exists(@".\Chat\Logs"))
+            {
+                Directory.CreateDirectory(@".\Chat\Logs");
+            }
+            StreamWriter sw = File.CreateText($@".\Chat\Logs\Log{ID}.txt");
+            sw.Dispose();
             ProcessStartInfo psi = new ProcessStartInfo()
             {
                 CreateNoWindow = false,
                 UseShellExecute = true,
                 FileName = $@"{Directory.GetCurrentDirectory()}\Chat\SzachyChat.exe",
                 WindowStyle = ProcessWindowStyle.Normal,
-                Arguments = $"{ID}"
+                Arguments = $"{ID} {Nick}"
             };
             chat.StartInfo = psi;
             chat.Start();
@@ -1835,46 +2098,45 @@ namespace SzachyMulti
 
         public static void KlientOdbierajacy()
         {
-            while(true)
+            int repeati = 0;
+            while(czy_odbierac == true)
             {
-                int repeati = 0;
-                while(czy_odbierac == true)
+                try
                 {
-                    try
+                    Odbierz();
+                    repeati = 0;
+                    Thread.Sleep(7000);
+                }
+                catch
+                {
+                    if(repeati >= 4)
                     {
-                        Odbierz();
-                        repeati = 0;
-                        Thread.Sleep(700);
-                    }
-                    catch
-                    {
-                        if(repeati >= 4)
+                        Console.Write("Nie udalo sie polaczyc z serwerem, sprobowac ponownie? t/n\n(Odpowiedz \"n\" przerywa sesje, nie jest to wskazane.)\n>");
+                        connrepeatgoto:
+                        string connrepeat = Console.ReadLine().ToLower();
+                        if(connrepeat.Contains('t'))
                         {
-                            Console.Write("Nie udalo sie polaczyc z serwerem, sprobowac ponownie? t/n\n(Odpowiedz \"n\" przerywa sesje, nie jest to wskazane.)\n>");
-                            connrepeatgoto:
-                            string connrepeat = Console.ReadLine().ToLower();
-                            if(connrepeat.Contains('t'))
-                            {
-                                repeati++;
-                            }
-                            else if(connrepeat.Contains('n'))
-                            {
-                                Console.WriteLine("Konczenie sesji... cofanie do menu glownego");
-                                czy_odbierac = false;
-                            }
-                            else
-                            {
-                                Console.WriteLine($"Niepoprawna odpowiedz: {connrepeat}");
-                                goto connrepeatgoto;
-                            }
+                            repeati++;
                         }
-                        repeati++;
+                        else if(connrepeat.Contains('n'))
+                        {
+                            Console.WriteLine("Konczenie sesji... cofanie do menu glownego");
+                            czy_odbierac = false;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Niepoprawna odpowiedz: {connrepeat}");
+                            goto connrepeatgoto;
+                        }
                     }
+                    repeati++;
                 }
             }
         }
         static void Main(string[] args)
         {
+            Pozycja newPos = new Pozycja('D','7');
+            Console.WriteLine($"{newPos} {new Pozycja('G','4')}");
             Szachy.PostawPionki();
             Szachy.OznaczSzachy();
             Szachy.NarysujPlansze();
@@ -1938,7 +2200,6 @@ namespace SzachyMulti
                     client.SetWorkingDirectory(@"/SzachySerwer/StartingSessions/");
                 }
                 wykonajconnect = false;
-                odswiezlobby = false;
                 Console.WriteLine("---Lobby------------------------------------------------------------------------");
                 Console.WriteLine("Lp. Nazwa pokoju               - ID");
                 int i = 1;
@@ -1985,7 +2246,7 @@ namespace SzachyMulti
                     goto lobby;
                 }
             }
-            odswiezlobby = false;
+            int cyferkiID = new int();
             wykonajconnect = false;
             bool isCancel = false;
             Console.Write("\nPodaj ID sesji publicznej (z lobby) lub prywatnej (otrzymanej od znajomego) aby dolaczyc do niej. Utworz nowa sesje poleceniem \"create\". Odswiez lobby poleceniem \"refresh\"\n>");
@@ -2012,11 +2273,11 @@ namespace SzachyMulti
                     string ispublicstr = Console.ReadLine().ToLower();
                     if(ispublicstr.Contains('t'))
                     {
-                        isPublic = true;
+                        isPublic = false;
                     }
                     else if(ispublicstr.Contains('n'))
                     {
-                        isPublic = false;
+                        isPublic = true;
                     }
                     else
                     {
@@ -2037,6 +2298,11 @@ namespace SzachyMulti
                         {
                             Thread.Sleep(TimeSpan.FromSeconds(5));
                         }
+                        AppendText("CLOSING", currentfolder, ID);
+                        while(currentfolder != "ActiveSessions")
+                        {
+                            Thread.Sleep(TimeSpan.FromSeconds(3));
+                        }
                         Szachy.Rozgrywka();
                         //(Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds
                     }
@@ -2044,7 +2310,7 @@ namespace SzachyMulti
                     {
                         Console.WriteLine("\nWracanie do lobby...\n");
                         wykonajconnect = false;
-                        odswiezlobby = true;
+                        goto lobby;
                     }
                 }
             }
@@ -2052,23 +2318,18 @@ namespace SzachyMulti
             {
                 Console.WriteLine("\nOdswiezanie lobby...\n");
                 wykonajconnect = false;
-                odswiezlobby = true;
                 client.Connect();
-
+                goto lobby;
             }
-            try
+            else if(int.TryParse(ID, out cyferkiID))
             {
-                if(isCancel == false)
-                {
-                    ID = connect_to_id;
-                    wykonajconnect = true;
-                }
+                ID = connect_to_id;
+                wykonajconnect = true;
             }
-            catch(InvalidCastException)
+            else
             {
                 Console.WriteLine("Niepoprawna odpowiedz:" + connect_to_id);
                 Console.WriteLine("Cofanie do lobby...\n");
-                wykonajconnect = false;
                 goto lobby;
             }
             if(wykonajconnect == true)
@@ -2104,10 +2365,6 @@ namespace SzachyMulti
                     }
                 }
             }
-            else if(odswiezlobby == true)
-            {
-                goto lobby;
-            }
         }
         static void SizeCheckThread()
         {
@@ -2129,12 +2386,13 @@ namespace SzachyMulti
         {
             Thread Size = new Thread(new ThreadStart(SizeCheck));
             Size.Start();
-            if(BasicIO == true)
+            if(BasicIO == false)
             {
                 OtwórzCzat();
                 Thread chat = new Thread(new ThreadStart(ChatThread));
                 chat.Start();
             }
+            czy_odbierac = true;
             Thread t = new Thread(new ThreadStart(KlientOdbierajacy));
             t.Start();
         }
