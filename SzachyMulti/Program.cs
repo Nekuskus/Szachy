@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -1376,23 +1377,85 @@ namespace SzachyMulti
             {
                 //switch(Plansza[Pozycja1.Pos1, Pozycja1.Pos2] & ChessPiece.AllPieces)
                 //These functions should throw the InvalidEnemyMoveExcpetion(MoveInfo) with some info about the error that will get logged and told to the player
-                if(Plansza[Pozycja1.Pos1,Pozycja1.Pos2].HasFlag(ChessPiece.King)) //"krol"
-                {
-                    RuchKrólem(Pozycja1, Pozycja2, Pos1team);
-                }
-                else
+                try
                 {
                     if(Plansza[Pozycja1.Pos1, Pozycja1.Pos2].HasFlag(ChessPiece.Queen)) //"krolowa"
+                    {
                         RuchKrólową(Pozycja1, Pozycja2, Pos1team);
-                    //(Plansza[Pozycja1.Pos2,Pozycja1.Pos2].HasFlag(ChessPiece.Pawn)) //"pionek"
-                    RuchPionem(Pozycja1, Pozycja2, Pos1team);
-                    case ChessPiece.Knight: //"kon"
-                        RuchKoniem(Pozycja1, Pozycja2, Pos1team);
-                    case ChessPiece.Bishop: //"goniec"
-                        RuchGońcem(Pozycja1, Pozycja2, Pos1team);
-                    case ChessPiece.Rook: //"wieza"
-                        RuchWieżą(Pozycja1, Pozycja2, Pos1team);
-                    
+                    }
+                    else
+                    {
+                        throw new InvalidMoveException();
+                    }
+                }
+                catch
+                {
+                    try
+                    {
+                        if(Plansza[Pozycja1.Pos1, Pozycja1.Pos2].HasFlag(ChessPiece.Bishop)) //case ChessPiece.Bishop: //"goniec"
+                        {
+                            RuchGońcem(Pozycja1, Pozycja2, Pos1team);
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            //case ChessPiece.Rook: //"wieza"
+                            if(Plansza[Pozycja1.Pos1, Pozycja1.Pos2].HasFlag(ChessPiece.Rook))
+                            {
+                                RuchWieżą(Pozycja1, Pozycja2, Pos1team);
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
+                        catch
+                        {
+                            try
+                            {
+                                if(Plansza[Pozycja1.Pos2, Pozycja1.Pos2].HasFlag(ChessPiece.Pawn)) //"pionek"
+                                {
+                                    RuchPionem(Pozycja1, Pozycja2, Pos1team);
+                                }
+                                else
+                                {
+                                    throw;
+                                }
+                            }
+                            catch
+                            {
+                                try
+                                {
+                                    //case ChessPiece.Knight: //"kon"
+                                    if(Plansza[Pozycja1.Pos1, Pozycja1.Pos2].HasFlag(ChessPiece.Knight))
+                                    {
+                                        RuchKoniem(Pozycja1, Pozycja2, Pos1team);
+                                    }
+                                    else
+                                    {
+                                        throw;
+                                    }
+                                }
+                                catch
+                                {
+                                    if(Plansza[Pozycja1.Pos1, Pozycja1.Pos2].HasFlag(ChessPiece.King)) //"krol"
+                                    {
+                                        RuchKrólem(Pozycja1, Pozycja2, Pos1team);
+                                    }
+                                    else
+                                    {
+                                        throw;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 OznaczSzachyPoRuchu(Pos1team);
                 //TODO: After validation Program.AppendText($"{nick}: {Pozycja1.ToString()} >> {Pozycja2.ToString()}", Program.currentfolder, Program.ID);
