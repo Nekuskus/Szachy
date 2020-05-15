@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -23,7 +22,7 @@ namespace SzachyMulti
         {
             if(arr.Rank != destination.Rank)
             {
-                throw new ArgumentException("The arrays had different numbers of destinations.");
+                throw new ArgumentException("The arrays had different numbers of dimensions.");
             }
             for(int i = 0; i < arr.Rank; i++)
             {
@@ -207,7 +206,7 @@ namespace SzachyMulti
         public static void OznaczSzachyPoRuchu(char Team)
         {
             OznaczSzachy();
-            //TODO: ADD SOME CHECKING HERE IDK
+            //DONE TODO: ADD SOME CHECKING HERE IDK
             for(int i = 0, i2 = 0; i<8; i2++)
             {
                 if(i2 == 8)
@@ -227,8 +226,7 @@ namespace SzachyMulti
                         {
                             if(!(BackupSzachyBC[i, i2].HasFlag(ChessPiece.TeamC)))
                             {
-                                Console.WriteLine("Niewlasciwy ruch! Cofanie.");
-                                //TODO: Make it throw exception instead
+                                throw new InvalidMoveException("Gracz B spowodowal szacha u siebie");
                             }
                         }
                         break;
@@ -237,13 +235,11 @@ namespace SzachyMulti
                         {
                             if(!(BackupSzachyBC[i, i2].HasFlag(ChessPiece.TeamB)))
                             {
-                                Console.WriteLine("Niewlasciwy ruch! Cofanie.");
-                                //TODO: Make it throw exception instead
+                                throw new InvalidMoveException("Gracz C spowodowal szacha u siebie");
                             }
                         }
                         break;
                 }
-                //if team = playerteam send move
             }
         }
         public static void OznaczSzachy()
@@ -1459,12 +1455,13 @@ namespace SzachyMulti
                 }
                 OznaczSzachyPoRuchu(Pos1team);
                 //TODO: After validation Program.AppendText($"{nick}: {Pozycja1.ToString()} >> {Pozycja2.ToString()}", Program.currentfolder, Program.ID);
+                Program.AppendText($"{nick}: {Pozycja1.ToString()} >> {Pozycja2.ToString()}", Program.currentfolder, Program.ID);
                 return;
             }
-            catch(Exception InvalidMove)
+            catch(InvalidMoveException InvalidMove)
             {
                 //TODO: Wyslij do jakiegoś logu błędów na serwerze i powiadom użytkownika, jakoś cofnij ruch może/przerwij sesję
-                throw new InvalidMoveException(InvalidMove.Message, InvalidMove);
+                throw;
             }
         }
         public static void RuchPionem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
