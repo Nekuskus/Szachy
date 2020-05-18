@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Web.WebSockets;
 
 namespace SzachyMulti
 {
@@ -18,6 +19,7 @@ namespace SzachyMulti
         /// Used to copy 2dimensional arrays as normal copying with = only makes a set of reference values.
         /// </summary>
         /// <typeparam name="T"> Used this to make it work for any type of array, using Array class is not working because it does not have [] indexing as it is only a base for all array types</typeparam>
+        /// <param name="destination"> This is the array values will be copied to </param>
         public static void CopyD<T>(this T[,] arr, ref T[,] destination)
         {
             if(arr.Rank != destination.Rank)
@@ -52,11 +54,7 @@ namespace SzachyMulti
     }
     public class InvalidMoveException : Exception
     {
-        private string _Message
-        {
-            get => _Message;
-            set => _Message = value;
-        }
+        private string _Message;
         public override string Message
         {
             get => _Message;
@@ -71,7 +69,7 @@ namespace SzachyMulti
         }
         public InvalidMoveException(String message, Exception innerException) : base(message, innerException)
         {
-            _Message = "Enemy client has sent an invalid move: " + message;
+            _Message = message;
         }
     }
     public struct Pozycja
@@ -80,8 +78,8 @@ namespace SzachyMulti
         int _pos2;
         public Pozycja(char pos1, char pos2)
         {
-            _pos1 = Program.SkonwertujLitere(pos1);
-            _pos2 = (int)char.GetNumericValue(pos2) - 1;
+            _pos2 = Program.SkonwertujLitere(Char.ToUpper(pos1));
+            _pos1 = (int)char.GetNumericValue(pos2) - 1;
         }
         public int Pos1
         {
@@ -95,7 +93,7 @@ namespace SzachyMulti
         }
         public override string ToString()
         {
-            string str = $"{Program.SkonwertujCyfre(this.Pos1)}{this.Pos2+1}";
+            string str = $"{Program.SkonwertujCyfre(this.Pos2)}{this.Pos1+1}";
             return str;
         }
     };
@@ -1415,7 +1413,7 @@ namespace SzachyMulti
                         {
                             try
                             {
-                                if(Plansza[Pozycja1.Pos2, Pozycja1.Pos2].HasFlag(ChessPiece.Pawn)) //"pionek"
+                                if(Plansza[Pozycja1.Pos1, Pozycja1.Pos2].HasFlag(ChessPiece.Pawn)) //"pionek"
                                 {
                                     RuchPionem(Pozycja1, Pozycja2, Pos1team);
                                 }
@@ -1438,7 +1436,7 @@ namespace SzachyMulti
                                         throw;
                                     }
                                 }
-                                catch
+                                catch (InvalidMoveException ex5)
                                 {
                                     if(Plansza[Pozycja1.Pos1, Pozycja1.Pos2].HasFlag(ChessPiece.King)) //"krol"
                                     {
@@ -1455,7 +1453,10 @@ namespace SzachyMulti
                 }
                 OznaczSzachyPoRuchu(Pos1team);
                 //TODO: After validation Program.AppendText($"{nick}: {Pozycja1.ToString()} >> {Pozycja2.ToString()}", Program.currentfolder, Program.ID);
-                Program.AppendText($"{nick}: {Pozycja1.ToString()} >> {Pozycja2.ToString()}", Program.currentfolder, Program.ID);
+                if(nick == Program.Nick)
+                {
+                    Program.AppendText($"{nick}: {Pozycja1.ToString()} >> {Pozycja2.ToString()}", Program.currentfolder, Program.ID);
+                }
                 return;
             }
             catch(InvalidMoveException InvalidMove)
@@ -1744,7 +1745,48 @@ namespace SzachyMulti
         }
         public static void RuchKoniem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
-
+            if(Pozycja1.Pos1 + 2 < 8 || Pozycja1.Pos1 + 1 < 8 || Pozycja1.Pos1 - 1 > -1 || Pozycja1.Pos1 - 2 > -1)
+            {
+                if(Pozycja2.Pos1 == Pozycja1.Pos1 + 2 || Pozycja2.Pos1 == Pozycja1.Pos1 + 1 || Pozycja2.Pos1 == Pozycja1.Pos1 - 1 || Pozycja2.Pos1 == Pozycja1.Pos1 - 2)
+                {
+                    if(Pozycja1.Pos1 + 2 < 8)
+                    {
+                        if(Pozycja2.Pos1 == Pozycja1.Pos1 + 2)
+                        {
+                            Console.WriteLine("Valid point 1");
+                        }
+                    }
+                    if(Pozycja1.Pos1 + 1 < 8)
+                    {
+                        if(Pozycja2.Pos1 == Pozycja1.Pos1 + 1)
+                        {
+                            Console.WriteLine("Valid point 2");
+                        }
+                    }
+                    if(Pozycja1.Pos1 - 1 > -1)
+                    {
+                        if(Pozycja2.Pos1 == Pozycja1.Pos1 - 1)
+                        {
+                            Console.WriteLine("Valid point 3");
+                        }
+                    }
+                    if(Pozycja1.Pos1 - 2 > -1)
+                    {
+                        if(Pozycja2.Pos1 == Pozycja1.Pos1 - 2)
+                        {
+                            Console.WriteLine("Valid point 4");
+                        }
+                    } 
+                }
+                else
+                {
+                    throw new InvalidMoveException($"Ruch konia {Team} nie spelnial zadnego warunku ruchu");
+                }
+            }
+            else
+            {
+                throw new InvalidMoveException($"Ruch konia {Team} nie spelnial zadnego warunku odleglosci od konca co jest niemozliwe");
+            }
         }
         public static void RuchGońcem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
@@ -1754,7 +1796,6 @@ namespace SzachyMulti
         {
 
         }
-
         public static void RuchKrólową(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
 
@@ -2195,10 +2236,15 @@ namespace SzachyMulti
         }
         static void Main(string[] args)
         {
-            Pozycja newPos = new Pozycja('D','7');
-            Console.WriteLine($"{newPos} {new Pozycja('G','4')}");
             Szachy.PostawPionki();
             Szachy.OznaczSzachy();
+            Console.SetWindowPosition(0, 0);
+            Console.SetWindowSize(200, 80);
+            Pozycja poz = new Pozycja(Console.ReadKey(true).KeyChar, Console.ReadKey(true).KeyChar);
+            Pozycja poz2 = new Pozycja(Console.ReadKey(true).KeyChar, Console.ReadKey(true).KeyChar);
+            Console.WriteLine(Szachy.Plansza[poz.Pos1,poz.Pos2]);
+            Console.WriteLine(Szachy.Plansza[poz2.Pos1,poz2.Pos2]);
+            Szachy.WykonajRuch(poz, poz2, "kyaaan");
             Szachy.NarysujPlansze();
             playerTeam = 'C';
             Szachy.NarysujPlansze();
