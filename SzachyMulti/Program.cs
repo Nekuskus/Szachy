@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -61,11 +62,11 @@ namespace SzachyMulti
         }
         public InvalidMoveException()
         {
-            _Message = "Enemy client has sent an invalid move: "; //Add information about the move here!
+            _Message = "Client has sent an invalid move"; //Add information about the move here!
         }
         public InvalidMoveException(String message) : base(message)
         {
-            _Message = "Enemy client has sent an invalid move: " + message;
+            _Message = "Client has sent an invalid move: " + message;
         }
         public InvalidMoveException(String message, Exception innerException) : base(message, innerException)
         {
@@ -1436,7 +1437,7 @@ namespace SzachyMulti
                                         throw;
                                     }
                                 }
-                                catch (InvalidMoveException ex5)
+                                catch
                                 {
                                     if(Plansza[Pozycja1.Pos1, Pozycja1.Pos2].HasFlag(ChessPiece.King)) //"krol"
                                     {
@@ -1487,7 +1488,7 @@ namespace SzachyMulti
                                             //Wykonaj ruch i potem sprawdz czy szacha ni ma
                                             Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
                                             Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
-                                            PossibleEnPassants[Pozycja2.Pos1,Pozycja2.Pos2] |= ChessPiece.TeamB;
+                                            PossibleEnPassants[Pozycja2.Pos1,Pozycja2.Pos2] = ChessPiece.TeamB;
                                             //TODO: Usuń możliwy en passant kiedy znowu jest tura białego zaraz na początku tury forem!
                                         }
                                         else
@@ -1522,9 +1523,16 @@ namespace SzachyMulti
                                     {
                                         if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
                                         {
-                                            //Zbij
-                                            Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
-                                            Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            if(!Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(ChessPiece.King))
+                                            {
+                                                //Zbij
+                                                Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                                Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            }
+                                            else
+                                            {
+                                                throw new InvalidMoveException("Pionek B probowal zbic krola w lewo");
+                                            }
                                         }
                                         else if(PossibleEnPassants[Pozycja2.Pos1-1, Pozycja2.Pos2] == ChessPiece.TeamC)
                                         {
@@ -1551,17 +1559,31 @@ namespace SzachyMulti
                                     {
                                         if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
                                         {
-                                            //Zbij
-                                            Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
-                                            Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            if(!Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(ChessPiece.King))
+                                            {
+                                                //Zbij
+                                                Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                                Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            }
+                                            else
+                                            {
+                                                throw new InvalidMoveException("Pionek B probowal zbic krola w prawo");
+                                            }
                                         }
                                         else if(PossibleEnPassants[Pozycja2.Pos1-1, Pozycja2.Pos2] == ChessPiece.TeamC)
                                         {
-                                            //Wykonaj en passant
-                                            Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
-                                            Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
-                                            Plansza[Pozycja2.Pos1-1, Pozycja2.Pos2] = ChessPiece.None;
-                                            PossibleEnPassants[Pozycja2.Pos1-1, Pozycja2.Pos2] = ChessPiece.None;
+                                            if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] == ChessPiece.None)
+                                            {
+                                                //Wykonaj en passant
+                                                Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                                Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                                Plansza[Pozycja2.Pos1-1, Pozycja2.Pos2] = ChessPiece.None;
+                                                PossibleEnPassants[Pozycja2.Pos1-1, Pozycja2.Pos2] = ChessPiece.None; 
+                                            }
+                                            else
+                                            {
+                                                throw new InvalidMoveException("Pionek B probowal zrobic en passant w miejsce gdzie stoi inny pionek w prawo");
+                                            }
                                         }
                                         else
                                         {
@@ -1570,7 +1592,7 @@ namespace SzachyMulti
                                     }
                                     else
                                     {
-                                        throw new InvalidMoveException("Pionek B probowal sie ruszyc po skosie poza plansze w lewo (Pozycja2.Pos2 < -1)");
+                                        throw new InvalidMoveException("Pionek B probowal sie ruszyc po skosie poza plansze w prawo (Pozycja2.Pos2 < -1)");
                                     }
                                 }
                             }
@@ -1625,7 +1647,7 @@ namespace SzachyMulti
                                         {
                                             Plansza[Pozycja2.Pos1,Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
                                             Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
-                                            PossibleEnPassants[Pozycja2.Pos1, Pozycja2.Pos2] |= ChessPiece.TeamC;
+                                            PossibleEnPassants[Pozycja2.Pos1, Pozycja2.Pos2] = ChessPiece.TeamC;
                                         }
                                         else
                                         {
@@ -1659,17 +1681,31 @@ namespace SzachyMulti
                                     {
                                         if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
                                         {
-                                            //Zbij
-                                            Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1,Pozycja1.Pos2];
-                                            Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            if(!Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(ChessPiece.King))
+                                            {
+                                                //Zbij
+                                                Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                                Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None; 
+                                            }
+                                            else
+                                            {
+                                                throw new InvalidMoveException("Pionek C probowal zbic krola w lewo");
+                                            }
                                         }
                                         else if(PossibleEnPassants[Pozycja2.Pos1+1, Pozycja2.Pos2] == ChessPiece.TeamB)
                                         {
-                                            //Wykonaj en passant
-                                            Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1,Pozycja1.Pos2];
-                                            Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
-                                            Plansza[Pozycja2.Pos1+1, Pozycja2.Pos2] = ChessPiece.None;
-                                            PossibleEnPassants[Pozycja2.Pos1+1, Pozycja2.Pos2] = ChessPiece.None;
+                                            if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] == ChessPiece.None)
+                                            {
+                                                //Wykonaj en passant
+                                                Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                                Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                                Plansza[Pozycja2.Pos1+1, Pozycja2.Pos2] = ChessPiece.None;
+                                                PossibleEnPassants[Pozycja2.Pos1+1, Pozycja2.Pos2] = ChessPiece.None; 
+                                            }
+                                            else
+                                            {
+                                                throw new InvalidMoveException("Pionek C probowal zrobic en passant w miejsce gdzie stoi inny pionek w lewo");
+                                            }
                                         }
                                         else
                                         {
@@ -1687,17 +1723,31 @@ namespace SzachyMulti
                                 {
                                     if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
                                     {
-                                        //Zbij
-                                        Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
-                                        Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                        if(!Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(ChessPiece.King))
+                                        {
+                                            //Zbij
+                                            Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                            Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None; 
+                                        }
+                                        else
+                                        {
+                                            throw new InvalidMoveException("Pionek C probowal zbic krola w prawo");
+                                        }
                                     }
                                     else if(PossibleEnPassants[Pozycja2.Pos1+1, Pozycja2.Pos2] == ChessPiece.TeamB)
                                     {
-                                        //Wykonaj en passant
-                                        Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
-                                        Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
-                                        Plansza[Pozycja2.Pos1+1, Pozycja2.Pos2] = ChessPiece.None;
-                                        PossibleEnPassants[Pozycja2.Pos1+1, Pozycja2.Pos2] = ChessPiece.None;
+                                        if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] == ChessPiece.None)
+                                        {
+                                            //Wykonaj en passant
+                                            Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                            Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            Plansza[Pozycja2.Pos1+1, Pozycja2.Pos2] = ChessPiece.None;
+                                            PossibleEnPassants[Pozycja2.Pos1+1, Pozycja2.Pos2] = ChessPiece.None; 
+                                        }
+                                        else
+                                        {
+                                            throw new InvalidMoveException("Pionek C probowal zrobic en passant w miejsce gdzie stoi inny pionek w prawo");
+                                        }
                                     }
                                     else
                                     {
@@ -2238,13 +2288,30 @@ namespace SzachyMulti
         {
             Szachy.PostawPionki();
             Szachy.OznaczSzachy();
-            Console.SetWindowPosition(0, 0);
-            Console.SetWindowSize(200, 80);
-            Pozycja poz = new Pozycja(Console.ReadKey(true).KeyChar, Console.ReadKey(true).KeyChar);
-            Pozycja poz2 = new Pozycja(Console.ReadKey(true).KeyChar, Console.ReadKey(true).KeyChar);
-            Console.WriteLine(Szachy.Plansza[poz.Pos1,poz.Pos2]);
-            Console.WriteLine(Szachy.Plansza[poz2.Pos1,poz2.Pos2]);
-            Szachy.WykonajRuch(poz, poz2, "kyaaan");
+            Console.WriteLine("----");
+            Pozycja raz = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
+            Console.WriteLine("\n--->");
+            Pozycja dwa = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
+            Szachy.WykonajRuch(raz, dwa, "kyaaan");
+            Console.WriteLine("\n----\n");
+            Console.WriteLine("----");
+            Pozycja trzy = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
+            Console.WriteLine("\n--->");
+            Pozycja cztery = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
+            Szachy.WykonajRuch(trzy, cztery, "kyaaan");
+            Console.WriteLine("\n----\n");
+            Console.WriteLine("----");
+            Pozycja piec = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
+            Console.WriteLine("\n--->");
+            Pozycja szesc = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
+            Szachy.WykonajRuch(piec, szesc, "kyaaan");
+            Console.WriteLine("\n----\n");
+            Console.WriteLine("----");
+            Pozycja siedem = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
+            Console.WriteLine("\n--->");
+            Pozycja osiem = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
+            Szachy.WykonajRuch(siedem, osiem, "kyaaan");
+            Console.WriteLine("\n----");
             Szachy.NarysujPlansze();
             playerTeam = 'C';
             Szachy.NarysujPlansze();
