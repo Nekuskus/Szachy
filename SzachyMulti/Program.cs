@@ -110,9 +110,78 @@ namespace SzachyMulti
         /// <summary>
         /// ISerializable replacement
         /// </summary>
-        static bool SerializeBoard()
+        /// <param name="path">
+        /// This param gives the folder the board will be saved to. Default = @".\SavedBoards\"
+        /// </param>
+        static bool SerializeBoard(string path = @".\SavedBoards\")
         {
-            return true;
+            List<List<string>> plansze = new List<List<string>>();
+            List<string> pola = new List<string>();
+            foreach(var item in Plansza)
+            {
+                pola.Add(((int)item).ToString());
+            }
+            plansze.Add(pola);
+            pola.Clear();
+            foreach(var item in SzachyBC)
+            {
+                pola.Add(((int)item).ToString());
+            }
+            plansze.Add(pola);
+            pola.Clear();
+            foreach(var item in HiddenSzachyBC)
+            {
+                pola.Add(((int)item).ToString());
+            }
+            plansze.Add(pola);
+            pola.Clear();
+            foreach(var item in PossibleEnPassants)
+            {
+                pola.Add(((int)item).ToString());
+            }
+            plansze.Add(pola);
+            pola.Clear();
+            foreach(var item in BackupPlansza)
+            {
+                pola.Add(((int)item).ToString());
+            }
+            plansze.Add(pola);
+            pola.Clear();
+            foreach(var item in BackupSzachyBC)
+            {
+                pola.Add(((int)item).ToString());
+            }
+            plansze.Add(pola);
+            pola.Clear();
+            foreach(var item in BackupHiddenSzachyBC)
+            {
+                pola.Add(((int)item).ToString());
+            }
+            plansze.Add(pola);
+            pola.Clear();
+            foreach(var item in BackupPossibleEnPassants)
+            {
+                pola.Add(((int)item).ToString());
+            }
+            plansze.Add(pola);
+            pola.Clear();
+            try 
+            {
+                using(StreamWriter sw = new StreamWriter(path + $"{DateTime.Now.ToString().Replace('/','-').Replace(' ', '_')}.txt"))
+                {
+                    foreach(var plansza in plansze)
+                    {
+                        sw.WriteLine(plansza.ToArray().Join(","));
+                        sw.WriteLine();
+                    }
+                }
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("An exception has occured when serializing the boards: " + ex.ToString());
+                return false;
+            }
         }
         [Flags]
         public enum ChessPiece
