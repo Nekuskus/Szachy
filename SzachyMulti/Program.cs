@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -103,8 +104,16 @@ namespace SzachyMulti
             return str;
         }
     };
+    [Serializable]
     public static class Szachy
     {
+        /// <summary>
+        /// ISerializable replacement
+        /// </summary>
+        static bool SerializeBoard()
+        {
+            return true;
+        }
         [Flags]
         public enum ChessPiece
         {
@@ -2194,6 +2203,12 @@ namespace SzachyMulti
         }
         public static void OtwórzCzat()
         {
+            void chat_Exited(object sender, System.EventArgs e)
+            {
+                AppendText($"Gracz {Nick} opuscil sesje", currentfolder, ID);
+                czy_odbierac = false;
+
+            }
             if(!Directory.Exists(@".\Chat\Logs"))
             {
                 Directory.CreateDirectory(@".\Chat\Logs");
@@ -2210,6 +2225,8 @@ namespace SzachyMulti
             };
             chat.StartInfo = psi;
             chat.Start();
+            chat.EnableRaisingEvents = true;
+            chat.Exited += new EventHandler(chat_Exited);
             isChatOpen = true;
         }
         public static void WyślijWiadomość(string currentfolder, string wiadomosc, int ID)
@@ -2261,7 +2278,6 @@ namespace SzachyMulti
             if(odebranoWiad)
             {
                 StreamWriter chatWriter = new StreamWriter($@".\Chat\Logs\Log{ID}.txt");
-                chatWriter.Close();
                 //sw = chat.StandardInput;
                 foreach(string receivedMessage in receivedMessages)
                 {
@@ -2298,7 +2314,7 @@ namespace SzachyMulti
                         else if(connrepeat.Contains('n'))
                         {
                             Console.WriteLine("Konczenie sesji... cofanie do menu glownego");
-                            czy_odbierac = false;
+                            chat.Dispose();
                         }
                         else
                         {
@@ -2312,6 +2328,15 @@ namespace SzachyMulti
         }
         static void Main(string[] args)
         {
+            void main_Exited(object sender, EventArgs e)
+            {
+                if(isChatOpen)
+                {
+                    chat.Dispose();
+                }
+            }
+            Process.GetCurrentProcess().EnableRaisingEvents = true;
+            Process.GetCurrentProcess().Exited += main_Exited;
             Szachy.PostawPionki();
             Szachy.OznaczSzachy();/*
             Szachy.NarysujPlansze();
