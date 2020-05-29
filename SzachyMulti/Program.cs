@@ -1994,7 +1994,20 @@ namespace SzachyMulti
 
             }
         }
-
+        public static void ClearEnPassants(Char Team)
+        {
+            var Flag = (Team == 'B' ? ChessPiece.TeamB : ChessPiece.TeamC);
+            for(int i = 0; i < 8; i++)
+            {
+                for(int i2 = 0; i < 8; i2++)
+                {
+                    if(PossibleEnPassants[i, i2].HasFlag(Flag))
+                    {
+                        PossibleEnPassants[i, i2] = ChessPiece.None;
+                    }
+                }
+            }
+        }
         public static void Rozgrywka()
         {
             Szachy.PostawPionki();
@@ -2031,10 +2044,8 @@ namespace SzachyMulti
                 }
                 switch(Program.playerTeam)
                 {
-                    //Remember about clearing possible en passants!
-                    //TODO: ADD CLEARING EN PASSANTS OF THE TEAMS AT THE BEGINNING
                     case 'B':
-                        //TODO: ADD CLEARING WHITE ENPASSANTS HERE
+                        ClearEnPassants('B');
                         NarysujPlansze();
                         OznaczSzachy();
                         //oznacz szachy
@@ -2308,7 +2319,7 @@ namespace SzachyMulti
         }
         public static void OtwórzCzat()
         {
-            void chat_Exited(object sender, System.EventArgs e)
+            void chat_Exited(object sender, EventArgs e)
             {
                 AppendText($"Gracz {Nick} opuscil sesje", currentfolder, ID);
                 czy_odbierac = false;
@@ -2393,7 +2404,6 @@ namespace SzachyMulti
                 chatWriter.Close();
             }
         }
-
         public static void KlientOdbierajacy()
         {
             int repeati = 0;
