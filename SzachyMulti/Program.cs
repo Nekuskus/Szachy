@@ -1890,44 +1890,80 @@ namespace SzachyMulti
             {
                 if(Pozycja2.Pos1 == Pozycja1.Pos1 + 2 || Pozycja2.Pos1 == Pozycja1.Pos1 + 1 || Pozycja2.Pos1 == Pozycja1.Pos1 - 1 || Pozycja2.Pos1 == Pozycja1.Pos1 - 2)
                 {
-                    if(Pozycja1.Pos1 + 2 < 8)
+                    // W dół o dwa
+                    if(Pozycja2.Pos1 == Pozycja1.Pos1 + 2)
                     {
-                        if(Pozycja2.Pos1 == Pozycja1.Pos1 + 2)
+                        if(Pozycja1.Pos1 + 2 < 8)
                         {
-                            Console.WriteLine("Valid point 1");
-                            //Zbij
-                            if(Plansza[Pozycja2.Pos1,Pozycja2.Pos2] != ChessPiece.None)
+                            //W lewo
+                            if(Pozycja2.Pos2 == Pozycja1.Pos2 - 1)
                             {
+                                if(Pozycja2.Pos2 > -1)
+                                {
+                                    //Zbij
+                                    if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
+                                    {
 
+                                    }
+                                    //Normalny ruch
+                                    else if(true)
+                                    {
+
+                                    } 
+                                }
+                                else
+                                {
+                                    throw new InvalidMoveException($"Kon {Team} probowal poruszyc sie poza plansze w lewo");
+                                }
                             }
-                            //Normalny ruch
-                            else if(true)
+                            //W prawo
+                            else if(Pozycja2.Pos2 == Pozycja2.Pos2 + 1)
                             {
+                                if(Pozycja2.Pos2 < 8)
+                                {
+                                    //Zbij
+                                    if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
+                                    {
 
+                                    }
+
+                                }
+                                else
+                                {
+                                    throw new InvalidMoveException($"Kon {Team} probowal poruszyc sie poza plansze w prawo");
+                                }
+                            }
+                            else
+                            {
+                                // Rzuć błąd
                             }
                         }
                     }
-                    if(Pozycja1.Pos1 + 1 < 8)
+                    else if(Pozycja2.Pos1 == Pozycja1.Pos1 + 1)
                     {
-                        if(Pozycja2.Pos1 == Pozycja1.Pos1 + 1)
+                        if(Pozycja1.Pos1 + 1 < 8)
                         {
                             Console.WriteLine("Valid point 2");
                         }
                     }
-                    if(Pozycja1.Pos1 - 1 > -1)
+                    else if(Pozycja2.Pos1 == Pozycja1.Pos1 - 1)
                     {
-                        if(Pozycja2.Pos1 == Pozycja1.Pos1 - 1)
+                        if(Pozycja1.Pos1 - 1 > -1)
                         {
                             Console.WriteLine("Valid point 3");
                         }
                     }
-                    if(Pozycja1.Pos1 - 2 > -1)
+                    else if(Pozycja2.Pos1 == Pozycja1.Pos1 - 2)
                     {
-                        if(Pozycja2.Pos1 == Pozycja1.Pos1 - 2)
+                        if(Pozycja1.Pos1 - 2 > -1)
                         {
                             Console.WriteLine("Valid point 4");
                         }
-                    } 
+                    }
+                    else
+                    {
+                        throw new InvalidMoveException($"Kon {Team} nie wykonal zadnego poprawnego ruchu");
+                    }
                 }
                 else
                 {
