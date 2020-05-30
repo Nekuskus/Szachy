@@ -1903,12 +1903,28 @@ namespace SzachyMulti
                                     //Zbij
                                     if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
                                     {
-
+                                        if(!Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(ChessPiece.King))
+                                        {
+                                            if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(Team == 'B' ? ChessPiece.TeamC : ChessPiece.TeamB))
+                                            {
+                                                Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                                Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            }
+                                            else
+                                            {
+                                                throw new InvalidMoveException($"Kon {Team} probowal zbic pionka swojej druzyny");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            throw new InvalidMoveException($"Kon {Team} probowal zbic krola");
+                                        }
                                     }
                                     //Normalny ruch
-                                    else if(true)
+                                    else
                                     {
-
+                                        Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                        Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
                                     } 
                                 }
                                 else
@@ -1917,14 +1933,35 @@ namespace SzachyMulti
                                 }
                             }
                             //W prawo
-                            else if(Pozycja2.Pos2 == Pozycja2.Pos2 + 1)
+                            else if(Pozycja2.Pos2 == Pozycja1.Pos2 + 1)
                             {
                                 if(Pozycja2.Pos2 < 8)
                                 {
                                     //Zbij
                                     if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
                                     {
-
+                                        if(!Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(ChessPiece.King))
+                                        {
+                                            if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(Team == 'B' ? ChessPiece.TeamC : ChessPiece.TeamB))
+                                            {
+                                                Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                                Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            }
+                                            else
+                                            {
+                                                throw new InvalidMoveException($"Kon {Team} probowal zbic pionka swojej druzyny");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            throw new InvalidMoveException($"Kon {Team} probowal zbic krola");
+                                        }
+                                    }
+                                    //Normalny ruch
+                                    else
+                                    {
+                                        Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                        Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
                                     }
 
                                 }
@@ -2453,7 +2490,8 @@ namespace SzachyMulti
             Process.GetCurrentProcess().EnableRaisingEvents = true;
             Process.GetCurrentProcess().Exited += main_Exited;
             Szachy.PostawPionki();
-            Szachy.OznaczSzachy();/*
+            playerTeam = 'C';
+            Szachy.OznaczSzachy();
             Szachy.NarysujPlansze();
             Console.WriteLine("----");
             Pozycja raz = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
@@ -2461,7 +2499,7 @@ namespace SzachyMulti
             Pozycja dwa = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n----\n");
             Szachy.WykonajRuch(raz, dwa, "kyaaan");
-            Console.WriteLine("----");
+            /*Console.WriteLine("----");
             Pozycja trzy = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n--->");
             Pozycja cztery = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
@@ -2480,8 +2518,8 @@ namespace SzachyMulti
             Console.WriteLine("\n----");
             Szachy.WykonajRuch(siedem, osiem, "kyaaan");
             Szachy.NarysujPlansze();
-            playerTeam = 'C';
-            Szachy.NarysujPlansze();*/
+            playerTeam = 'C';*/
+            Szachy.NarysujPlansze();
             if(args.Length > 0)
             {
                 if(args[0] == "true")
@@ -2590,7 +2628,7 @@ namespace SzachyMulti
             wykonajconnect = false;
             bool isCancel = false;
             Console.Write("\nPodaj ID sesji publicznej (z lobby) lub prywatnej (otrzymanej od znajomego) aby dolaczyc do niej. Utworz nowa sesje poleceniem \"create\". Odswiez lobby poleceniem \"refresh\"\n>");
-            string connect_to_id = Console.ReadLine();
+            string connect_to_id = Console.ReadLine().Trim();
             if(connect_to_id.ToLower().Contains("create"))
             {
                 bool isPublic;
