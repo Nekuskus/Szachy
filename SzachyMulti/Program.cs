@@ -52,10 +52,14 @@ namespace SzachyMulti
             }
         }
     }
-    public class InvalidMoveException : Exception
+     class InvalidMoveException : Exception
     {
         private string _Message;
         private string _Details;
+        private bool _WasEmpty;
+        private bool _WasOtherTeam;
+        private bool _WasKing;
+        private bool _WasSameTeam;
         public string Details
         {
             get => _Details;
@@ -63,6 +67,22 @@ namespace SzachyMulti
         public override string Message
         {
             get => _Message;
+        }
+        public bool WasEmpty
+        {
+            get => _WasEmpty;
+        }
+        public bool WasOtherTeam
+        {
+            get => _WasOtherTeam;
+        }
+        public bool WasKing
+        {
+            get => _WasKing;
+        }
+        public bool WasSameTeam
+        {
+            get => _WasSameTeam;
         }
         public InvalidMoveException()
         {
@@ -72,6 +92,33 @@ namespace SzachyMulti
         {
             _Message = "Client has sent an invalid move: " + message;
             _Details = Message;
+        }
+        /// <summary>
+        /// Constructor intended for special conditions
+        /// </summary>
+        /// <param name="message"> Error message </param>
+        /// <param name="cond">
+        /// Was other team: "other"  Was empty: "empty"   Was a king: "king"   Was the same team: "same"</param>
+        public InvalidMoveException(String message, String cond)
+        {
+            _Message = "Client has sent an invalid move: " + message;
+            _Details = Message;
+            if(cond == "empty")
+            {
+                _WasEmpty = true;
+            }
+            if(cond == "other")
+            {
+                _WasOtherTeam = true;
+            }
+            if(cond == "king")
+            {
+                _WasKing = true;
+            }
+            if(cond == "same")
+            {
+                _WasSameTeam = true;
+            }
         }
         public InvalidMoveException(String message, Exception innerException) : base(message, innerException)
         {
@@ -1441,7 +1488,7 @@ namespace SzachyMulti
         {
             try
             {
-                WykonajRuch(Pozycja1, Pozycja2, Program.enemyNick);
+                WykonajRuch(Pozycja1, Pozycja2, Program.enemyNick, Program.enemyTeam);
                 Program.hasEnemyMoved = true;
                 return;
             }
@@ -1450,10 +1497,18 @@ namespace SzachyMulti
                 //InvalidMoveException will be thrown to here if the move is invalid
             }
         }
-        public static void WykonajRuch(Pozycja Pozycja1, Pozycja Pozycja2, string nick)
+        public static void WykonajRuch(Pozycja Pozycja1, Pozycja Pozycja2, string nick, char curTeam)
         {
-            Array.Copy(PossibleEnPassants, BackupPossibleEnPassants, PossibleEnPassants.Length);
+            if(Plansza[Pozycja1.Pos1, Pozycja1.Pos2] == ChessPiece.None)
+            {
+                throw new InvalidMoveException("Na tym polu nie ma zadnego pionka", "empty");
+            }
             char Pos1team = (Plansza[Pozycja1.Pos1, Pozycja1.Pos2] & ChessPiece.BothTeams) == ChessPiece.TeamB ? 'B' : 'C'; // hasflag ? yes : no
+            if(!(Pos1team == curTeam))
+            {
+                throw new InvalidMoveException("Pionek nie byl tej samej druzyny", "other");
+            }
+            Array.Copy(PossibleEnPassants, BackupPossibleEnPassants, PossibleEnPassants.Length);
             //Ily pieces, in memory I'm keeping this. string figureType = Plansza[Pozycja1.Pos1, Pozycja1.Pos2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'B', 'C');
             try
             {
@@ -1912,7 +1967,7 @@ namespace SzachyMulti
                                             }
                                             else
                                             {
-                                                throw new InvalidMoveException($"Kon {Team} probowal zbic pionka swojej druzyny");
+                                                throw new InvalidMoveException($"Kon {Team} probowal zbic pionka swojej druzyny", "king");
                                             }
                                         }
                                         else
@@ -2110,7 +2165,7 @@ namespace SzachyMulti
                                 Pozycja Pozycja2 = new Pozycja(pozycjaDocelowa.First(), pozycjaDocelowa.Last());
                                 try
                                 {
-                                    WykonajRuch(Pozycja1, Pozycja2, Program.Nick);
+                                    WykonajRuch(Pozycja1, Pozycja2, Program.Nick, Program.playerTeam);
                                 }
                                 catch
                                 {
@@ -2498,7 +2553,7 @@ namespace SzachyMulti
             Console.WriteLine("\n--->");
             Pozycja dwa = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n----\n");
-            Szachy.WykonajRuch(raz, dwa, "kyaaan");
+            Szachy.WykonajRuch(raz, dwa, "kyaaan", Szachy.Plansza[raz.Pos1, raz.Pos2].HasFlag(Szachy.ChessPiece.TeamB) ? 'B' : 'C');
             /*Console.WriteLine("----");
             Pozycja trzy = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n--->");
