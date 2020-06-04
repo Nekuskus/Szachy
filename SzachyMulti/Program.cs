@@ -334,7 +334,6 @@ namespace SzachyMulti
         /// <param name="Team">
         /// This parameter represents the team that has done the move.
         /// </param>
-        /// <remarks> This will get replaced when moving functions are done. </remarks>
         public static void OznaczSzachyPoRuchu(char Team)
         {
             OznaczSzachy();
@@ -1967,12 +1966,12 @@ namespace SzachyMulti
                                             }
                                             else
                                             {
-                                                throw new InvalidMoveException($"Kon {Team} probowal zbic pionka swojej druzyny", "king");
+                                                throw new InvalidMoveException($"Kon {Team} probowal zbic pionka swojej druzyny", "same");
                                             }
                                         }
                                         else
                                         {
-                                            throw new InvalidMoveException($"Kon {Team} probowal zbic krola");
+                                            throw new InvalidMoveException($"Kon {Team} probowal zbic krola", "king");
                                         }
                                     }
                                     //Normalny ruch
@@ -2004,12 +2003,12 @@ namespace SzachyMulti
                                             }
                                             else
                                             {
-                                                throw new InvalidMoveException($"Kon {Team} probowal zbic pionka swojej druzyny");
+                                                throw new InvalidMoveException($"Kon {Team} probowal zbic pionka swojej druzyny", "same");
                                             }
                                         }
                                         else
                                         {
-                                            throw new InvalidMoveException($"Kon {Team} probowal zbic krola");
+                                            throw new InvalidMoveException($"Kon {Team} probowal zbic krola", "king");
                                         }
                                     }
                                     //Normalny ruch
@@ -2027,7 +2026,7 @@ namespace SzachyMulti
                             }
                             else
                             {
-                                // Rzuć błąd
+                                throw new InvalidMoveException($"Kon {Team} probowal poruszyc sie bez ruszania sie w bok");
                             }
                         }
                     }
@@ -2035,21 +2034,252 @@ namespace SzachyMulti
                     {
                         if(Pozycja1.Pos1 + 1 < 8)
                         {
-                            Console.WriteLine("Valid point 2");
+                            //W lewo
+                            if(Pozycja2.Pos2 == Pozycja1.Pos2 - 2)
+                            {
+                                if(Pozycja2.Pos2 > -1)
+                                {
+                                    //Zbij
+                                    if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
+                                    {
+                                        if(!Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(ChessPiece.King))
+                                        {
+                                            if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(Team == 'B' ? ChessPiece.TeamC : ChessPiece.TeamB))
+                                            {
+                                                Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                                Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            }
+                                            else
+                                            {
+                                                throw new InvalidMoveException($"Kon {Team} probowal zbic pionka swojej druzyny", "same");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            throw new InvalidMoveException($"Kon {Team} probowal zbic krola", "king");
+                                        }
+                                    }
+                                    //Normalny ruch
+                                    else
+                                    {
+                                        Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                        Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                    }
+                                }
+                                else
+                                {
+                                    throw new InvalidMoveException($"Kon {Team} probowal poruszyc sie poza plansze w lewo");
+                                }
+                            }
+                            //W prawo
+                            else if(Pozycja2.Pos2 == Pozycja1.Pos2 + 2)
+                            {
+                                if(Pozycja2.Pos2 < 8)
+                                {
+                                    //Zbij
+                                    if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
+                                    {
+                                        if(!Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(ChessPiece.King))
+                                        {
+                                            if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(Team == 'B' ? ChessPiece.TeamC : ChessPiece.TeamB))
+                                            {
+                                                Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                                Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            }
+                                            else
+                                            {
+                                                throw new InvalidMoveException($"Kon {Team} probowal zbic pionka swojej druzyny", "same");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            throw new InvalidMoveException($"Kon {Team} probowal zbic krola", "king");
+                                        }
+                                    }
+                                    //Normalny ruch
+                                    else
+                                    {
+                                        Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                        Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                    }
+                                }
+                                else
+                                {
+                                    throw new InvalidMoveException($"Kon {Team} probowal poruszyc sie poza plansze w prawo");
+                                }
+                            }
+                            else
+                            {
+                                throw new InvalidMoveException($"Kon {Team} probowal poruszyc sie bez ruszania sie w bok");
+                            }
                         }
                     }
                     else if(Pozycja2.Pos1 == Pozycja1.Pos1 - 1)
                     {
                         if(Pozycja1.Pos1 - 1 > -1)
                         {
-                            Console.WriteLine("Valid point 3");
+                            //W lewo
+                            if(Pozycja2.Pos2 == Pozycja1.Pos2 - 2)
+                            {
+                                if(Pozycja2.Pos2 > -1)
+                                {
+                                    //Zbij
+                                    if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
+                                    {
+                                        if(!Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(ChessPiece.King))
+                                        {
+                                            if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(Team == 'B' ? ChessPiece.TeamC : ChessPiece.TeamB))
+                                            {
+                                                Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                                Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            }
+                                            else
+                                            {
+                                                throw new InvalidMoveException($"Kon {Team} probowal zbic pionka swojej druzyny", "same");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            throw new InvalidMoveException($"Kon {Team} probowal zbic krola", "king");
+                                        }
+                                    }
+                                    //Normalny ruch
+                                    else
+                                    {
+                                        Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                        Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                    }
+                                }
+                                else
+                                {
+                                    throw new InvalidMoveException($"Kon {Team} probowal poruszyc sie poza plansze w lewo");
+                                }
+                            }
+                            //W prawo
+                            else if(Pozycja2.Pos2 == Pozycja1.Pos2 + 2)
+                            {
+                                if(Pozycja2.Pos2 < 8)
+                                {
+                                    //Zbij
+                                    if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
+                                    {
+                                        if(!Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(ChessPiece.King))
+                                        {
+                                            if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(Team == 'B' ? ChessPiece.TeamC : ChessPiece.TeamB))
+                                            {
+                                                Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                                Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            }
+                                            else
+                                            {
+                                                throw new InvalidMoveException($"Kon {Team} probowal zbic pionka swojej druzyny", "same");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            throw new InvalidMoveException($"Kon {Team} probowal zbic krola", "king");
+                                        }
+                                    }
+                                    //Normalny ruch
+                                    else
+                                    {
+                                        Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                        Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                    }
+                                }
+                                else
+                                {
+                                    throw new InvalidMoveException($"Kon {Team} probowal poruszyc sie poza plansze w lewo");
+                                }
+                            }
+                            else
+                            {
+                                throw new InvalidMoveException($"Kon {Team} probowal poruszyc sie bez ruszania sie w bok");
+                            }
                         }
                     }
                     else if(Pozycja2.Pos1 == Pozycja1.Pos1 - 2)
                     {
                         if(Pozycja1.Pos1 - 2 > -1)
                         {
-                            Console.WriteLine("Valid point 4");
+                            //W lewo
+                            if(Pozycja2.Pos2 == Pozycja1.Pos2 - 1)
+                            {
+                                if(Pozycja2.Pos2 > -1)
+                                {
+                                    //Zbij
+                                    if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
+                                    {
+                                        if(!Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(ChessPiece.King))
+                                        {
+                                            if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(Team == 'B' ? ChessPiece.TeamC : ChessPiece.TeamB))
+                                            {
+                                                Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                                Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            }
+                                            else
+                                            {
+                                                throw new InvalidMoveException($"Kon {Team} probowal zbic pionka swojej druzyny", "same");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            throw new InvalidMoveException($"Kon {Team} probowal zbic krola", "king");
+                                        }
+                                    }
+                                    //Normalny ruch
+                                    else
+                                    {
+                                        Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                        Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                    }
+                                }
+                                else
+                                {
+                                    throw new InvalidMoveException($"Kon {Team} probowal poruszyc sie poza plansze w lewo");
+                                }
+                            }
+                            //W prawo
+                            else if(Pozycja2.Pos2 == Pozycja1.Pos2 + 1)
+                            {
+                                if(Pozycja2.Pos2 < 8)
+                                {
+                                    //Zbij
+                                    if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
+                                    {
+                                        if(!Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(ChessPiece.King))
+                                        {
+                                            if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(Team == 'B' ? ChessPiece.TeamC : ChessPiece.TeamB))
+                                            {
+                                                Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                                Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                            }
+                                            else
+                                            {
+                                                throw new InvalidMoveException($"Kon {Team} probowal zbic pionka swojej druzyny", "same");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            throw new InvalidMoveException($"Kon {Team} probowal zbic krola", "king");
+                                        }
+                                    }
+                                    //Normalny ruch
+                                    else
+                                    {
+                                        Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                                        Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
+                                    }
+                                }
+                                else
+                                {
+                                    throw new InvalidMoveException($"Kon {Team} probowal poruszyc sie poza plansze w lewo");
+                                }
+                            }
+                            else
+                            {
+                                throw new InvalidMoveException($"Kon {Team} probowal poruszyc sie bez ruszania sie w bok");
+                            }
                         }
                     }
                     else
@@ -2554,26 +2784,26 @@ namespace SzachyMulti
             Pozycja dwa = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n----\n");
             Szachy.WykonajRuch(raz, dwa, "kyaaan", Szachy.Plansza[raz.Pos1, raz.Pos2].HasFlag(Szachy.ChessPiece.TeamB) ? 'B' : 'C');
-            /*Console.WriteLine("----");
+            Console.WriteLine("----");
             Pozycja trzy = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n--->");
             Pozycja cztery = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n----\n");
-            Szachy.WykonajRuch(trzy, cztery, "kyaaan");
+            Szachy.WykonajRuch(trzy, cztery, "kyaaan", Szachy.Plansza[raz.Pos1, raz.Pos2].HasFlag(Szachy.ChessPiece.TeamB) ? 'B' : 'C');
             Console.WriteLine("----");
             Pozycja piec = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n--->");
             Pozycja szesc = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n----\n");
-            Szachy.WykonajRuch(piec, szesc, "kyaaan");
+            Szachy.WykonajRuch(piec, szesc, "kyaaan", Szachy.Plansza[raz.Pos1, raz.Pos2].HasFlag(Szachy.ChessPiece.TeamB) ? 'B' : 'C');
             Console.WriteLine("----");
             Pozycja siedem = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n--->");
             Pozycja osiem = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n----");
-            Szachy.WykonajRuch(siedem, osiem, "kyaaan");
+            Szachy.WykonajRuch(siedem, osiem, "kyaaan", Szachy.Plansza[raz.Pos1, raz.Pos2].HasFlag(Szachy.ChessPiece.TeamB) ? 'B' : 'C');
             Szachy.NarysujPlansze();
-            playerTeam = 'C';*/
+            playerTeam = 'C';
             Szachy.NarysujPlansze();
             if(args.Length > 0)
             {
