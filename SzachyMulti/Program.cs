@@ -1494,6 +1494,7 @@ namespace SzachyMulti
             catch(InvalidMoveException e)
             {
                 //InvalidMoveException will be thrown to here if the move is invalid
+                throw;
             }
         }
         public static void WykonajRuch(Pozycja Pozycja1, Pozycja Pozycja2, string nick, char curTeam)
@@ -2370,48 +2371,52 @@ namespace SzachyMulti
                         ClearEnPassants('B');
                         NarysujPlansze();
                         OznaczSzachy();
-                        //oznacz szachy
-                        //wykonaj turę
-                        Console.WriteLine("Kliknij enter aby wykonac ruch");
-                        Console.ReadKey();
-                        //TODO: ZASTĄP Z WSPARCIEM ROSZADY/WYMIANY PIONA ETC MOZE Z ?:
-                        Console.Write("Podaj pozycje pionka, który ma sie poruszyc (np. A1)\n>");
-                        Regex posregex = new Regex("^[A-H][1-8]$");
-                        podajpozycje:
-                        string pionekDoRuszenia = Console.ReadLine().ToUpper();
-                        if(posregex.IsMatch(pionekDoRuszenia))
+                        Console.Write("Podaj akcje do wykonania: \tRuch\tRoszada\n>");
+                        string akcja = Console.ReadLine();
+                        if(akcja.ToLower().StartsWith("ruch"))
                         {
-                            Pozycja Pozycja1 = new Pozycja(pionekDoRuszenia.First(), pionekDoRuszenia.Last());
-                            if(Plansza[Pozycja1.Pos1, Pozycja1.Pos2] == ChessPiece.None)
+                            Console.Write("Podaj pozycje pionka, który ma sie poruszyc (np. A1)\n>");
+                            Regex posregex = new Regex("^[A-H][1-8]$");
+                            podajpozycje:
+                            string pionekDoRuszenia = Console.ReadLine().ToUpper();
+                            if(posregex.IsMatch(pionekDoRuszenia))
                             {
-                                Console.Write("Niepoprawna pozycja\n>");
-                                goto podajpozycje;
-                            }
-                            Console.Write("Podaj pozycje na ktora pionek ma sie poruszyc\n>");
-                            podajpozycjedocelowa:
-                            string pozycjaDocelowa = Console.ReadLine().ToUpper();
-                            if(posregex.IsMatch(pozycjaDocelowa))
-                            {
-                                Pozycja Pozycja2 = new Pozycja(pozycjaDocelowa.First(), pozycjaDocelowa.Last());
-                                try
+                                Pozycja Pozycja1 = new Pozycja(pionekDoRuszenia.First(), pionekDoRuszenia.Last());
+                                if(Plansza[Pozycja1.Pos1, Pozycja1.Pos2] == ChessPiece.None)
                                 {
-                                    WykonajRuch(Pozycja1, Pozycja2, Program.Nick, Program.playerTeam);
+                                    Console.Write("Niepoprawna pozycja\n>");
+                                    goto podajpozycje;
                                 }
-                                catch
+                                Console.Write("Podaj pozycje na ktora pionek ma sie poruszyc\n>");
+                                podajpozycjedocelowa:
+                                string pozycjaDocelowa = Console.ReadLine().ToUpper();
+                                if(posregex.IsMatch(pozycjaDocelowa))
                                 {
-                                    //Invalid move handler here
+                                    Pozycja Pozycja2 = new Pozycja(pozycjaDocelowa.First(), pozycjaDocelowa.Last());
+                                    try
+                                    {
+                                        WykonajRuch(Pozycja1, Pozycja2, Program.Nick, Program.playerTeam);
+                                    }
+                                    catch
+                                    {
+                                        //Invalid move handler here
+                                    }
+                                }
+                                else
+                                {
+                                    Console.Write("Niepoprawna pozycja\n>");
+                                    goto podajpozycjedocelowa;
                                 }
                             }
                             else
                             {
                                 Console.Write("Niepoprawna pozycja\n>");
-                                goto podajpozycjedocelowa;
-                            }
+                                goto podajpozycje;
+                            } 
                         }
-                        else
+                        else if(akcja.ToLower().StartsWith("roszada"))
                         {
-                            Console.Write("Niepoprawna pozycja\n>");
-                            goto podajpozycje;
+                            //TODO: Wykonaj roszadę
                         }
                         break;
                     case 'C':
@@ -2422,6 +2427,7 @@ namespace SzachyMulti
                         }
                         Program.hasEnemyMoved = false;
                         //Wykonaj turę przeciwnika
+                        
                         //wykonaj swoją turę
                         //przeciwnik wykonuje ture
                         break;
