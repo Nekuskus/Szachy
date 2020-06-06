@@ -2304,7 +2304,35 @@ namespace SzachyMulti
         }
         public static void RuchWieżą(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
+            // Sprawdza czy ruch jest w poprawnym kierunku
+            // Warunki:
+            // 1 - W górę
+            // 2 - W lewo
+            // 3 - W prawo
+            // 4 - W dół
+            if((Pozycja2.Pos1 < Pozycja1.Pos1 && Pozycja2.Pos2 == Pozycja1.Pos2)||(Pozycja2.Pos1 == Pozycja1.Pos1 && Pozycja2.Pos2 < Pozycja1.Pos2)||(Pozycja2.Pos1 == Pozycja1.Pos1 && Pozycja2.Pos2 > Pozycja1.Pos2)||(Pozycja2.Pos1 > Pozycja1.Pos1 && Pozycja2.Pos2 == Pozycja1.Pos2))
+            {
+                //1 - W górę
+                if(Pozycja2.Pos1 < Pozycja1.Pos1 && Pozycja2.Pos2 == Pozycja1.Pos2)
+                {
 
+                }
+                //2 - W lewo
+                else if(Pozycja2.Pos1 == Pozycja1.Pos1 && Pozycja2.Pos2 < Pozycja1.Pos2)
+                {
+
+                }
+                //3 - W prawo
+                else if(Pozycja2.Pos1 == Pozycja1.Pos1 && Pozycja2.Pos2 > Pozycja1.Pos2)
+                {
+
+                }
+                //4 - W dół
+                if(Pozycja2.Pos1 > Pozycja1.Pos1 && Pozycja2.Pos2 == Pozycja1.Pos2)
+                {
+
+                }
+            }
         }
         /*public static void RuchKrólową(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
@@ -2417,6 +2445,11 @@ namespace SzachyMulti
                         else if(akcja.ToLower().StartsWith("roszada"))
                         {
                             //TODO: Wykonaj roszadę
+                        }
+                        //else if(){ }
+                        else
+                        {
+                            //TODO: Cofnij do wyboru
                         }
                         break;
                     case 'C':
