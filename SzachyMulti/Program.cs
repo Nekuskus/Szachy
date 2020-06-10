@@ -327,7 +327,15 @@ namespace SzachyMulti
                 }
             }
         }
-        /// <summary>
+		///
+		///	<oldcomments>
+		///		IMPORTANT: Moved to above function.
+        ///		<summary>
+        /// 	This is checking for whether a king got threatened as a result of a move. The base logic is: foreach var item
+        /// 	</summary>
+        /// </oldcomments>
+		///
+		/// <summary>
         /// This function is a replacement for checking at the end of OznaczSzachy() to use after the move.
         /// It is checking whether the King of the same team as the param was threatened in the last turn.
         /// </summary>
@@ -1262,7 +1270,7 @@ namespace SzachyMulti
                             //DONE TODO: Finish this without copying!
                         }
                     }
-
+					
                     /// <summary> 
                     /// Queen is now marked as Rook | Bishop, therefore she does not have a separate case/if
                     /// </summary>
@@ -1282,10 +1290,6 @@ namespace SzachyMulti
                 ///TODO: JEŚLI TAK TO PRZYWRÓĆ BACKUP I GŁÓWNEGO I HIDDEN
                 ///</remarks>
             }
-            ///IMPORTANT: Moved to above function.
-            ///<summary>
-            /// This is checking for whether a king got threatened as a result of a move. The base logic is: foreach var item
-            /// </summary>
         }
         public static void NarysujPlansze()
         {
@@ -1499,6 +1503,10 @@ namespace SzachyMulti
         }
         public static void WykonajRuch(Pozycja Pozycja1, Pozycja Pozycja2, string nick, char curTeam)
         {
+            if(Pozycja1.Pos1 == Pozycja2.Pos1 && Pozycja1.Pos2 == Pozycja2.Pos2)
+            {
+                throw new InvalidMoveException("Pionek sprobowal porzuszyc sie na to samo pole");
+            }
             if(Plansza[Pozycja1.Pos1, Pozycja1.Pos2] == ChessPiece.None)
             {
                 throw new InvalidMoveException("Na tym polu nie ma zadnego pionka", "empty");
@@ -2304,6 +2312,9 @@ namespace SzachyMulti
         }
         public static void RuchWieżą(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
+			//
+			// TODO: ADD CHECKS FOR IF < 8/IF > -1 HERE!!!
+			//
             // Sprawdza czy ruch jest w poprawnym kierunku
             // Warunki:
             // 1 - W górę
@@ -2315,24 +2326,51 @@ namespace SzachyMulti
                 //1 - W górę
                 if(Pozycja2.Pos1 < Pozycja1.Pos1 && Pozycja2.Pos2 == Pozycja1.Pos2)
                 {
-
+					int i = Pozycja1.Pos1;
+                    // Sprawdza czy po drodze nie ma żadnego pionka
+					while(i > Pozycja2.Pos1)
+					{
+						if(Plansza[i, Pozycja1.Pos2] == ChessPiece.None)
+						{
+                            i--;
+                            continue;
+                        }
+						else
+						{
+                            throw new InvalidMoveException($"Wieza {Team} probowala poruszyc sie przez innego pionka");
+						}
+					}
+                    // To wykonuje się tylko jeśli po drodze nie ma pionka
+                    if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
+                    {
+                        if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(Team == 'B' ? ChessPiece.TeamB : ChessPiece.TeamC))
+                        {
+                            throw new InvalidMoveException($"Wieza {Team} sprobowala zbic pionka swojej druzyny", "same");
+                        }
+                    }
+                    Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                    Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
                 }
                 //2 - W lewo
                 else if(Pozycja2.Pos1 == Pozycja1.Pos1 && Pozycja2.Pos2 < Pozycja1.Pos2)
                 {
-
+					
                 }
                 //3 - W prawo
                 else if(Pozycja2.Pos1 == Pozycja1.Pos1 && Pozycja2.Pos2 > Pozycja1.Pos2)
                 {
-
+					
                 }
                 //4 - W dół
                 if(Pozycja2.Pos1 > Pozycja1.Pos1 && Pozycja2.Pos2 == Pozycja1.Pos2)
                 {
-
+					
                 }
             }
+			else
+			{
+				throw new InvalidMoveException("Ruch wiezy nie spelnial zadnego warunku");
+			}
         }
         /*public static void RuchKrólową(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
