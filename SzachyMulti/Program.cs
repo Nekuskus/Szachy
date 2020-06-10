@@ -2326,7 +2326,7 @@ namespace SzachyMulti
                 //1 - W górę
                 if(Pozycja2.Pos1 < Pozycja1.Pos1 && Pozycja2.Pos2 == Pozycja1.Pos2)
                 {
-					int i = Pozycja1.Pos1;
+					int i = Pozycja1.Pos1-1;
                     // Sprawdza czy po drodze nie ma żadnego pionka
 					while(i > Pozycja2.Pos1)
 					{
@@ -2354,17 +2354,81 @@ namespace SzachyMulti
                 //2 - W lewo
                 else if(Pozycja2.Pos1 == Pozycja1.Pos1 && Pozycja2.Pos2 < Pozycja1.Pos2)
                 {
-					
+					int i = Pozycja1.Pos2-1;
+                    while(i > Pozycja2.Pos2)
+                    {
+                        if(Plansza[Pozycja1.Pos1, i] == ChessPiece.None)
+                        {
+                            i--;
+                            continue;
+                        }
+                        else
+                        {
+                            throw new InvalidMoveException($"Wieza {Team} probowala poruszyc sie przez innego pionka");
+                        }
+                    }
+                    if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
+                    {
+                        if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(Team == 'B' ? ChessPiece.TeamB : ChessPiece.TeamC))
+                        {
+                            throw new InvalidMoveException($"Wieza {Team} sprobowala zbic pionka swojej druzyny", "same");
+                        }
+                    }
+                    // Ruch
+                    Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                    Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
                 }
                 //3 - W prawo
                 else if(Pozycja2.Pos1 == Pozycja1.Pos1 && Pozycja2.Pos2 > Pozycja1.Pos2)
                 {
-					
+					int i = Pozycja1.Pos2+1;
+                    while(i < Pozycja2.Pos2)
+                    {
+                        if(Plansza[Pozycja1.Pos1, i] == ChessPiece.None)
+                        {
+                            i++;
+                            continue;
+                        }
+                        else
+                        {
+                            throw new InvalidMoveException($"Wieza {Team} probowala poruszyc sie przez innego pionka");
+                        }
+                    }
+                    if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
+                    {
+                        if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(Team == 'B' ? ChessPiece.TeamB : ChessPiece.TeamC))
+                        {
+                            throw new InvalidMoveException($"Wieza {Team} sprobowala zbic pionka swojej druzyny", "same");
+                        }
+                    }
+                    Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                    Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
                 }
                 //4 - W dół
-                if(Pozycja2.Pos1 > Pozycja1.Pos1 && Pozycja2.Pos2 == Pozycja1.Pos2)
+                else if(Pozycja2.Pos1 > Pozycja1.Pos1 && Pozycja2.Pos2 == Pozycja1.Pos2)
                 {
-					
+					int i = Pozycja1.Pos1+1;
+                    while(i < Pozycja2.Pos2)
+                    {
+                        if(Plansza[i, Pozycja1.Pos2] == ChessPiece.None)
+                        {
+                            i++;
+                            continue;
+                        }
+                        else
+                        {
+                            throw new InvalidMoveException($"Wieza {Team} probowala poruszyc sie przez innego pionka");
+                        }
+                    }
+                    if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2] != ChessPiece.None)
+                    {
+                        if(Plansza[Pozycja2.Pos1, Pozycja2.Pos2].HasFlag(Team == 'B' ? ChessPiece.TeamB : ChessPiece.TeamC))
+                        {
+                            throw new InvalidMoveException($"Wieza {Team} sprobowala zbic pionka swojej druzyny", "same");
+                        }
+                    }
+                    Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                    Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
                 }
             }
 			else
