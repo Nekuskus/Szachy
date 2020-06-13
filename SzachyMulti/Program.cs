@@ -1270,7 +1270,7 @@ namespace SzachyMulti
                             //DONE TODO: Finish this without copying!
                         }
                     }
-					
+                    
                     /// <summary> 
                     /// Queen is now marked as Rook | Bishop, therefore she does not have a separate case/if
                     /// </summary>
@@ -1291,7 +1291,6 @@ namespace SzachyMulti
                 ///</remarks>
             }
         }
-        #region
         public static void NarysujPlansze()
         {
             Console.Write("\n\t    A       B       C       D       E       F       G       H\n");
@@ -2311,7 +2310,6 @@ namespace SzachyMulti
                 throw new InvalidMoveException($"Ruch konia {Team} nie spelnial zadnego warunku odleglosci od konca co jest niemozliwe");
             }
         }
-        #endregion
         public static void RuchGońcem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
             // Jak niżej
@@ -2322,25 +2320,91 @@ namespace SzachyMulti
             // 4 - W dół i w lewo
             if((Pozycja1.Pos1 < Pozycja2.Pos1 && Pozycja1.Pos2 > Pozycja2.Pos2) || (Pozycja1.Pos1 > Pozycja2.Pos1 && Pozycja1.Pos2 > Pozycja2.Pos2) || (Pozycja1.Pos1 < Pozycja2.Pos1 && Pozycja1.Pos2 < Pozycja2.Pos2) || (Pozycja1.Pos1 > Pozycja2.Pos1 && Pozycja1.Pos2 < Pozycja2.Pos2))
             {
+                // Deklaracja iteratorów
+                int i = Pozycja1.Pos1;
+                int i2 = Pozycja1.Pos2;
                 // 1 - W górę i w prawo
                 if(Pozycja1.Pos1 < Pozycja2.Pos1 && Pozycja1.Pos2 > Pozycja2.Pos2)
                 {
-
+                    i++;
+                    i2--;
+                    while(i < Pozycja2.Pos1 && i2 > Pozycja2.Pos2)
+                    {
+                        if(Plansza[i, i2] == ChessPiece.None)
+                        {
+                            i++;
+                            i2--;
+                            continue;
+                        }
+                        else
+                        {
+                            throw new InvalidMoveException($"Goniec {Team} probowal poruszyc sie przez innego pionka");
+                        }
+                    }
+                    Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                    Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
                 }
                 // 2 - W dół i w prawo
                 if(Pozycja1.Pos1 > Pozycja2.Pos1 && Pozycja1.Pos2 > Pozycja2.Pos2)
                 {
-
+                    i--;
+                    i2--;
+                    while(i > Pozycja2.Pos1 && i2 > Pozycja2.Pos2)
+                    {
+                        if(Plansza[i, i2] == ChessPiece.None)
+                        {
+                            i--;
+                            i2--;
+                            continue;
+                        }
+                        else
+                        {
+                            throw new InvalidMoveException($"Goniec {Team} probowal poruszyc sie przez innego pionka");
+                        }
+                    }
+                    Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                    Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
                 }
                 // 3 - W górę i w lewo
                 if(Pozycja1.Pos1 < Pozycja2.Pos1 && Pozycja1.Pos2 < Pozycja2.Pos2)
                 {
-                    
+                    i++;
+                    i2++;
+                    while(i < Pozycja2.Pos1 && i2 < Pozycja2.Pos2)
+                    {
+                        if(Plansza[i, i2] == ChessPiece.None)
+                        {
+                            i++;
+                            i2++;
+                            continue;
+                        }
+                        else
+                        {
+                            throw new InvalidMoveException($"Goniec {Team} probowal poruszyc sie przez innego pionka");
+                        }
+                    }
+                    Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                    Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
                 }
                 // 4 - W dół i w lewo
                 if(Pozycja1.Pos1 > Pozycja2.Pos1 && Pozycja1.Pos2 < Pozycja2.Pos2)
                 {
-
+                    i--;
+                    i2++;
+                    while(i > Pozycja2.Pos1 && i2 < Pozycja2.Pos2)
+                    {
+                        if(Plansza[i, i2] == ChessPiece.None)
+                        {
+                            i--;
+                            i2++;
+                        }
+                        else
+                        {
+                            throw new InvalidMoveException($"Goniec {Team} probowal poruszyc sie przez innego pionka");
+                        }
+                    }
+                    Plansza[Pozycja2.Pos1, Pozycja2.Pos2] = Plansza[Pozycja1.Pos1, Pozycja1.Pos2];
+                    Plansza[Pozycja1.Pos1, Pozycja1.Pos2] = ChessPiece.None;
                 }
             }
             else
@@ -2443,7 +2507,7 @@ namespace SzachyMulti
                 else if(Pozycja2.Pos1 > Pozycja1.Pos1 && Pozycja2.Pos2 == Pozycja1.Pos2)
                 {
 					int i = Pozycja1.Pos1+1;
-                    while(i < Pozycja2.Pos2)
+                    while(i < Pozycja2.Pos1)
                     {
                         if(Plansza[i, Pozycja1.Pos2] == ChessPiece.None)
                         {
