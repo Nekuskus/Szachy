@@ -2312,6 +2312,10 @@ namespace SzachyMulti
         }
         public static void RuchGońcem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
+            if((Plansza[Pozycja2.Pos1, Pozycja2.Pos2] & ChessPiece.King) == ChessPiece.King)
+            {
+                throw new InvalidMoveException($"Goniec {Team} probowal zbic krola", "king");
+            }
             // Jak niżej
             // Warunki:
             // 1 - W górę i w prawo
@@ -2414,6 +2418,10 @@ namespace SzachyMulti
         }
         public static void RuchWieżą(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
+            if((Plansza[Pozycja2.Pos1, Pozycja2.Pos2] & ChessPiece.King) == ChessPiece.King)
+            {
+                throw new InvalidMoveException($"Wieza {Team} sprobowala zbic krola", "king");
+            }
             // Sprawdza czy ruch jest w poprawnym kierunku
             // Warunki:
             // 1 - W górę
