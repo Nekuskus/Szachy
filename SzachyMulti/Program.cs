@@ -1291,6 +1291,7 @@ namespace SzachyMulti
                 ///</remarks>
             }
         }
+        #region
         public static void NarysujPlansze()
         {
             Console.Write("\n\t    A       B       C       D       E       F       G       H\n");
@@ -1503,6 +1504,10 @@ namespace SzachyMulti
         }
         public static void WykonajRuch(Pozycja Pozycja1, Pozycja Pozycja2, string nick, char curTeam)
         {
+            if(Pozycja2.Pos1 <= -1 || Pozycja2.Pos2 <= -1 || Pozycja2.Pos1 >= 8 || Pozycja2.Pos2 >= 8)
+            {
+                throw new InvalidMoveException("Pionek sprobowal pouszyc sie poza plansze");
+            }
             if(Pozycja1.Pos1 == Pozycja2.Pos1 && Pozycja1.Pos2 == Pozycja2.Pos2)
             {
                 throw new InvalidMoveException("Pionek sprobowal porzuszyc sie na to samo pole");
@@ -2306,15 +2311,45 @@ namespace SzachyMulti
                 throw new InvalidMoveException($"Ruch konia {Team} nie spelnial zadnego warunku odleglosci od konca co jest niemozliwe");
             }
         }
+        #endregion
         public static void RuchGońcem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
+            // Jak niżej
+            // Warunki:
+            // 1 - W górę i w prawo
+            // 2 - W dół i w prawo
+            // 3 - W górę i w lewo
+            // 4 - W dół i w lewo
+            if((Pozycja1.Pos1 < Pozycja2.Pos1 && Pozycja1.Pos2 > Pozycja2.Pos2) || (Pozycja1.Pos1 > Pozycja2.Pos1 && Pozycja1.Pos2 > Pozycja2.Pos2) || (Pozycja1.Pos1 < Pozycja2.Pos1 && Pozycja1.Pos2 < Pozycja2.Pos2) || (Pozycja1.Pos1 > Pozycja2.Pos1 && Pozycja1.Pos2 < Pozycja2.Pos2))
+            {
+                // 1 - W górę i w prawo
+                if(Pozycja1.Pos1 < Pozycja2.Pos1 && Pozycja1.Pos2 > Pozycja2.Pos2)
+                {
 
+                }
+                // 2 - W dół i w prawo
+                if(Pozycja1.Pos1 > Pozycja2.Pos1 && Pozycja1.Pos2 > Pozycja2.Pos2)
+                {
+
+                }
+                // 3 - W górę i w lewo
+                if(Pozycja1.Pos1 < Pozycja2.Pos1 && Pozycja1.Pos2 < Pozycja2.Pos2)
+                {
+                    
+                }
+                // 4 - W dół i w lewo
+                if(Pozycja1.Pos1 > Pozycja2.Pos1 && Pozycja1.Pos2 < Pozycja2.Pos2)
+                {
+
+                }
+            }
+            else
+            {
+                throw new InvalidMoveException("Ruch gonca nie spelnial zadnego warunku");
+            }
         }
         public static void RuchWieżą(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
-			//
-			// TODO: ADD CHECKS FOR IF < 8/IF > -1 HERE!!!
-			//
             // Sprawdza czy ruch jest w poprawnym kierunku
             // Warunki:
             // 1 - W górę
