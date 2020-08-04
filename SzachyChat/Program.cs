@@ -46,7 +46,7 @@ namespace SzachyChat
         }
         static void PrzeczytajCzat()
         {
-            StreamReader sr = new StreamReader($@".\Logs\Log{ID}.txt");
+            StreamReader sr = new StreamReader($@".\Chat\Logs\Log{ID}.txt");
             string[] messages = sr.ReadToEnd().Split('\n');
             if (messages.Length > lastcount)
             {
@@ -62,7 +62,7 @@ namespace SzachyChat
                 trywrite:
                 try
                 {
-                    StreamWriter sw = new StreamWriter($@".\Logs\Log{ID}.txt");
+                    StreamWriter sw = new StreamWriter($@".\Chat\Logs\Log{ID}.txt");
                     sw.WriteLine($"{Nick}: {Message}");
                     isReady = true;
                 }
