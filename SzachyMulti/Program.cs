@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
@@ -152,7 +153,7 @@ namespace SzachyMulti
         }
     };
     [Serializable]
-    public static class Szachy
+    public class Szachy
     {
         /// <summary>
         /// ISerializable replacement
@@ -160,7 +161,7 @@ namespace SzachyMulti
         /// <param name="path">
         /// This param gives the folder the board will be saved to. Default = @".\SavedBoards\"
         /// </param>
-        static bool SerializeBoard(string path = @".\SavedBoards\")
+        public bool SerializeBoard(string path = @".\SavedBoards\")
         {
             List<List<string>> plansze = new List<List<string>>();
             List<string> pola = new List<string>();
@@ -253,7 +254,7 @@ namespace SzachyMulti
         public static volatile ChessPiece[,] BackupHiddenSzachyBC = new ChessPiece[8, 8];
         public static volatile ChessPiece[,] PossibleEnPassants = new ChessPiece[8, 8];
         public static volatile ChessPiece[,] BackupPossibleEnPassants = new ChessPiece[8, 8];
-        public static void PostawPionki()
+        public void PostawPionki()
         {
             //pierwsze - linia, drugie, kolumna
             //Ily my pieces
@@ -315,7 +316,7 @@ namespace SzachyMulti
         /// </summary>
         /// <remarks> It should be used after the match is complete to allow easy starting another one. 
         ///  My feelings stop me from clearing the backups. I guess I will do without it. </remarks>
-        public static void WyczyscPlansze()
+        public void WyczyscPlansze()
         {
             for(int i = 0; i < 8; i++)
             {
@@ -342,12 +343,13 @@ namespace SzachyMulti
         /// <param name="Team">
         /// This parameter represents the team that has done the move.
         /// </param>
-        public static void OznaczSzachyPoRuchu(char Team)
+        private void OznaczSzachyPoRuchu(char Team)
         {
             OznaczSzachy();
             //DONE TODO: ADD SOME CHECKING HERE IDK
-            for(int i = 0, i2 = 0; i<8; i2++)
+            for(int i = 0; i<8; i++)
             {
+                /* An artifact! Do not touch!
                 if(i2 == 8)
                 {
                     i2 = 0;
@@ -357,31 +359,35 @@ namespace SzachyMulti
                         continue;
                     }
                 }
-                //TODO: MAKE THIS CHECK BETTER
-                switch(Team)
+                */
+                //TODO: (planned but not done yet) MAKE THIS CHECK BETTER
+                for(int i2 = 0; i2 < 8; i2++)
                 {
-                    case 'B':
-                        if(SzachyBC[i, i2].HasFlag(ChessPiece.TeamC))
-                        {
-                            if(!(BackupSzachyBC[i, i2].HasFlag(ChessPiece.TeamC)))
+                    switch(Team)
+                    {
+                        case 'B':
+                            if(SzachyBC[i, i2].HasFlag(ChessPiece.TeamC))
                             {
-                                throw new InvalidMoveException("Gracz B spowodowal szacha u siebie");
+                                if(!(BackupSzachyBC[i, i2].HasFlag(ChessPiece.TeamC)))
+                                {
+                                    throw new InvalidMoveException("Gracz B spowodowal szacha u siebie");
+                                }
                             }
-                        }
-                        break;
-                    case 'C':
-                        if(SzachyBC[i, i2].HasFlag(ChessPiece.TeamB))
-                        {
-                            if(!(BackupSzachyBC[i, i2].HasFlag(ChessPiece.TeamB)))
+                            break;
+                        case 'C':
+                            if(SzachyBC[i, i2].HasFlag(ChessPiece.TeamB))
                             {
-                                throw new InvalidMoveException("Gracz C spowodowal szacha u siebie");
+                                if(!(BackupSzachyBC[i, i2].HasFlag(ChessPiece.TeamB)))
+                                {
+                                    throw new InvalidMoveException("Gracz C spowodowal szacha u siebie");
+                                }
                             }
-                        }
-                        break;
+                            break;
+                    }
                 }
             }
         }
-        public static void OznaczSzachy()
+        public void OznaczSzachy()
         {
             //DONE: MAKE BACKUPS BEFORE REDEFINING AND CHANGE BOARDS TO THE MERGED ONES
             Array.Copy(SzachyBC, BackupSzachyBC, SzachyBC.Length);
@@ -1291,7 +1297,7 @@ namespace SzachyMulti
                 ///</remarks>
             }
         }
-        public static void NarysujPlansze()
+        public void NarysujPlansze()
         {
             Console.Write("\n\t    A       B       C       D       E       F       G       H\n");
             //\t = 8 *'-'
@@ -1447,7 +1453,7 @@ namespace SzachyMulti
             Console.WriteLine("\t-----------------------------------------------------------------");
 
         }
-        public static void NapiszPionek(int pos1, int pos2)
+        public void NapiszPionek(int pos1, int pos2)
         {
             switch(Plansza[pos1, pos2] & ChessPiece.AllPieces) // In memory of the dear Pieces ❤︎ (Plansza[pos1, pos2].TrimEnd('1', '2', '3', '4', '5', '6', '7', '8', 'C', 'B'))
             {
@@ -1487,7 +1493,7 @@ namespace SzachyMulti
         /// The point of this method being semi-separate is to raise an alarm after the enemy client let trough an invalid move.
         /// </summary>
         /// <returns>Either returns an exception or a void if move is incorrect</returns>
-        public static void WykonajISprawdzRuchPrzeciwnika(Pozycja Pozycja1, Pozycja Pozycja2)
+        public void WykonajISprawdzRuchPrzeciwnika(Pozycja Pozycja1, Pozycja Pozycja2)
         {
             try
             {
@@ -1501,7 +1507,7 @@ namespace SzachyMulti
                 throw;
             }
         }
-        public static void WykonajRuch(Pozycja Pozycja1, Pozycja Pozycja2, string nick, char curTeam)
+        public void WykonajRuch(Pozycja Pozycja1, Pozycja Pozycja2, string nick, char curTeam)
         {
             if(Pozycja2.Pos1 <= -1 || Pozycja2.Pos2 <= -1 || Pozycja2.Pos1 >= 8 || Pozycja2.Pos2 >= 8)
             {
@@ -1624,7 +1630,7 @@ namespace SzachyMulti
                 throw;
             }
         }
-        public static void RuchPionem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
+        private void RuchPionem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
             Array.Copy(Plansza, BackupPlansza, Plansza.Length);
             switch(Team)
@@ -1951,7 +1957,7 @@ namespace SzachyMulti
                     break;
             }
         }
-        public static void RuchKoniem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
+        private void RuchKoniem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
             if(Pozycja1.Pos1 + 2 < 8 || Pozycja1.Pos1 + 1 < 8 || Pozycja1.Pos1 - 1 > -1 || Pozycja1.Pos1 - 2 > -1)
             {
@@ -2310,7 +2316,7 @@ namespace SzachyMulti
                 throw new InvalidMoveException($"Ruch konia {Team} nie spelnial zadnego warunku odleglosci od konca co jest niemozliwe");
             }
         }
-        public static void RuchGońcem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
+        private void RuchGońcem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
             if((Plansza[Pozycja2.Pos1, Pozycja2.Pos2] & ChessPiece.King) == ChessPiece.King)
             {
@@ -2416,7 +2422,7 @@ namespace SzachyMulti
                 throw new InvalidMoveException("Ruch gonca nie spelnial zadnego warunku");
             }
         }
-        public static void RuchWieżą(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
+        private static void RuchWieżą(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
             if((Plansza[Pozycja2.Pos1, Pozycja2.Pos2] & ChessPiece.King) == ChessPiece.King)
             {
@@ -2547,14 +2553,15 @@ namespace SzachyMulti
         {
 
         }*/
-        public static void RuchKrólem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
+        // TODO: NAPISAĆ RUCH KRÓLEM
+        public void RuchKrólem(Pozycja Pozycja1, Pozycja Pozycja2, Char Team)
         {
             switch(Team)
             {
 
             }
         }
-        public static void ClearEnPassants(Char Team)
+        public void ClearEnPassants(Char Team)
         {
             var Flag = (Team == 'B' ? ChessPiece.TeamB : ChessPiece.TeamC);
             for(int i = 0; i < 8; i++)
@@ -2568,9 +2575,9 @@ namespace SzachyMulti
                 }
             }
         }
-        public static void Rozgrywka()
+        public void Rozgrywka()
         {
-            Szachy.PostawPionki();
+            this.PostawPionki();
             bool koniecrozgrywki = false;
             switch(Program.playerTeam)
             {
@@ -2662,7 +2669,7 @@ namespace SzachyMulti
                         }
                         break;
                     case 'C':
-                        Szachy.NarysujPlansze();
+                        this.NarysujPlansze();
                         while(!Program.hasEnemyMoved)
                         {
                             Thread.Sleep(1000);
@@ -2680,6 +2687,7 @@ namespace SzachyMulti
     }
     public class Program
     {
+        public static Szachy szachy;
         public static Random rand = new Random();
         public static volatile bool hasOtherPlayerJoined = false;
         public static volatile bool isApppending = false;
@@ -2856,7 +2864,7 @@ namespace SzachyMulti
                             Pozycja1.Pos2 = moveArgs[0].Last();
                             Pozycja2.Pos1 = SkonwertujLitere(moveArgs[1].First());
                             Pozycja2.Pos2 = moveArgs[1].Last();
-                            Szachy.WykonajISprawdzRuchPrzeciwnika(Pozycja1, Pozycja2);
+                            szachy.WykonajISprawdzRuchPrzeciwnika(Pozycja1, Pozycja2);
                         }
                         else if(lines[i].StartsWith("CLOSING"))
                         {
@@ -3022,37 +3030,40 @@ namespace SzachyMulti
             }
             Process.GetCurrentProcess().EnableRaisingEvents = true;
             Process.GetCurrentProcess().Exited += main_Exited;
-            Szachy.PostawPionki();
+#if DEBUG
+            Szachy s = new Szachy();
+            s.PostawPionki();
             playerTeam = 'C';
-            Szachy.OznaczSzachy();
-            Szachy.NarysujPlansze();
+            s.OznaczSzachy();
+            s.NarysujPlansze();
             Console.WriteLine("----");
             Pozycja raz = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n--->");
             Pozycja dwa = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n----\n");
-            Szachy.WykonajRuch(raz, dwa, "kyaaan", Szachy.Plansza[raz.Pos1, raz.Pos2].HasFlag(Szachy.ChessPiece.TeamB) ? 'B' : 'C');
+            s.WykonajRuch(raz, dwa, "kyaaan", Szachy.Plansza[raz.Pos1, raz.Pos2].HasFlag(Szachy.ChessPiece.TeamB) ? 'B' : 'C');
             Console.WriteLine("----");
             Pozycja trzy = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n--->");
             Pozycja cztery = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n----\n");
-            Szachy.WykonajRuch(trzy, cztery, "kyaaan", Szachy.Plansza[trzy.Pos1, trzy.Pos2].HasFlag(Szachy.ChessPiece.TeamB) ? 'B' : 'C');
+            s.WykonajRuch(trzy, cztery, "kyaaan", Szachy.Plansza[trzy.Pos1, trzy.Pos2].HasFlag(Szachy.ChessPiece.TeamB) ? 'B' : 'C');
             Console.WriteLine("----");
             Pozycja piec = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n--->");
             Pozycja szesc = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n----\n");
-            Szachy.WykonajRuch(piec, szesc, "kyaaan", Szachy.Plansza[piec.Pos1, piec.Pos2].HasFlag(Szachy.ChessPiece.TeamB) ? 'B' : 'C');
+            s.WykonajRuch(piec, szesc, "kyaaan", Szachy.Plansza[piec.Pos1, piec.Pos2].HasFlag(Szachy.ChessPiece.TeamB) ? 'B' : 'C');
             Console.WriteLine("----");
             Pozycja siedem = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n--->");
             Pozycja osiem = new Pozycja(Console.ReadKey(false).KeyChar, Console.ReadKey(false).KeyChar);
             Console.WriteLine("\n----");
-            Szachy.WykonajRuch(siedem, osiem, "kyaaan", Szachy.Plansza[siedem.Pos1, siedem.Pos2].HasFlag(Szachy.ChessPiece.TeamB) ? 'B' : 'C');
-            Szachy.NarysujPlansze();
+            s.WykonajRuch(siedem, osiem, "kyaaan", Szachy.Plansza[siedem.Pos1, siedem.Pos2].HasFlag(Szachy.ChessPiece.TeamB) ? 'B' : 'C');
+            s.NarysujPlansze();
             playerTeam = 'C';
-            Szachy.NarysujPlansze();
+            s.NarysujPlansze();
+#endif
             if(args.Length > 0)
             {
                 if(args[0] == "true")
@@ -3214,7 +3225,17 @@ namespace SzachyMulti
                         {
                             Thread.Sleep(TimeSpan.FromSeconds(3));
                         }
-                        Szachy.Rozgrywka();
+                        szachy = new Szachy();
+                        szachy.Rozgrywka();
+                        /* 
+                         * 
+                         * 
+                         * WIELKIE TODO TUTAJ!!!!
+                         * POWRÓT DO EKRANU GŁÓWNEGO I ZAMKNIĘCIE CZATU
+                         * 
+                         * 
+                         * 
+                         */
                         //(Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds
                     }
                     else if(napewno.ToLower().Contains('n'))
@@ -3243,7 +3264,7 @@ namespace SzachyMulti
                 Console.WriteLine("Cofanie do lobby...\n");
                 goto lobby;
             }
-            if(wykonajconnect == true)
+            if(wykonajconnect)
             {
                 foreach(var item in client.GetNameListing())
                 {
@@ -3271,7 +3292,8 @@ namespace SzachyMulti
                                     playerTeam = 'B';
                                     break;
                             }
-                            Szachy.Rozgrywka();
+                            szachy = new Szachy();
+                            szachy.Rozgrywka();
                         }
                     }
                 }
