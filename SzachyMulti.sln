@@ -4,8 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SzachyMulti", "SzachyMulti\SzachyMulti.csproj", "{38A94678-1EBD-442F-92AC-6B6D8F37D039}"
+	ProjectSection(ProjectDependencies) = postProject
+		{910B498F-8D37-45B6-88FA-B17792A44AC7} = {910B498F-8D37-45B6-88FA-B17792A44AC7}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SzachyChat", "SzachyChat\SzachyChat.csproj", "{0663DB1A-F66E-46CD-8AC5-186C046316D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsApp1", "WindowsFormsApp1\WindowsFormsApp1.csproj", "{910B498F-8D37-45B6-88FA-B17792A44AC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +20,10 @@ Global
 		{38A94678-1EBD-442F-92AC-6B6D8F37D039}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38A94678-1EBD-442F-92AC-6B6D8F37D039}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38A94678-1EBD-442F-92AC-6B6D8F37D039}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0663DB1A-F66E-46CD-8AC5-186C046316D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0663DB1A-F66E-46CD-8AC5-186C046316D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0663DB1A-F66E-46CD-8AC5-186C046316D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0663DB1A-F66E-46CD-8AC5-186C046316D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{910B498F-8D37-45B6-88FA-B17792A44AC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{910B498F-8D37-45B6-88FA-B17792A44AC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{910B498F-8D37-45B6-88FA-B17792A44AC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{910B498F-8D37-45B6-88FA-B17792A44AC7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
