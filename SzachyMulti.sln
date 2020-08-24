@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SzachyMulti", "SzachyMulti\
 		{910B498F-8D37-45B6-88FA-B17792A44AC7} = {910B498F-8D37-45B6-88FA-B17792A44AC7}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsApp1", "WindowsFormsApp1\WindowsFormsApp1.csproj", "{910B498F-8D37-45B6-88FA-B17792A44AC7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SzachyChat", "WindowsFormsApp1\SzachyChat.csproj", "{910B498F-8D37-45B6-88FA-B17792A44AC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
