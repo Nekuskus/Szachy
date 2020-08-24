@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.Chat_TextBox = new System.Windows.Forms.RichTextBox();
             this.Input_TextBox = new System.Windows.Forms.RichTextBox();
             this.button1 = new System.Windows.Forms.Button();
@@ -39,9 +40,10 @@
             this.Chat_TextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Chat_TextBox.Location = new System.Drawing.Point(13, 45);
             this.Chat_TextBox.Name = "Chat_TextBox";
+            this.Chat_TextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             this.Chat_TextBox.Size = new System.Drawing.Size(344, 338);
             this.Chat_TextBox.TabIndex = 0;
-            this.Chat_TextBox.Text = "";
+            this.Chat_TextBox.Text = resources.GetString("Chat_TextBox.Text");
             // 
             // Input_TextBox
             // 
