@@ -1,4 +1,4 @@
-﻿namespace WindowsFormsApp1
+﻿namespace SzachyChat
 {
     partial class Form1
     {
@@ -89,11 +89,10 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.RichTextBox Chat_TextBox;
         private System.Windows.Forms.RichTextBox Input_TextBox;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label Names_Label;
+        private System.Windows.Forms.RichTextBox Chat_TextBox;
     }
 }
 
