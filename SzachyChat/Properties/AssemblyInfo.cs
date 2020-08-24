@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SzachyChat")]
+[assembly: AssemblyProduct("SzachtChat")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Następujący identyfikator GUID jest identyfikatorem biblioteki typów w przypadku udostępnienia tego projektu w modelu COM
-[assembly: Guid("0663db1a-f66e-46cd-8ac5-186c046316d2")]
+[assembly: Guid("910b498f-8d37-45b6-88fa-b17792a44ac7")]
 
 // Informacje o wersji zestawu zawierają następujące cztery wartości:
 //

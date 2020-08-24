@@ -2687,6 +2687,7 @@ namespace SzachyMulti
     }
     public class Program
     {
+        #region Global variables
         public static Szachy szachy;
         public static Random rand = new Random();
         public static volatile bool hasOtherPlayerJoined = false;
@@ -2713,6 +2714,11 @@ namespace SzachyMulti
         public static bool wykonajconnect = true;
         public static string nazwasesji;
         public static bool hasEnemyMoved;
+        public static FtpClient client = new FtpClient();
+        public static bool czy_odbierac = false;
+        #endregion
+
+        #region Milosz's FTP functions
         public static List<string> GetContent(string folder, string id)
         {
             var tmp = client.OpenRead($"/SzachySerwer/{folder}/{id}.txt");
@@ -2764,9 +2770,9 @@ namespace SzachyMulti
             var bytes = Encoding.UTF8.GetBytes(txt);
             tmp.Write(bytes, 0, bytes.Length);
         }
+        #endregion
 
-        public static FtpClient client = new FtpClient();
-        public static bool czy_odbierac = false;
+        #region Char utilities
         public static int SkonwertujLitere(char litera)
         {
             switch(litera)
@@ -2815,6 +2821,98 @@ namespace SzachyMulti
                 default:
                     Console.WriteLine("Damian co ty zrobiles to nie powinno nigdy sie stac");
                     throw new Exception_2_rozne_od_2();
+            }
+        }
+        #endregion
+
+        // To check!!
+        public static void OtwórzCzat()
+        {
+            void chat_Exited(object sender, EventArgs e)
+            {
+                AppendText($"Gracz {Nick} opuscil sesje", currentfolder, ID);
+                czy_odbierac = false;
+
+            }
+            if(!Directory.Exists(@".\Chat\Logs"))
+            {
+                Directory.CreateDirectory(@".\Chat\Logs");
+            }
+            StreamWriter sw = File.CreateText($@".\Chat\Logs\Log{ID}.txt");
+            sw.Dispose();
+            ProcessStartInfo psi = new ProcessStartInfo()
+            {
+                CreateNoWindow = false,
+                UseShellExecute = true,
+                FileName = $@"{Directory.GetCurrentDirectory()}\Chat\SzachyChat.exe",
+                WindowStyle = ProcessWindowStyle.Normal,
+                Arguments = $"{ID} {Nick}"
+            };
+            chat.StartInfo = psi;
+            chat.Start();
+            chat.EnableRaisingEvents = true;
+            chat.Exited += new EventHandler(chat_Exited);
+            isChatOpen = true;
+        }
+        // To rewrite!!
+        public static void WyślijWiadomość(string currentfolder, string wiadomosc, int ID)
+        {
+            Program.isSending = true;
+            if(!Program.client.IsConnected)
+            {
+                Program.client.Connect();
+            }
+            Program.AppendText($"{Program.Nick}: {wiadomosc}", currentfolder, Convert.ToString(ID));
+            Program.isSending = false;
+        }
+        // To rewrite!!
+        static void Chat()
+        {
+            StreamReader chatReader = new StreamReader($@".\Chat\Logs\Log{ID}.txt");
+            chatLog.Clear();
+            chatLog.AddRange(chatReader.ReadToEnd().Split('\n'));
+            int countNow = chatLog.Count();
+            if(countNow != 0)
+            {
+                if(countNow > lastCountChat)
+                {
+                    isSending = true;
+                    List<string> sentMessages = new List<string>();
+                    for(int i = lastCountChat; i < countNow; i++)
+                    {
+                        if(!chatLog[i].StartsWith(Nick))
+                        {
+                            sentMessages.Add($"{Nick}: {chatLog[i]}");
+                        }
+                    }
+                    if(client.IsConnected == false)
+                    {
+                        client.Connect();
+                    }
+                    foreach(string msg in sentMessages)
+                    {
+                        AppendText(msg, currentfolder, Convert.ToString(ID));
+                    }
+                    lastCountChat = chatLog.Count();
+                    if(isOdbierz == false)
+                    {
+                        client.Disconnect();
+                    }
+                    isSending = false;
+                    chatReader.Close();
+                }
+            }
+            if(odebranoWiad)
+            {
+                StreamWriter chatWriter = new StreamWriter($@".\Chat\Logs\Log{ID}.txt");
+                //sw = chat.StandardInput;
+                foreach(string receivedMessage in receivedMessages)
+                {
+                    chatWriter.WriteLine($"{enemyNick}: {receivedMessage}");
+                    receivedMessages.Remove(receivedMessage);
+                }
+                odebranoWiad = false;
+                chatWriter.Close();
             }
         }
         public static void Odbierz()
@@ -2895,93 +2993,6 @@ namespace SzachyMulti
             lastCount = lines.Count;
             isOdbierz = false;
         }
-        public static void OtwórzCzat()
-        {
-            void chat_Exited(object sender, EventArgs e)
-            {
-                AppendText($"Gracz {Nick} opuscil sesje", currentfolder, ID);
-                czy_odbierac = false;
-
-            }
-            if(!Directory.Exists(@".\Chat\Logs"))
-            {
-                Directory.CreateDirectory(@".\Chat\Logs");
-            }
-            StreamWriter sw = File.CreateText($@".\Chat\Logs\Log{ID}.txt");
-            sw.Dispose();
-            ProcessStartInfo psi = new ProcessStartInfo()
-            {
-                CreateNoWindow = false,
-                UseShellExecute = true,
-                FileName = $@"{Directory.GetCurrentDirectory()}\Chat\SzachyChat.exe",
-                WindowStyle = ProcessWindowStyle.Normal,
-                Arguments = $"{ID} {Nick}"
-            };
-            chat.StartInfo = psi;
-            chat.Start();
-            chat.EnableRaisingEvents = true;
-            chat.Exited += new EventHandler(chat_Exited);
-            isChatOpen = true;
-        }
-        public static void WyślijWiadomość(string currentfolder, string wiadomosc, int ID)
-        {
-            Program.isSending = true;
-            if(!Program.client.IsConnected)
-            {
-                Program.client.Connect();
-            }
-            Program.AppendText($"{Program.Nick}: {wiadomosc}", currentfolder, Convert.ToString(ID));
-            Program.isSending = false;
-        }
-        static void Chat()
-        {
-            StreamReader chatReader = new StreamReader($@".\Chat\Logs\Log{ID}.txt");
-            chatLog.Clear();
-            chatLog.AddRange(chatReader.ReadToEnd().Split('\n'));
-            int countNow = chatLog.Count();
-            if(countNow != 0)
-            {
-                if(countNow > lastCountChat)
-                {
-                    isSending = true;
-                    List<string> sentMessages = new List<string>();
-                    for(int i = lastCountChat; i < countNow; i++)
-                    {
-                        if(!chatLog[i].StartsWith(Nick))
-                        {
-                            sentMessages.Add($"{Nick}: {chatLog[i]}");
-                        }
-                    }
-                    if(client.IsConnected == false)
-                    {
-                        client.Connect();
-                    }
-                    foreach(string msg in sentMessages)
-                    {
-                        AppendText(msg, currentfolder, Convert.ToString(ID));
-                    }
-                    lastCountChat = chatLog.Count();
-                    if(isOdbierz == false)
-                    {
-                        client.Disconnect();
-                    }
-                    isSending = false;
-                    chatReader.Close();
-                }
-            }
-            if(odebranoWiad)
-            {
-                StreamWriter chatWriter = new StreamWriter($@".\Chat\Logs\Log{ID}.txt");
-                //sw = chat.StandardInput;
-                foreach(string receivedMessage in receivedMessages)
-                {
-                    chatWriter.WriteLine($"{enemyNick}: {receivedMessage}");
-                    receivedMessages.Remove(receivedMessage);
-                }
-                odebranoWiad = false;
-                chatWriter.Close();
-            }
-        }
         public static void KlientOdbierajacy()
         {
             int repeati = 0;
@@ -3018,6 +3029,20 @@ namespace SzachyMulti
                     repeati++;
                 }
             }
+        }
+        static void InitKlient()
+        {
+            Thread Size = new Thread(new ThreadStart(SizeCheck));
+            Size.Start();
+            if(BasicIO == false)
+            {
+                OtwórzCzat();
+                Thread chat = new Thread(new ThreadStart(ChatThread));
+                chat.Start();
+            }
+            czy_odbierac = true;
+            Thread t = new Thread(new ThreadStart(KlientOdbierajacy));
+            t.Start();
         }
         static void Main(string[] args)
         {
@@ -3299,6 +3324,8 @@ namespace SzachyMulti
                 }
             }
         }
+
+        #region Different threads
         static void SizeCheckThread()
         {
             if(Console.WindowWidth != 80)
@@ -3314,21 +3341,6 @@ namespace SzachyMulti
                 Thread.Sleep(1500);
             }
         }
-
-        static void InitKlient()
-        {
-            Thread Size = new Thread(new ThreadStart(SizeCheck));
-            Size.Start();
-            if(BasicIO == false)
-            {
-                OtwórzCzat();
-                Thread chat = new Thread(new ThreadStart(ChatThread));
-                chat.Start();
-            }
-            czy_odbierac = true;
-            Thread t = new Thread(new ThreadStart(KlientOdbierajacy));
-            t.Start();
-        }
         static void ChatThread()
         {
             while(isChatOpen)
@@ -3337,6 +3349,8 @@ namespace SzachyMulti
                 Thread.Sleep(500);
             }
         }
+        #endregion
     }
 } //As of 14:07 2020-05-08 this is line 2014. I love this moment and want this memory to exist.
-//As of 14:48 2020-05-08 this is now line 2020!
+  //As of 14:48 2020-05-08 this is now line 2020!
+  //As of 20:34 (20:35 xD ❤︎) 2020-08-24 this is currently line 3343 uwu xD I'm now switching to TCP over FTP it's gonna be hard xD ❤︎
