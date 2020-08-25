@@ -69,7 +69,14 @@ namespace SzachyChat
         public static IPAddress localhost;
         public static TcpListener tcpListener;
         public static Thread listenThread = new Thread(StartReading);
-        public static Queue<string> read_strings = new Queue<string>();
+        
+        /*
+            FORMAT:
+            MESSAGE (true, string)
+            BROADCAST (false, string)
+        */ 
+        public static Queue<(bool, string)> read_strings = new Queue<(bool, string)>();
+        
         private static bool shouldStop = false;
 
         public static async void StartReading()
@@ -83,17 +90,33 @@ namespace SzachyChat
                 }
                 while(ns.DataAvailable)
                 {
-                    char app = (char)ns.ReadByte();
-                    byte[] _amount = new byte[4];
-                    int amount = await Task.Run(() => ns.ReadAsync(_amount, 0, 4)).ContinueWith((a) => { return BitConverter.ToInt32(_amount, 0); });
-                    if(app == 'S')
+                    /*
+                        FORMAT:
+                        MESSAGE "[M][SC]1234onethousandtwohundredthirtyfourcharacersmessagehere"
+                        BROADCAST "[B]1234onethousandtwohundredthirtyfourcharacersmessagehere"
+                    */
+                    char ismessage = (char)ns.ReadByte();
+                    if(ismessage == 'M')
                     {
-                        byte[] bytes = new byte[amount];
-                        await Task.Run(() => ns.ReadAsync(bytes, 0, bytes.Length)).ContinueWith((abc) => { lock(read_strings) { read_strings.Enqueue(bytes.ToString()); } });
+                        char app = (char)ns.ReadByte();
+                        byte[] _amount = new byte[4];
+                        int amount = await Task.Run(() => ns.ReadAsync(_amount, 0, 4)).ContinueWith((a) => { return BitConverter.ToInt32(_amount, 0); });
+                        if(app == 'S')
+                        {
+                            byte[] bytes = new byte[amount];
+                            await Task.Run(() => ns.ReadAsync(bytes, 0, bytes.Length)).ContinueWith((abc) => { lock(read_strings) { read_strings.Enqueue((true, bytes.ToString())); } });
+                        }
+                        else
+                        {
+                            ns.Read(new byte[amount], 0, amount);
+                        }
                     }
                     else
                     {
-                        ns.Read(new byte[amount], 0, amount);
+                        byte[] _amount = new byte[4];
+                        int amount = await Task.Run(() => ns.ReadAsync(_amount, 0, 4)).ContinueWith((a) => { return BitConverter.ToInt32(_amount, 0); });
+                        byte[] bytes = new byte[amount];
+                        await Task.Run(() => ns.ReadAsync(bytes, 0, bytes.Length)).ContinueWith((abc) => { lock(read_strings) { read_strings.Enqueue((false, bytes.ToString())); } });
                     }
                 }
             }

@@ -31,9 +31,8 @@ namespace SzachyChat
         {
             Names_Label.Text = Names_Label.Text.Replace("Nick_1", ChatClient.thisNick).Replace("Color_1", ChatClient.thisColour).Replace("Nick_2", ChatClient.enemyNick).Replace("Color_2", ChatClient.enemyColour);
             Chat_TextBox.ForeColor = Color.Black;
-            WriteInColour(Color.Red, $"{ChatClient.thisNick}: Hi\n", 0, ChatClient.thisNick.Length);
-            WriteInColour(Color.PaleVioletRed, $"{ChatClient.enemyNick}: Hello\n", 0, ChatClient.enemyNick.Length);
-            WriteInColour(Color.Aquamarine, "Abcabcabc: a message", 0, 9);
+            WriteInColour(Color.CadetBlue, $"{ChatClient.thisNick}: Hi\n", 0, ChatClient.thisNick.Length);
+            WriteInColour(Color.MediumVioletRed, $"{ChatClient.enemyNick}: Hello\n", 0, ChatClient.enemyNick.Length);
             await Task.Run(() => ChatClient.StartReading());
             
             await Task.Run(() => {
@@ -43,12 +42,42 @@ namespace SzachyChat
                     {
                         lock(ChatClient.read_strings)
                         {
-                            Chat_TextBox.Text += $"{ChatClient.enemyNick}: {ChatClient.read_strings.Dequeue()}\n"; 
+                            var tuple = ChatClient.read_strings.Dequeue();
+                            if(tuple.Item1 == true)
+                                WriteInColour(Color.MediumVioletRed, $"{ChatClient.enemyNick}: {tuple.Item2}\n", 0, ChatClient.enemyNick.Length);
+                            else
+                                Chat_TextBox.AppendText($"{tuple.Item2}\n");
                         }
                     }
                     System.Threading.Thread.Sleep(350);
                 }
             });
+        }
+
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            button1.Enabled = false;
+            Input_TextBox.Enabled = false;
+            byte[] chatbyte = UnicodeEncoding.UTF8.GetBytes(new char[] {'C'});
+            byte[] bytelength = BitConverter.GetBytes(Input_TextBox.Text.Length);
+            byte[] bytemessage = UnicodeEncoding.UTF8.GetBytes(Input_TextBox.Text);
+            byte[] message = chatbyte.Concat(bytelength).Concat(bytemessage).ToArray();
+            await ChatClient.ns.WriteAsync(message, 0, message.Length);
+            WriteInColour(Color.BlueViolet, $"{ChatClient.thisNick}: {Input_TextBox.Text}\n", 0, ChatClient.thisNick.Length);
+            Input_TextBox.Text = ""; 
+            Input_TextBox.Enabled = true;
+        }
+
+        private void Input_TextBox_TextChanged(object sender, EventArgs e)
+        {
+            if(!(Input_TextBox.Text.Length == 0))
+            {
+                button1.Enabled = true;
+            }
+            else
+            {
+                button1.Enabled = false;
+            }
         }
     }
 }
