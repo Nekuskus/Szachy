@@ -7,6 +7,9 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Net;
 using System.Security.Cryptography;
+using System.Runtime.CompilerServices;
+using System.Diagnostics;
+using System.Runtime.Remoting.Channels;
 
 namespace SzachyChat
 {
@@ -16,8 +19,30 @@ namespace SzachyChat
         /// Główny punkt wejścia dla aplikacji.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
+            if(args.Length == 0)
+            {
+                ChatClient.thisNick = "ThisPlayer";
+                ChatClient.enemyNick = "EnemyPlayer";
+                ChatClient.thisColour = "White";
+                ChatClient.enemyColour = "Black";
+            }
+            else
+            {
+                ChatClient.thisNick = args[0];
+                ChatClient.enemyNick = args[1];
+                ChatClient.thisColour = args[2];
+                ChatClient.enemyColour = args[3];
+            }
+            Process p = Process.GetCurrentProcess();
+            p.EnableRaisingEvents = true;
+            p.Exited += ChatClient.StopReading;
+            p.Exited += ((sender, e) =>
+            {
+                ChatClient.ns.Dispose();
+                ChatClient.tcpClient.Dispose();
+            });
             ChatClient.Init();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -28,35 +53,55 @@ namespace SzachyChat
     {
         public static async void Init()
         {
-            localhost = IPAddress.Parse("127.0.0.1");
+            localhost = IPAddress.Parse("127.17.155.122");
             // The one in SzachyMulti will have port 8082
-            tcpListener = new TcpListener(localhost, 8081);
+            tcpListener = new TcpListener(IPAddress.Any, 8081);
+            tcpListener.Start();
             tcpClient = await Task.FromResult(tcpListener.AcceptTcpClientAsync()).Result;
-            ns = tcpClient.GetStream();
+            ns = await Task.Run(() => tcpClient.GetStream());
         }
+        public static string thisNick;
+        public static string enemyNick;
+        public static string thisColour;
+        public static string enemyColour;
         public static NetworkStream ns;
         public static TcpClient tcpClient;
         public static IPAddress localhost;
         public static TcpListener tcpListener;
-        public static Thread listenThread;
-        public static Queue<string> read_strings;
+        public static Thread listenThread = new Thread(StartReading);
+        public static Queue<string> read_strings = new Queue<string>();
         private static bool shouldStop = false;
 
         public static async void StartReading()
         {
-            byte[] bytes = new byte[1024];
             while(!shouldStop)
             {
+                if(ns == null)
+                {
+                    Thread.Sleep(750);
+                    continue;
+                }
                 while(ns.DataAvailable)
                 {
-                    await Task.Run(() => ns.ReadAsync(bytes.ToArray(), 0, 1024)).ContinueWith((abc) => { lock(read_strings) { read_strings.Enqueue(bytes.ToString()); } bytes = new byte[1024]; });
+                    char app = (char)ns.ReadByte();
+                    byte[] _amount = new byte[4];
+                    int amount = await Task.Run(() => ns.ReadAsync(_amount, 0, 4)).ContinueWith((a) => { return BitConverter.ToInt32(_amount, 0); });
+                    if(app == 'S')
+                    {
+                        byte[] bytes = new byte[amount];
+                        await Task.Run(() => ns.ReadAsync(bytes, 0, bytes.Length)).ContinueWith((abc) => { lock(read_strings) { read_strings.Enqueue(bytes.ToString()); } });
+                    }
+                    else
+                    {
+                        ns.Read(new byte[amount], 0, amount);
+                    }
                 }
             }
         }
-        public static async void StopReading()
+        public static async void StopReading(Object sender, EventArgs e)
         {
             shouldStop = true;
-            ns.Close();
+            ns.Close(350);
         }
     }
 }

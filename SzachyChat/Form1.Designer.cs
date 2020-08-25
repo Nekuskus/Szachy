@@ -28,22 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.Chat_TextBox = new System.Windows.Forms.RichTextBox();
             this.Input_TextBox = new System.Windows.Forms.RichTextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.Names_Label = new System.Windows.Forms.Label();
+            this.Chat_TextBox = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
-            // 
-            // Chat_TextBox
-            // 
-            this.Chat_TextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.Chat_TextBox.Location = new System.Drawing.Point(13, 45);
-            this.Chat_TextBox.Name = "Chat_TextBox";
-            this.Chat_TextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.Chat_TextBox.Size = new System.Drawing.Size(344, 338);
-            this.Chat_TextBox.TabIndex = 0;
-            this.Chat_TextBox.Text = resources.GetString("Chat_TextBox.Text");
             // 
             // Input_TextBox
             // 
@@ -71,6 +60,17 @@
             this.Names_Label.Size = new System.Drawing.Size(124, 26);
             this.Names_Label.TabIndex = 3;
             this.Names_Label.Text = "You: Nick_1 (Color_1)\r\nEnemy: Nick_2 (Color_2)";
+            // 
+            // Chat_TextBox
+            // 
+            this.Chat_TextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.Chat_TextBox.Location = new System.Drawing.Point(13, 45);
+            this.Chat_TextBox.Name = "Chat_TextBox";
+            this.Chat_TextBox.ReadOnly = true;
+            this.Chat_TextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.Chat_TextBox.Size = new System.Drawing.Size(344, 338);
+            this.Chat_TextBox.TabIndex = 0;
+            this.Chat_TextBox.Text = "";
             // 
             // Form1
             // 
