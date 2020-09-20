@@ -1,4 +1,4 @@
-﻿namespace SzachyChat
+﻿namespace SzachyMulti
 {
     partial class Form1 : System.Windows.Forms.Form
     {

@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -53,12 +53,13 @@ namespace SzachyChat
     {
         public static async void Init()
         {
-            localhost = IPAddress.Parse("127.17.155.122");
+            // localhost = IPAddress.Parse("127.17.155.122");
             // The one in SzachyMulti will have port 8082
-            tcpListener = new TcpListener(IPAddress.Any, 8081);
+            tcpListener = new TcpListener(Dns.GetHostName(), 8081);
             tcpListener.Start();
-            tcpClient = await Task.FromResult(tcpListener.AcceptTcpClientAsync()).Result;
+            tcpClient = await tcpListener.AcceptTcpClientAsync();
             ns = await Task.Run(() => tcpClient.GetStream());
+            listenThread.Start();
         }
         public static string thisNick;
         public static string enemyNick;

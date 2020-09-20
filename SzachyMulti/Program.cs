@@ -4,16 +4,17 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Pipes;
 using System.Linq;
 using System.Net;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace SzachyMulti
 {
+    #region Classes
     public static class ArrayExtension
     {
         /// <summary>
@@ -152,6 +153,8 @@ namespace SzachyMulti
             return str;
         }
     };
+    #endregion
+
     [Serializable]
     public class Szachy
     {
@@ -2824,8 +2827,6 @@ namespace SzachyMulti
             }
         }
         #endregion
-
-        // To check!!
         public static void OtwórzCzat()
         {
             void chat_Exited(object sender, EventArgs e)
@@ -2834,26 +2835,16 @@ namespace SzachyMulti
                 czy_odbierac = false;
 
             }
-            if(!Directory.Exists(@".\Chat\Logs"))
-            {
-                Directory.CreateDirectory(@".\Chat\Logs");
-            }
-            StreamWriter sw = File.CreateText($@".\Chat\Logs\Log{ID}.txt");
-            sw.Dispose();
-            ProcessStartInfo psi = new ProcessStartInfo()
-            {
-                CreateNoWindow = false,
-                UseShellExecute = true,
-                FileName = $@"{Directory.GetCurrentDirectory()}\Chat\SzachyChat.exe",
-                WindowStyle = ProcessWindowStyle.Normal,
-                Arguments = $"{ID} {Nick}"
-            };
-            chat.StartInfo = psi;
-            chat.Start();
-            chat.EnableRaisingEvents = true;
-            chat.Exited += new EventHandler(chat_Exited);
+            Form1 f;
+            ChatClient.Init();
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(f = new Form1());
+            f.FormClosed += chat_Exited;
             isChatOpen = true;
         }
+
+        #region Functions to rewrite for TCP
         // To rewrite!!
         public static void WyślijWiadomość(string currentfolder, string wiadomosc, int ID)
         {
@@ -2868,7 +2859,7 @@ namespace SzachyMulti
         // To rewrite!!
         static void Chat()
         {
-            StreamReader chatReader = new StreamReader($@".\Chat\Logs\Log{ID}.txt");
+            /*StreamReader chatReader = new StreamReader($@".\Chat\Logs\Log{ID}.txt");
             chatLog.Clear();
             chatLog.AddRange(chatReader.ReadToEnd().Split('\n'));
             int countNow = chatLog.Count();
@@ -2913,7 +2904,7 @@ namespace SzachyMulti
                 }
                 odebranoWiad = false;
                 chatWriter.Close();
-            }
+            }*/
         }
         public static void Odbierz()
         {
@@ -3030,6 +3021,9 @@ namespace SzachyMulti
                 }
             }
         }
+        #endregion
+
+        //Rewrite Chat part!!!!
         static void InitKlient()
         {
             Thread Size = new Thread(new ThreadStart(SizeCheck));
@@ -3046,7 +3040,13 @@ namespace SzachyMulti
         }
         static void Main(string[] args)
         {
-            void main_Exited(object sender, EventArgs e)
+        /*Task.Run(() => {
+            ChatClient.Init(true);
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Form1());
+        });*/
+        void main_Exited(object sender, EventArgs e)
             {
                 if(isChatOpen)
                 {
